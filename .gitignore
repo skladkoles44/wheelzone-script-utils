@@ -1,3 +1,11 @@
 create_github_repo.sh
 setup_termux_final.sh
 setup_vps_ssh_key.sh
+wheelzone/secrets/
+secrets/
+*.key
+*.pem
+*.env
+*.sh~
+*token*
+*.backup
