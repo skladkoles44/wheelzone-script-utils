@@ -1,0 +1,25 @@
+name: Termux Script CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Проверка синтаксиса bash
+      run: |
+        find . -type f -name "*.sh" -exec bash -n {} \;
+
+    - name: Проверка на утечки секретов
+      uses: secret-scanner/action@v1
+
+    - name: Установка прав на исполняемые скрипты
+      run: |
+        chmod +x *.sh || true
