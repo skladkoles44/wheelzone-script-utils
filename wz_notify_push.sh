@@ -1,6 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-
-BOT_TOKEN="7593126254:AAG61-IsOp1H-MaZcGVc2jRBm8WrXMmkYFA"
+[ -f ~/wheelzone/secrets/tokens.env ] && source ~/wheelzone/secrets/tokens.env
 CHAT_ID="-1001975043439"
 MESSAGE="✅ Успешный Push: изменения загружены в Git, Drive и Яндекс.Диск"
 

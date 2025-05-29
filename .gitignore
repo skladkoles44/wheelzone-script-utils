@@ -9,3 +9,7 @@ secrets/
 *.sh~
 *token*
 *.backup
+.secret/
+WZ_env_secret.txt
+WZ_env_secret.example.txt
+
