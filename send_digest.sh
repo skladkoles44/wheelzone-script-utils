@@ -1,5 +1,5 @@
 # --- ВСТАВИТЬ ПЕРЕД ФОРМИРОВАНИЕМ DIGEST-ФАЙЛА ---
-
+[ -f ~/wheelzone/secrets/tokens.env ] && source ~/wheelzone/secrets/tokens.env
 LMS_LOG="$HOME/wheelzone/wheelzone-core/personas/shef/roadmap/knowledge/lms_log.jsonl"
 LMS_ENTRY=$(tail -n 1 "$LMS_LOG")
 
@@ -11,9 +11,7 @@ LMS_BLOCK="📚 Урок от ${LMS_AUTHOR}\n\n${LMS_TEXT}\n\nUID: ${LMS_ID}"
 
 # --- И потом ДОБАВИТЬ ЭТО В ФАЙЛ DIGEST ---
 echo -e "\n\n${LMS_BLOCK}" >> "$DIGEST_FILE"#!/data/data/com.termux/files/usr/bin/bash
-#!/data/data/com.termux/files/usr/bin/bash
 
-TOKEN="7593126254:AAG61-IsOp1H-MaZcGVc2jRBm8WrXMmkYFA"
 CHAT_ID="-1002654013714"
 TODAY=$(date +"%Y-%m-%d")
 DIGEST_FILE="$HOME/storage/downloads/project_44/Termux/Digest/daily_digest_${TODAY}.md"
