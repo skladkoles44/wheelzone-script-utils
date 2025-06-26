@@ -47,7 +47,7 @@ termux-auto-maintenance() {
   pkg update -y && pkg upgrade -y
   apt update && apt upgrade -y
   pip list | grep -v '^-e' | cut -d ' ' -f1 | xargs pip install --upgrade
-  npm install -g npm && npm update -g
+  npm update -g --silent || echo "[!] npm update failed"
   cargo install-update -a 2>/dev/null
   go get -u all 2>/dev/null
   echo "[WZ] ✅ Завершено: $(date)" >> ~/.last_termux_update.log
