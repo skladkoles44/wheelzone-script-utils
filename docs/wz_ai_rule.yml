@@ -1,0 +1,49 @@
+script: wz_ai_rule.sh
+version: 3.1
+description: >
+  CLI-интерфейс генерации технических правил через OpenRouter AI.
+  Автоматически регистрирует правило в YAML, кеширует ответы, делает git commit/push.
+  Не требует ключа API — работает с pk-anon.
+
+entrypoint: scripts/wz_ai_rule.sh
+
+dependencies:
+  - curl
+  - python3
+  - uuidgen
+  - git
+  - pip: [pyyaml]
+
+paths:
+  cache: ~/.cache/wz_ai/
+  registry: ~/wz-knowledge/registry.yaml
+  rules_dir: ~/wz-knowledge/rules/
+  log_file: ~/.cache/wz_ai/ai_rule.log
+
+cli:
+  default_model: auto
+  model_override: true
+
+commands:
+  - name: rule
+    description: Сгенерировать правило и записать его в Markdown и YAML
+    usage: ./wz_ai_rule.sh rule "Правило на естественном языке"
+    options:
+      - --model <имя_модели>: Указать конкретную модель вместо авто
+
+  - name: --dry-run
+    description: Получить ответ AI без сохранения файла
+    usage: ./wz_ai_rule.sh --dry-run "Фраза или идея"
+
+  - name: log
+    description: Показать последние строки лога
+    usage: ./wz_ai_rule.sh log
+
+  - name: help
+    description: Показать справку
+    usage: ./wz_ai_rule.sh help
+
+author:
+  name: WheelZone AI Interface
+  maintainer: wheelzone-core
+  license: MIT
