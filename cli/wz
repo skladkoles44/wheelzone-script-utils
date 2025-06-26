@@ -1,0 +1,16 @@
+#!/bin/bash
+# wz CLI — интерфейс управления WheelZone утилитами
+
+SCRIPT_DIR="$HOME/wheelzone-script-utils/scripts"
+
+case "$1" in
+  rule)
+    shift
+    "$SCRIPT_DIR/wz_ai_rule.sh" "$@"
+    ;;
+  *)
+    echo "⚙️  Доступные команды:"
+    echo "  wz rule \"Текст\"              — AI-генерация правила"
+    echo "  wz rule --model MODEL \"Текст\" — с указанием модели"
+    ;;
+esac

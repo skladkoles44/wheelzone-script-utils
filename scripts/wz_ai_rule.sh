@@ -1,135 +1,132 @@
-#!/data/data/com.termux/files/usr/bin/bash
-# WheelZone AI Rule Hybrid Interface (v3.3 — WBP Hybrid Edition, OpenRouter only, Android-safe)
-
-set -euo pipefail
+#!/bin/bash
+# WheelZone AI Rule Interface v3.1 (OpenRouter + AutoModel + YAML)
 
 WZ_DIR="$HOME/wz-knowledge"
 RULES_DIR="$WZ_DIR/rules"
 REGISTRY="$WZ_DIR/registry.yaml"
-CACHE_DIR="$HOME/wz-tmp/wz_ai_cache"
-LOG_FILE="$HOME/wz-tmp/wz_ai_rule.log"
-OPENROUTER_TOKEN="${OPENROUTER_TOKEN:-pk-anon}"
+CACHE_DIR="$HOME/.cache/wz_ai"
+LOG_FILE="$CACHE_DIR/ai_rule.log"
+DEFAULT_TOKEN="pk-anon"
+OPENROUTER_URL="https://openrouter.ai/api/v1/chat/completions"
+AI_MODEL=""
+MANUAL_MODEL=""
+MODE=""
 
 init_env() {
-    mkdir -p "$RULES_DIR" "$CACHE_DIR"
-    [[ -f "$REGISTRY" ]] || echo "rules: []" > "$REGISTRY"
-    touch "$LOG_FILE"
-
-    for cmd in python3 curl git uuidgen; do
+    mkdir -p "$RULES_DIR" "$CACHE_DIR" || return 1
+    [ -f "$REGISTRY" ] || echo "rules: []" > "$REGISTRY"
+    touch "$LOG_FILE" || return 1
+    for cmd in curl python3 git uuidgen; do
         command -v "$cmd" >/dev/null || pkg install -y "$cmd" >/dev/null 2>&1
     done
-
-    python3 -c "import yaml" 2>/dev/null || pip install --quiet pyyaml >/dev/null 2>&1
+    python3 -c "import yaml" 2>/dev/null || pip install --quiet pyyaml >/dev/null
 }
 
 gen_uuid() {
-    uuidgen 2>/dev/null | tr '[:upper:]' '[:lower:]' | cut -d'-' -f1 ||
-    python3 -c "import uuid; print(str(uuid.uuid4()).split('-')[0])"
+    uuidgen | tr '[:upper:]' '[:lower:]' | cut -d'-' -f1
 }
 
 auto_select_model() {
-    local mode="$1"
-    local text="$2"
-    local len="${#text}"
-
-    if [[ -n "${MANUAL_MODEL:-}" ]]; then
+    if [ -n "$MANUAL_MODEL" ]; then
         AI_MODEL="$MANUAL_MODEL"
+    elif [ "$MODE" = "rule" ]; then
+        AI_MODEL="anthropic/claude-3-sonnet"
+    elif [ "$MODE" = "dry" ]; then
+        AI_MODEL="mistralai/mistral-7b-instruct"
     else
-        case "$mode" in
-            rule) AI_MODEL=$([[ $len -gt 500 ]] && echo "anthropic/claude-3-opus" || echo "anthropic/claude-3-sonnet") ;;
-            dry) AI_MODEL="mistralai/mistral-7b-instruct" ;;
-            *) AI_MODEL="cohere/command-r-plus" ;;
-        esac
+        AI_MODEL="cohere/command-r-plus"
     fi
 }
 
 ai_request() {
     local prompt="$1"
-    local cache_hash
-    cache_hash=$(echo -n "$prompt$AI_MODEL" | md5sum | awk '{print $1}')
-    local cache_file="$CACHE_DIR/${cache_hash}.txt"
+    local cache_file="$CACHE_DIR/$(echo -n "$prompt$AI_MODEL" | md5sum | awk '{print $1}').txt"
 
-    if [[ -f "$cache_file" ]] && [[ $(stat -c %Y "$cache_file") -gt $(date -d '-7 days' +%s) ]]; then
-        cat "$cache_file"
-        return
+    if [ -f "$cache_file" ] && [ $(date +%s -r "$cache_file") -gt $(date -d '-5 days' +%s) ]; then
+        cat "$cache_file"; return 0
     fi
 
-    local response
-    response=$(curl -s https://openrouter.ai/api/v1/chat/completions \
-        -H "Authorization: Bearer $OPENROUTER_TOKEN" \
-        -H "Content-Type: application/json" \
-        -d "{\"model\": \"$AI_MODEL\", \"messages\": [{\"role\": \"user\", \"content\": \"$prompt\"}], \"max_tokens\": 300}" 2>>"$LOG_FILE")
+    local response=$(curl -sS "$OPENROUTER_URL" \
+      -H "Authorization: Bearer $DEFAULT_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "'"$AI_MODEL"'",
+        "messages": [{"role": "user", "content": "'"${prompt}"'"}],
+        "temperature": 0.2,
+        "max_tokens": 300
+      }')
 
-    local content
-    content=$(echo "$response" | python3 -c "import sys, json; j = json.load(sys.stdin); print(j['choices'][0]['message']['content'].strip())" 2>>"$LOG_FILE") || {
-        echo "AI request failed" >> "$LOG_FILE"
-        return 1
-    }
+    local output=$(echo "$response" | python3 -c "import sys, json; print(json.load(sys.stdin)['choices'][0]['message']['content'].strip())" 2>/dev/null)
 
-    echo "$content" | tee "$cache_file"
+    [ -n "$output" ] && echo "$output" > "$cache_file"
+    echo "$output"
 }
 
 create_rule() {
-    local text="$1"
-    local uuid
-    uuid=$(gen_uuid)
-    local date
-    date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    local input="$1"
+    local uuid=$(gen_uuid)
+    local date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     local file="$RULES_DIR/rule_${uuid}.md"
+    local prompt="Сформулируй строгое и лаконичное техническое правило на основе: '$input'. Ответь только текстом правила."
 
-    auto_select_model rule "$text"
-    local rule_text
-    rule_text=$(ai_request "Сформулируй строгое и лаконичное техническое правило на основе: '$text'. Ответь только текстом правила.") || return 1
+    local result=$(ai_request "$prompt")
+    [ -z "$result" ] && echo "AI ошибка или пустой ответ" && return 1
 
-    printf "# %s\nUUID: %s\nCreated: %s\n\nПравило: %s\n" "${text//\`/\\\`}" "$uuid" "$date" "${rule_text//\`/\\\`}" > "$file"
+    cat > "$file" <<EOF2
+# $(echo "$input" | sed 's/`/\\`/g')
+UUID: $uuid
+Created: $date
 
-    python3 -c "
-import sys, yaml, tempfile, os
-reg, uid, title, created = sys.argv[1:]
-with open(reg) as f:
-    data = yaml.safe_load(f) or {'rules': []}
-if not any(r.get('uuid') == uid for r in data['rules']):
-    data['rules'].append({'uuid': uid, 'file': f'rules/rule_{uid}.md', 'title': title, 'created_at': created, 'status': 'active'})
-    with tempfile.NamedTemporaryFile('w', delete=False) as tmp:
-        yaml.dump(data, tmp, allow_unicode=True, sort_keys=False)
-    os.replace(tmp.name, reg)
-" "$REGISTRY" "$uuid" "$text" "$date"
+Правило: $(echo "$result" | sed 's/`/\\`/g')
+EOF2
 
-    (cd "$WZ_DIR" && git rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
-        git add "$file" "$REGISTRY" &&
-        git commit -m "auto: rule $uuid" --quiet &&
-        git pull --rebase --quiet &&
-        git push origin main --quiet) || echo "Git error" >> "$LOG_FILE"
+    python3 - "$REGISTRY" "$uuid" "$file" "$input" "$date" <<'PYTHON'
+import yaml, sys, os, tempfile
+regfile, uid, fpath, title, dt = sys.argv[1:6]
+with open(regfile) as f:
+    data = yaml.safe_load(f) or {"rules": []}
+if any(r.get("uuid") == uid for r in data["rules"]):
+    sys.exit(1)
+data["rules"].append({"uuid": uid, "file": os.path.relpath(fpath, os.path.dirname(regfile)), "title": title, "created_at": dt, "status": "active"})
+with tempfile.NamedTemporaryFile("w", delete=False) as tmp:
+    yaml.dump(data, tmp, allow_unicode=True, sort_keys=False)
+os.replace(tmp.name, regfile)
+PYTHON
+
+    (cd "$WZ_DIR" && git add "$file" "$REGISTRY" && \
+     git commit -m "auto: rule $uuid" --quiet && \
+     git pull --rebase --quiet && \
+     git push origin main --quiet) || echo "⚠️ Git ошибка"
 
     echo "✅ $uuid"
     echo "Файл: $file"
 }
 
-main() {
-    init_env || { echo "Ошибка инициализации"; exit 1; }
+print_help() {
+    echo "Использование:"
+    echo "  $0 rule \"Текст правила\""
+    echo "  $0 --model MODEL rule \"Текст\""
+    echo "  $0 --model MODEL --dry-run \"Текст\""
+    echo "  $0 log"
+    echo "  $0 help"
+}
 
-    while [[ "${1:-}" == --* ]]; do
+main() {
+    init_env || { echo "❌ init error"; exit 1; }
+
+    while [[ "$1" =~ ^-- ]]; do
         case "$1" in
-            --model) MANUAL_MODEL="$2"; shift 2 ;;
-            *) echo "Неизвестный флаг: $1" >&2; exit 1 ;;
+            --model) shift; MANUAL_MODEL="$1"; shift ;;
+            --dry-run) MODE="dry"; shift ;;
+            --help|help) print_help; exit 0 ;;
+            *) echo "Неизвестный параметр $1"; exit 1 ;;
         esac
     done
 
-    case "${1:-}" in
-        rule|--create) shift; [[ $# -eq 0 ]] && { echo "Usage: $0 rule \"text\""; exit 1; }; create_rule "$*" ;;
-        --dry-run) shift; [[ $# -eq 0 ]] && { echo "Usage: $0 --dry-run \"text\""; exit 1; }; auto_select_model dry "$*"; ai_request "$*" ;;
-        log) tail -n40 "$LOG_FILE" 2>/dev/null || echo "Лог не найден" ;;
-        help|--help|-h)
-            cat <<EOF2
-Использование:
-  $0 rule "Текст"                  — создать правило
-  $0 --model MODEL rule "Текст"    — использовать заданную модель
-  $0 --dry-run "Текст"             — тест без сохранения
-  $0 log                           — просмотреть лог
-EOF2
-            ;;
-        *) echo "Неизвестная команда: $1"; exit 1 ;;
+    case "$1" in
+        rule) MODE="rule"; shift; auto_select_model; create_rule "$*";;
+        log) tail -n40 "$LOG_FILE";;
+        *) print_help;;
     esac
 }
-
 main "$@"
