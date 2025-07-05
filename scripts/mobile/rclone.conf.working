@@ -1,6 +1,0 @@
-[gdrive]
-type = drive
-client_id = 594147511751-tqhg2re91rohrnfh5ncq0jl2594.apps.googleusercontent.com
-client_secret = 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
-scope = drive
-token = {"access_token":"ya29.a0AZYkNZiqSYQMAjclogn4t...","token_type":"Bearer","refresh_token":"1//0gFakeRefreshToken123456789","expiry":"2030-01-01T00:00:00+03:00"}
