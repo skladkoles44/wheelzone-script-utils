@@ -64,3 +64,23 @@ main() {
 }
 
 main "$@"
+
+# === Автофиксация восстановления rclone.conf ===
+if [[ -f "$HOME/.config/rclone/rclone.conf" ]]; then
+  echo "🧩 Обнаружен rclone.conf — создаю chatend-запись..."
+  OUT="$HOME/wz-wiki/WZChatEnds/chat_$(date +%Y%m%d)_auto_rclone_restore.yaml"
+  REMOTE=$(grep -o '^\[[^]]*\]' ~/.config/rclone/rclone.conf | tr -d '[]')
+  EXPIRY=$(grep -o '"expiry":"[^"]*"' ~/.config/rclone/rclone.conf | cut -d':' -f2 | tr -d '"')
+
+  cat > "$OUT" <<EOR
+chatend:
+  id: rclone_restore_$(date +%s)
+  title: Автофиксация восстановления rclone.conf ($REMOTE)
+  type: chatend
+  remote: $REMOTE
+  token_expiry: $EXPIRY
+  status: completed
+  created_at: "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+  context: Termux / Android / WheelZone
+EOR
+fi
