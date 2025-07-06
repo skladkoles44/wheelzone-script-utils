@@ -13,8 +13,12 @@ from datetime import datetime
 
 __all__ = ["log_diagram_snapshot"]
 
+from datetime import datetime, timezone
+
+
 def UTC_TIMESTAMP():
-    return datetime.utcnow().isoformat(timespec="seconds") + "Z"
+
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 def envload(var: str, required=True, default=None) -> str:
     val = os.environ.get(var, default)
