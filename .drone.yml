@@ -1,0 +1,9 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: generate-diagram
+    image: bash
+    commands:
+      - bash ./scripts/utils/wz_generate_diagram.sh
