@@ -1,0 +1,22 @@
+# 🛰️ WZDrone Mission: Generate Diagrams
+# Версия: 1.0.0 | Статус: active | Node: Utility
+
+name: generate_diagram
+version: 1.0.0
+schedule: manual
+node_type: Utility
+status: active
+
+source:
+  type: script
+  id: wz_generate_diagram
+
+steps:
+  - scripts/utils/wz_generate_diagram.sh
+
+notifications:
+  on_success:
+    - wzbot_notify
+    - chatend_append
+  on_failure:
+    - wzbot_alert
