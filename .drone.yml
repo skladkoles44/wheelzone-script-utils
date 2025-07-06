@@ -1,9 +1,10 @@
-kind: pipeline
-type: docker
-name: default
 
-steps:
-  - name: generate-diagram
-    image: bash
-    commands:
-      - bash ./scripts/utils/wz_generate_diagram.sh
+- name: import_tasks_to_notion
+  image: python:3.12
+  commands:
+    - pip install -r wheelzone-script-utils/scripts/notion/requirements.txt
+    - python3 wheelzone-script-utils/scripts/notion/import_tasks_from_md_auto.py --file wz-wiki/docs/TODO_notionsync.md
+  when:
+    changes:
+      - wz-wiki/docs/TODO_notionsync.md
+      - wheelzone-script-utils/scripts/notion/import_tasks_from_md_auto.py
