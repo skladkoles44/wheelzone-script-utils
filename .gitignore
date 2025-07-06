@@ -27,3 +27,6 @@ Downloads/
 __pycache__/
 logs/
 tmp/
+configs/.env.notion
+configs/.env.notion
+configs/.env.notion
