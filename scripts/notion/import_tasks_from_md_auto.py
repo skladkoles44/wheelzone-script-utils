@@ -1,12 +1,13 @@
-#!/usr/bin/env python3
+#!/data/data/com.termux/files/usr/bin/python3
+import hashlib
+import logging
 import os
 import re
 import time
-import hashlib
-import logging
-from typing import List, Dict, Set, Tuple, Optional
-from notion_client import Client
+from typing import Dict, List, Optional, Set, Tuple
+
 from dotenv import load_dotenv
+from notion_client import Client
 
 REQUIRED_PROPERTIES = {
     "Name": {"title": {}},
@@ -14,7 +15,7 @@ REQUIRED_PROPERTIES = {
     "Recommendations": {"rich_text": {}},
     "Categories": {"multi_select": {}},
     "Status": {"select": {}},
-    "Source": {"rich_text": {}}
+    "Source": {"rich_text": {}},
 }
 
 PROPERTY_TEMPLATE = {
@@ -22,8 +23,9 @@ PROPERTY_TEMPLATE = {
     "Description": lambda t: {"rich_text": [{"text": {"content": t[1]}}]},
     "Recommendations": lambda t: {"rich_text": [{"text": {"content": t[2]}}]},
     "Status": lambda _: {"select": {"name": "Open"}},
-    "Source": lambda _: {"rich_text": [{"text": {"content": "TODO_notionsync.md"}}]}
+    "Source": lambda _: {"rich_text": [{"text": {"content": "TODO_notionsync.md"}}]},
 }
+
 
 class NotionTaskImporter:
     def __init__(self):
@@ -54,10 +56,7 @@ class NotionTaskImporter:
             raise FileNotFoundError(f"Config file not found: {env_path}")
         load_dotenv(dotenv_path=env_path, override=True)
         try:
-            return (
-                os.environ["NOTION_TOKEN"],
-                os.environ["DATABASE_ID"]
-            )
+            return (os.environ["NOTION_TOKEN"], os.environ["DATABASE_ID"])
         except KeyError as e:
             raise ValueError(f"Missing env variable: {e}")
 
@@ -70,9 +69,7 @@ class NotionTaskImporter:
     def _build_properties(self, task: Tuple[str, str, str, List[str]]) -> Dict:
         properties = {k: v(task) for k, v in PROPERTY_TEMPLATE.items()}
         if task[3]:  # Категории
-            properties["Categories"] = {
-                "multi_select": [{"name": c} for c in task[3]]
-            }
+            properties["Categories"] = {"multi_select": [{"name": c} for c in task[3]]}
         return properties
 
     def _process_markdown(self, content: str) -> List[Tuple[str, str, str, List[str]]]:
@@ -80,26 +77,28 @@ class NotionTaskImporter:
         for match in re.finditer(
             r"(\d+)\.\s(.*?)\n\s*🔸(.*?)\n\s*🔹(.*?)(?:\n\s*([🧪📦🔧🚀\s]+))?(?:\n|$)",
             content,
-            re.DOTALL
+            re.DOTALL,
         ):
             _, title, desc, recommend, categories = match.groups()
-            tasks.append((
-                title.strip(),
-                desc.strip(),
-                recommend.strip(),
-                self._parse_categories(categories)
-            ))
+            tasks.append(
+                (
+                    title.strip(),
+                    desc.strip(),
+                    recommend.strip(),
+                    self._parse_categories(categories),
+                )
+            )
         return tasks
 
     def check_and_create_schema(self) -> None:
         try:
-            current = self.notion.databases.retrieve(self.database_id).get("properties", {})
+            current = self.notion.databases.retrieve(self.database_id).get(
+                "properties", {}
+            )
             missing = [k for k in REQUIRED_PROPERTIES if k not in current]
             if missing:
                 update_payload = {
-                    "properties": {
-                        k: REQUIRED_PROPERTIES[k] for k in missing
-                    }
+                    "properties": {k: REQUIRED_PROPERTIES[k] for k in missing}
                 }
                 self.notion.databases.update(self.database_id, **update_payload)
                 self.logger.info(f"Created missing fields: {missing}")
@@ -111,7 +110,7 @@ class NotionTaskImporter:
         logging.basicConfig(
             level=logging.INFO,
             format='{"time": "%(asctime)s", "level": "%(levelname)s", "message": "%(message)s"}',
-            handlers=[logging.StreamHandler()]
+            handlers=[logging.StreamHandler()],
         )
 
         try:
@@ -123,7 +122,9 @@ class NotionTaskImporter:
 
             for task in tasks:
                 task_str = "|".join(task[:3])
-                task_hash = hashlib.blake2b(task_str.encode(), digest_size=16).hexdigest()
+                task_hash = hashlib.blake2b(
+                    task_str.encode(), digest_size=16
+                ).hexdigest()
                 self.total += 1
 
                 if task_hash in self.processed_hashes:
@@ -136,7 +137,7 @@ class NotionTaskImporter:
                 try:
                     self.notion.pages.create(
                         parent={"database_id": self.database_id},
-                        properties=self._build_properties(task)
+                        properties=self._build_properties(task),
                     )
                     self.success += 1
                     self.processed_hashes.add(task_hash)
@@ -152,11 +153,15 @@ class NotionTaskImporter:
             self.logger.error(f"Fatal error: {e}", exc_info=True)
             raise SystemExit(1)
 
+
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="Test mode (no changes)")
-    parser.add_argument("--file", default="~/wz-wiki/docs/TODO_notionsync.md", help="Markdown file path")
+    parser.add_argument(
+        "--file", default="~/wz-wiki/docs/TODO_notionsync.md", help="Markdown file path"
+    )
     args = parser.parse_args()
 
     NotionTaskImporter().run(args.file, args.dry_run)

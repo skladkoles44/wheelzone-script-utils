@@ -1,30 +1,39 @@
-#!/usr/bin/env python3
-import os
-import sys
+#!/data/data/com.termux/files/usr/bin/python3
+import argparse
 import json
 import logging
-import argparse
+import os
+import sys
 from datetime import datetime, timezone
 
-from notion_client import Client
 from dotenv import load_dotenv
+from notion_client import Client
 
 # === Логгер ===
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%Y-%m-%dT%H:%M:%SZ"
+    datefmt="%Y-%m-%dT%H:%M:%SZ",
 )
 
 # === CLI ===
 parser = argparse.ArgumentParser(description="📌 Добавление задачи в Notion")
 parser.add_argument("name", help="Имя задачи")
-parser.add_argument("--status", default="TODO", choices=["TODO", "In Progress", "Done"], help="Статус")
-parser.add_argument("--priority", default="Medium", choices=["Low", "Medium", "High", "Critical"], help="Приоритет")
+parser.add_argument(
+    "--status", default="TODO", choices=["TODO", "In Progress", "Done"], help="Статус"
+)
+parser.add_argument(
+    "--priority",
+    default="Medium",
+    choices=["Low", "Medium", "High", "Critical"],
+    help="Приоритет",
+)
 parser.add_argument("--tags", nargs="*", default=[], help="Список тегов")
 parser.add_argument("--source", default="manual", help="Источник задачи")
 parser.add_argument("--dry-run", action="store_true", help="Не отправлять в Notion")
-parser.add_argument("--verbose", action="store_true", help="Показать отправляемые данные")
+parser.add_argument(
+    "--verbose", action="store_true", help="Показать отправляемые данные"
+)
 args = parser.parse_args()
 
 # === Загрузка конфигурации ===
@@ -37,6 +46,7 @@ except Exception as e:
     sys.exit(1)
 
 notion = Client(auth=NOTION_TOKEN)
+
 
 # === Функция добавления задачи ===
 def add_task():
@@ -55,7 +65,7 @@ def add_task():
             "Tags": {"multi_select": [{"name": tag} for tag in args.tags]},
             "Source": {"select": {"name": args.source}},
             "Created": {"date": {"start": now}},
-        }
+        },
     }
 
     if args.verbose or args.dry_run:
@@ -68,9 +78,16 @@ def add_task():
 
     try:
         res = notion.pages.create(**payload)
-        logging.info("✅ Задача добавлена: %s [%s/%s] → %s", args.name, args.status, args.priority, res.get("id"))
+        logging.info(
+            "✅ Задача добавлена: %s [%s/%s] → %s",
+            args.name,
+            args.status,
+            args.priority,
+            res.get("id"),
+        )
     except Exception as e:
         logging.exception("❌ Ошибка при отправке в Notion")
+
 
 # === Запуск ===
 if __name__ == "__main__":

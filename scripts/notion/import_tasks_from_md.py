@@ -1,27 +1,34 @@
-#!/usr/bin/env python3
+#!/data/data/com.termux/files/usr/bin/python3
+import hashlib
+import logging
 import os
 import re
 import time
-import hashlib
-import logging
 from dataclasses import dataclass
-from typing import List, Dict
 from functools import cached_property
 from threading import Lock
-from tqdm import tqdm
+from typing import Dict, List
+
+from dotenv import load_dotenv
 from notion_client import Client
 from notion_client.errors import APIResponseError
-from dotenv import load_dotenv
+from tqdm import tqdm
+
 
 class Config:
     MAX_LENGTH = 2000
     REQUEST_DELAY = 0.5
     MAX_RETRIES = 3
     VALID_CATEGORIES = {"🧪", "📦", "🔧", "🚀"}
-    LOG_FORMAT = '{"time": "%(asctime)s", "level": "%(levelname)s", "message": "%(message)s"}'
-    MARKDOWN_PATTERN = r"(\d+)\.\s(.*?)\n\s*🔸(.*?)\n\s*🔹(.*?)(?:\n\s*([🧪📦🔧🚀\s]+))?(?:\n|$)"
+    LOG_FORMAT = (
+        '{"time": "%(asctime)s", "level": "%(levelname)s", "message": "%(message)s"}'
+    )
+    MARKDOWN_PATTERN = (
+        r"(\d+)\.\s(.*?)\n\s*🔸(.*?)\n\s*🔹(.*?)(?:\n\s*([🧪📦🔧🚀\s]+))?(?:\n|$)"
+    )
     SOURCE_TEXT = "TODO_notionsync.md"
     DELIMITER = "|"
+
 
 @dataclass
 class Task:
@@ -30,18 +37,23 @@ class Task:
     recommendations: str
     categories: List[str]
 
+
 PROPERTY_TEMPLATE = {
     "Name": lambda t: {"title": [{"text": {"content": t.title}}]},
     "Description": lambda t: {"rich_text": [{"text": {"content": t.description}}]},
-    "Recommendations": lambda t: {"rich_text": [{"text": {"content": t.recommendations}}]},
+    "Recommendations": lambda t: {
+        "rich_text": [{"text": {"content": t.recommendations}}]
+    },
     "Status": lambda _: {"select": {"name": "Open"}},
-    "Source": lambda _: {"rich_text": [{"text": {"content": Config.SOURCE_TEXT}}]}
+    "Source": lambda _: {"rich_text": [{"text": {"content": Config.SOURCE_TEXT}}]},
 }
+
 
 def validate_length(text: str, field: str) -> str:
     if len(text.strip()) > Config.MAX_LENGTH:
         raise ValueError(f"{field} exceeds max length ({Config.MAX_LENGTH})")
     return text.strip()
+
 
 class NotionTaskImporter:
     def __init__(self):
@@ -62,10 +74,7 @@ class NotionTaskImporter:
             raise FileNotFoundError(f"❌ Config not found: {env_path}")
         load_dotenv(dotenv_path=env_path, override=True)
         try:
-            return (
-                os.environ["NOTION_TOKEN"],
-                os.environ["DATABASE_ID"]
-            )
+            return (os.environ["NOTION_TOKEN"], os.environ["DATABASE_ID"])
         except KeyError as e:
             raise ValueError(f"Missing env variable: {e}")
 
@@ -75,7 +84,9 @@ class NotionTaskImporter:
     def _build_properties(self, task: Task) -> Dict:
         props = {k: v(task) for k, v in PROPERTY_TEMPLATE.items()}
         if task.categories:
-            props["Categories"] = {"multi_select": [{"name": c} for c in task.categories]}
+            props["Categories"] = {
+                "multi_select": [{"name": c} for c in task.categories]
+            }
         return props
 
     def _get_task_hash(self, task: Task) -> str:
@@ -95,7 +106,7 @@ class NotionTaskImporter:
                     validate_length(title, "Title"),
                     validate_length(desc, "Description"),
                     validate_length(rec, "Recommendations"),
-                    self._parse_categories(cats)
+                    self._parse_categories(cats),
                 )
                 tasks.append(task)
             except ValueError as e:
@@ -106,7 +117,7 @@ class NotionTaskImporter:
         logging.basicConfig(
             level=logging.INFO,
             format=Config.LOG_FORMAT,
-            handlers=[logging.StreamHandler()]
+            handlers=[logging.StreamHandler()],
         )
 
         if not os.path.exists(file_path):
@@ -131,7 +142,7 @@ class NotionTaskImporter:
                 try:
                     self.notion.pages.create(
                         parent={"database_id": db_id},
-                        properties=self._build_properties(task)
+                        properties=self._build_properties(task),
                     )
                     self._add_processed_hash(task_hash)
                     self.success += 1
@@ -142,17 +153,25 @@ class NotionTaskImporter:
                         retry_after = int(e.headers.get("Retry-After", 5))
                         time.sleep(retry_after)
                     elif attempt == Config.MAX_RETRIES - 1:
-                        self.logger.error(f"❌ Failed task: {task.title}", exc_info=True)
+                        self.logger.error(
+                            f"❌ Failed task: {task.title}", exc_info=True
+                        )
                     else:
                         time.sleep((attempt + 1) * 2)
 
         self.logger.info(f"🎯 Imported {self.success}/{self.total} tasks successfully.")
 
+
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="Не отправлять в Notion")
-    parser.add_argument("--file", default="~/wz-wiki/docs/TODO_notionsync.md", help="Путь до markdown-файла")
+    parser.add_argument(
+        "--file",
+        default="~/wz-wiki/docs/TODO_notionsync.md",
+        help="Путь до markdown-файла",
+    )
     args = parser.parse_args()
 
     importer = NotionTaskImporter()
