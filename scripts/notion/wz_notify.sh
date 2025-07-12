@@ -69,7 +69,7 @@ done
 ### === INTERNAL ===
 generate_event_id() {
 	if command -v iconv >/dev/null; then
-		printf -- '%s' "$TITLE" | iconv -t ascii//TRANSLIT//IGNORE 2>/dev/null |
+		printf -- '%s' "$TITLE" -- | iconv -t ascii//TRANSLIT//IGNORE 2>/dev/null |
 			tr -dc 'a-zA-Z0-9 ' | sed -e 's/  */ /g' -e 's/^ //' -e 's/ $//' |
 			tr ' ' '-' | head -c 48
 	else
@@ -113,13 +113,13 @@ notify_telegram() {
 }
 
 log_json() {
-	printf '{"ts":"%s","type":"%s","title":"%s","msg":"%s"}\n' \
+	printf '{"ts":"%s","type":"%s","title":"%s","msg":"%s" --}\n' \
 		"$(date +%FT%T)" "$TYPE" "$TITLE" "$MESSAGE" >>"$LOG_DIR/notify.json"
 }
 
 log_permalog() {
-	printf '%s — [%s] %s\n' "$(date +%FT%T)" "$TYPE" "$TITLE" >>"$PERMALOG_DIR/permalog.log"
-	printf "- type: %s\n  title: %s\n  ts: %s\n" "$TYPE" "$TITLE" "$(date +%FT%T)" >>"$LOG_DIR/permalog.yaml"
+	printf '%s — [%s] %s\n' "$(date +%FT%T)" "$TYPE" "$TITLE" >>"$PERMALOG_DIR/permalog.log" --
+	printf "- type: %s\n  title: %s\n  ts: %s\n" "$TYPE" "$TITLE" "$(date +%FT%T)" >>"$LOG_DIR/permalog.yaml" --
 }
 
 ### === MAIN ===

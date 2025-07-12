@@ -18,7 +18,7 @@ declare -rA CONFIG=(
 log() {
 	local level="$1"
 	local message="$2"
-	printf '{"time":"%s","level":"%s","message":"%s"}\n' \
+	printf '{"time":"%s","level":"%s","message":"%s" --}\n' \
 		"$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
 		"$level" \
 		"$(echo "$message" | sed 's/"/\\"/g')" >&2

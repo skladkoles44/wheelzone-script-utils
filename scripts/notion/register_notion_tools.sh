@@ -20,7 +20,7 @@ sanitize_path() {
 log() {
 	local level="$1" message="$2"
 	mkdir -p "$(dirname "$LOG_FILE")"
-	printf '{"time":"%s","level":"%s","msg":"%s"}\n' \
+	printf '{"time":"%s","level":"%s","msg":"%s" --}\n' \
 		"$(date +%FT%T.%3N)" "$level" "$message" >>"$LOG_FILE"
 }
 
@@ -109,7 +109,7 @@ main() {
 NOTION_LOG_DB_ID=2282a47c8803803e813ce6c7ec605a78'
 	[[ -f ~/.env.wzbot ]] || {
 		umask 0177
-		printf '%s\n' "$env_content" >~/.env.wzbot
+		printf '%s\n' "$env_content" -- >~/.env.wzbot
 		log_info "Created .env.wzbot"
 	}
 
