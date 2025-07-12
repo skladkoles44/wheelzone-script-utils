@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
 #!/bin/bash
 
 CONFIG_FILE="$HOME/wheelzone-script-utils/configs/rclone.conf"

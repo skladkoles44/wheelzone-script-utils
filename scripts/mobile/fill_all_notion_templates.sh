@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
 #!/bin/bash
 set -o errexit -o nounset -o pipefail
 

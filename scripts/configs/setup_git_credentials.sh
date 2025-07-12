@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
 #!/bin/bash
 
 # 🔐 Setup GitHub credentials using .netrc and optionally ~/.wz_secrets/github_token.txt

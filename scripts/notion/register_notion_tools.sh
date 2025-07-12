@@ -1,0 +1,115 @@
+#!/data/data/com.termux/files/usr/bin/bash
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail
+shopt -s inherit_errexit
+
+readonly LOCK_FILE="/tmp/wz_registry.lock"
+readonly LOG_FILE="$HOME/.wzlogs/wz_registry.log"
+readonly REGISTRY_DIR="$HOME/wz-wiki/registry"
+
+# Безопасность
+sanitize_path() {
+  local path="$1"
+  [[ "$path" =~ ^[a-zA-Z0-9_~/.\-]+$ ]] || {
+    log_error "Invalid path: $path"
+    return 1
+  }
+}
+
+# Логирование
+log() {
+  local level="$1" message="$2"
+  mkdir -p "$(dirname "$LOG_FILE")"
+  printf '{"time":"%s","level":"%s","msg":"%s"}\n' \
+    "$(date +%FT%T.%3N)" "$level" "$message" >> "$LOG_FILE"
+}
+
+log_info()  { log "INFO" "$1"; }
+log_error() { log "ERROR" "$1"; }
+
+# Блокировка
+with_lock() {
+  exec 9>"$LOCK_FILE"
+  flock -n 9 || {
+    log_error "Script already running"
+    return 1
+  }
+  "$@"
+  local rc=$?
+  exec 9>&-
+  return $rc
+}
+
+# Основной процесс
+main() {
+  trap 'rm -f "$LOCK_FILE"' EXIT
+  log_info "Starting registry update"
+
+  mkdir -p "$REGISTRY_DIR"
+  sanitize_path "$REGISTRY_DIR" || return 1
+
+  declare -A files=(
+    ["$REGISTRY_DIR/generate_notion_log_json.yaml"]='- uuid: generate-notion-log-json-v1
+  name: generate_notion_log_json
+  type: script
+  version: 1.0.0
+  status: PUSHED
+  path: wheelzone-script-utils/scripts/notion/generate_notion_log_json.sh
+  requires:
+    - wz-wiki/WZChatEnds/end_blocks.yaml
+  generates:
+    - wz-wiki/WZChatEnds/data.json
+  tags: [notion, chatend, converter, json]
+  updated: 2025-07-07'
+    ["$REGISTRY_DIR/notion_log_entry.yaml"]='- uuid: notion-log-entry-v1
+  name: notion_log_entry
+  type: script
+  version: 1.0.0
+  status: PUSHED
+  path: wheelzone-script-utils/scripts/notion/notion_log_entry.py
+  uses:
+    - .env.wzbot
+  tags: [notion, logger, event, api]
+  updated: 2025-07-07'
+  )
+
+  for file in "${!files[@]}"; do
+    sanitize_path "$file" || continue
+    [[ -f "$file" ]] || echo "${files[$file]}" > "$file"
+  done
+
+  (
+    cd "$REGISTRY_DIR/.." && \
+    git add registry/*.yaml && \
+    git commit -m "registry: добавлены generate_notion_log_json и notion_log_entry" && \
+    git push
+  ) || { log_error "Git operations failed"; return 1; }
+
+  declare -A log_events=(
+    ["generate_notion_log_json"]="registry/generate_notion_log_json.yaml"
+    ["notion_log_entry"]="registry/notion_log_entry.yaml"
+  )
+
+  for name in "${!log_events[@]}"; do
+    {
+      python3 ~/wheelzone-script-utils/scripts/notion/notion_log_entry.py \
+        --type script-event \
+        --name "$name" \
+        --event "registered + pushed" \
+        --result ready \
+        --source "${log_events[$name]}" &
+    } 2>/dev/null
+  done
+  wait
+
+  local env_content='***REMOVED***
+NOTION_LOG_DB_ID=2282a47c8803803e813ce6c7ec605a78'
+  [[ -f ~/.env.wzbot ]] || {
+    umask 0177
+    printf '%s\n' "$env_content" > ~/.env.wzbot
+    log_info "Created .env.wzbot"
+  }
+
+  log_info "Registry update completed"
+}
+with_lock main
