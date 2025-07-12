@@ -1,31 +1,29 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# tools/autofix_all.sh — локальное автоформатирование (shfmt, black, isort)
+# tools/autofix_all.sh — Автоформатирование и исправление по WZ
 
-set -euo pipefail
+set -eo pipefail
+shopt -s globstar
 
-echo "🧼 [AutoFix] Запуск автоформатирования скриптов..."
+echo "[WZ] 🔧 Автофиксы активированы..."
 
-# Проверка зависимостей
+# Установка shfmt, black, isort, если не установлены
+command -v shfmt >/dev/null || pkg install -y shfmt
 command -v black >/dev/null || pip install black
 command -v isort >/dev/null || pip install isort
-command -v shfmt >/dev/null || {
-  curl -sL https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64 \
-    -o "$PREFIX/bin/shfmt" && chmod +x "$PREFIX/bin/shfmt"
-}
 
-# Форматирование Bash
-echo "🔧 [shfmt] Форматирование *.sh"
-find scripts/ -name "*.sh" -exec shfmt -w -i 2 -ci -s {} +
+# Фикс Bash-скриптов
+find scripts/**/*.sh tools/**/*.sh -type f 2>/dev/null | while read -r f; do
+  sed -i '1s|^.*$|#!/data/data/com.termux/files/usr/bin/bash|' "$f"
+  chmod +x "$f"
+  shfmt -w "$f" || true
+done
 
-# Форматирование Python
-echo "🔧 [black] Форматирование *.py"
-black scripts/
+# Фикс Python-скриптов
+find scripts/**/*.py tools/**/*.py -type f 2>/dev/null | while read -r f; do
+  sed -i '1s|^.*$|#!/data/data/com.termux/files/usr/bin/python3|' "$f"
+  chmod +x "$f"
+  isort "$f" || true
+  black "$f" || true
+done
 
-echo "🔧 [isort] Сортировка импортов"
-isort scripts/
-
-# Добавление прав
-echo "🔒 [chmod +x] Назначение прав исполняемости"
-find scripts/ -name "*.sh" -o -name "*.py" -exec chmod +x {} +
-
-echo "✅ [AutoFix] Завершено успешно"
+echo "[WZ] ✅ AutoFix завершён"
