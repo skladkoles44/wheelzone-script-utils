@@ -1,3 +1,5 @@
+#!/data/data/com.termux/files/usr/bin/bash
+#!/data/data/com.termux/files/usr/bin/python3
 # wz_ai_rule.sh — WheelZone AI Rule Interface v3.1
 
 CLI-интерфейс генерации технических правил через OpenRouter AI. Автоматически регистрирует правило в YAML, кеширует ответы, делает git commit/push. Не требует ключа API — работает с pk-anon.

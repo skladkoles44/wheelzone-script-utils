@@ -1,3 +1,5 @@
+#!/data/data/com.termux/files/usr/bin/bash
+#!/data/data/com.termux/files/usr/bin/python3
 [gdrive]
 type = drive
 client_id = 594147511751-tqhg2re91rohrnfh5ncq0jl2594.apps.googleusercontent.com

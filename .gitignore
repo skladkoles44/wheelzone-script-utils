@@ -1,1 +1,3 @@
 configs/.env.notion
+.env.notion
+.env.notion.example
