@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/python3
 #!/usr/bin/env python3  
 """  
 Fractal Logger v3.2 — Абсолютно надежная версия с квантовым уровнем отказоустойчивости  
