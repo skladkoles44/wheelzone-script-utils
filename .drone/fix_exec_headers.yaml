@@ -1,0 +1,26 @@
+kind: pipeline
+type: docker
+name: fix-exec-headers
+
+steps:
+  - name: fix-exec-headers
+    image: bash:5
+    commands:
+      - cd /drone/src
+      - |
+        find scripts/ -type f \( -name "*.sh" -o -name "*.py" \) | while read -r f; do
+          case "$f" in
+            *.sh)
+              grep -q '^#!/data/data/com.termux/files/usr/bin/bash' "$f" || sed -i '1i #!/data/data/com.termux/files/usr/bin/bash' "$f"
+              ;;
+            *.py)
+              grep -q '^#!/data/data/com.termux/files/usr/bin/python3' "$f" || sed -i '1i #!/data/data/com.termux/files/usr/bin/python3' "$f"
+              ;;
+          esac
+          chmod +x "$f"
+        done
+      - git config user.email "ci@wheelzone.ai"
+      - git config user.name "WZ Drone Bot"
+      - git add scripts/
+      - git commit -m "ci: auto-fix exec headers + chmod +x for *.sh and *.py"
+      - git push
