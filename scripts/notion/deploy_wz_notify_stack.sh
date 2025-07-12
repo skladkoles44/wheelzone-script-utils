@@ -19,7 +19,7 @@ flock -n 9 || {
 
 # Потоковое логирование
 log() {
-	printf '{"ts":"%s","msg":"%s"}\n' "$(date +%s)" "$1" >>"$LOG_DIR/deploy.json"
+	printf '{"ts":"%s","msg":"%s"}\n' "$(date +%s)" "$1" >>"$LOG_DIR/deploy.json" --
 }
 
 # Основная функция

@@ -22,7 +22,7 @@ START_TIME=$(date +%s)
 # Функции
 format_duration() {
 	local seconds=$1
-	printf "%02d:%02d:%02d" $((seconds / 3600)) $((seconds % 3600 / 60)) $((seconds % 60))
+	printf "%02d:%02d:%02d" -- $((seconds / 3600)) $((seconds % 3600 / 60)) $((seconds % 60))
 }
 
 check_dependency() {

@@ -32,11 +32,11 @@ git -C "$REPO_DIR" add "docs/architecture/.gitkeep"
 # Markdown
 echo "{\"level\":\"INFO\",\"ts\":\"$DATE\",\"event\":\"gen_markdown\",\"msg\":\"Start генерация Markdown\"}" >>"$LOG_FILE"
 {
-	printf "# 📁 Репозиторий: wz-wiki\n"
+	printf "# 📁 Репозиторий: wz-wiki\n" --
 	cd "$HOME/wz-wiki"
 	find . -type f -print0 | LC_ALL=C sort -z | tr '\0' '\n' | sed 's|^|-- |'
 
-	printf "\n---\n\n# 📁 Репозиторий: wheelzone-script-utils\n"
+	printf "\n---\n\n# 📁 Репозиторий: wheelzone-script-utils\n" --
 	cd "$HOME/wheelzone-script-utils"
 	find . -type f -print0 | LC_ALL=C sort -z | tr '\0' '\n' | sed 's|^|-- |'
 } >"$ARCH_DIR/git_repository_tree.md"
@@ -87,7 +87,7 @@ git push
 # INSIGHT блок
 echo "{\"level\":\"INFO\",\"ts\":\"$DATE\",\"event\":\"write_insight\",\"msg\":\"INSIGHT -> $INSIGHT_FILE\"}" >>"$LOG_FILE"
 mkdir -p "$(dirname "$INSIGHT_FILE")"
-printf -- "- type: INSIGHT\n  title: Обновлены диаграммы Git\n  timestamp: %s\n  files:\n    - %s\n    - %s\n" \
+printf -- "- type: INSIGHT\n  title: Обновлены диаграммы Git\n  timestamp: %s\n  files:\n    - %s\n    - %s\n" -- \
 	"$DATE" \
 	"docs/architecture/git_repository_tree.md" \
 	"docs/architecture/git_repository_tree_mermaid.md" >>"$INSIGHT_FILE"
