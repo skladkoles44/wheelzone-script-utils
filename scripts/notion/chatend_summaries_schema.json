@@ -1,0 +1,64 @@
+#!/data/data/com.termux/files/usr/bin/bash
+#!/data/data/com.termux/files/usr/bin/python3
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "2282a47c880380ec9086d9e334fbe849"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {
+        "content": "ChatEnd Summaries"
+      }
+    }
+  ],
+  "properties": {
+    "chatend_id": {
+      "title": {}
+    },
+    "session_date": {
+      "date": {}
+    },
+    "topic": {
+      "rich_text": {}
+    },
+    "status": {
+      "select": {
+        "options": [
+          { "name": "proposed", "color": "gray" },
+          { "name": "pending", "color": "yellow" },
+          { "name": "confirmed", "color": "blue" },
+          { "name": "pushed", "color": "green" }
+        ]
+      }
+    },
+    "summary": {
+      "rich_text": {}
+    },
+    "type": {
+      "multi_select": {
+        "options": [
+          { "name": "idea", "color": "purple" },
+          { "name": "plan", "color": "blue" },
+          { "name": "tool", "color": "green" },
+          { "name": "bug", "color": "red" },
+          { "name": "ci", "color": "pink" },
+          { "name": "infra", "color": "brown" },
+          { "name": "ai", "color": "orange" },
+          { "name": "security", "color": "yellow" },
+          { "name": "monitoring", "color": "gray" }
+        ]
+      }
+    },
+    "chatend_file_url": {
+      "url": {}
+    },
+    "pushed_to_git": {
+      "checkbox": {}
+    },
+    "notion_sync_time": {
+      "created_time": {}
+    }
+  }
+}
