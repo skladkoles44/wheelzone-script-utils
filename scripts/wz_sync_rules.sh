@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 REPO="$HOME/wz-knowledge"
 RULES_DIR="$REPO/rules"
@@ -12,7 +12,7 @@ create_rule() {
 	created=$(timestamp)
 	file="$RULES_DIR/rule_${uuid}.md"
 	[[ -d "$RULES_DIR" ]] || mkdir -p "$RULES_DIR"
-	printf -- "# %s\nUUID: %s\nCreated: %s\n\nContent: %s\n" "$title" "$uuid" "$created" "$title" >"$file" --
+	printf -- "# %s\nUUID: %s\nCreated: %s\n\nContent: %s\n" "$title" "$uuid" "$created" "$title" -- >"$file"
 	echo "[WZ] Правило создано: $file"
 }
 update_registry() {

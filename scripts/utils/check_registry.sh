@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 # Проверка YAML-реестра объектов WheelZone
 # Version: 1.3.0 (production-ready)

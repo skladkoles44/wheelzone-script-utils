@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 # WZ Check: rule-autoprefix-paths — гибрид v2.0 (WBP)
 

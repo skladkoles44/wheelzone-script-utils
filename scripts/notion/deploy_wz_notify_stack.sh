@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 # ───────────────────────────────────────────────
 # 🚀 PROD-оптимизированный деплой (Termux/HyperOS)
@@ -19,7 +19,7 @@ flock -n 9 || {
 
 # Потоковое логирование
 log() {
-	printf '{"ts":"%s","msg":"%s"}\n' "$(date +%s)" "$1" >>"$LOG_DIR/deploy.json" --
+	printf '{"ts":"%s","msg":"%s"}\n' "$(date +%s)" "$1" -- >>"$LOG_DIR/deploy.json"
 }
 
 # Основная функция

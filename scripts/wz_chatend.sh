@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 # WheelZone ChatEnd Generator v1.4.3 (Android 15 HyperOS Optimized)
 set -eo pipefail
@@ -84,7 +84,7 @@ TEMP_OUT="${ARGS[output_dir]}/${SLUG}.md.tmp"
 FINAL_OUT="${ARGS[output_dir]}/${SLUG}.md"
 
 {
-	printf "---\nuuid: %s\nslug: %s\ntimestamp: %s\nsource: %s\nauto: %s\n---\n\n" \
+	printf -- "---\nuuid: %s\nslug: %s\ntimestamp: %s\nsource: %s\nauto: %s\n---\n\n" \
 		"$UUID" "$SLUG" "$TIMESTAMP" "${ARGS[input]}" "${ARGS[auto]}"
 	dd if="${ARGS[input]}" bs=64K 2>/dev/null
 } >"$TEMP_OUT" &&

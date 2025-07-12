@@ -27,3 +27,8 @@ find scripts/**/*.py tools/**/*.py -type f 2>/dev/null | while read -r f; do
 done
 
 echo "[WZ] ✅ AutoFix завершён"
+# --- [printf_safety_fix] ---
+echo "🔧 printf_safety_fix (Termux-safe printf -- protection)"
+find scripts/ -type f -name "*.sh" | while read -r f; do
+	sed -i -E 's/printf[[:space:]]+"([^"]+)"/printf -- "***REMOVED***"/g' "$f"
+done
