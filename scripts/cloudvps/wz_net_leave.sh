@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 
 # WZ — Отключение от приватной сети с автоуправлением сервером

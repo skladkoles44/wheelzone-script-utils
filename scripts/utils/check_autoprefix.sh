@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 #!/bin/bash
 # WZ Check: rule-autoprefix-paths — гибрид v2.0 (WBP)
 

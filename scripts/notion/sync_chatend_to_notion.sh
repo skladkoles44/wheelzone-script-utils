@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 #!/usr/bin/env bash
 # PROD-оптимизированный скрипт синхронизации ChatEnd с Notion
 # Версия: 2.0.1

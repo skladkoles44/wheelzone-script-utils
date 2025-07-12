@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 
 # Установка rclone
 pkg install rclone -y

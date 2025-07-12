@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 #!/usr/bin/env bash
 # WheelZone ChatEnd Generator v1.4.3 (Android 15 HyperOS Optimized)
 set -eo pipefail
