@@ -18,3 +18,23 @@ steps:
       - black --check scripts/
       - flake8 scripts/
       - isort scripts/ --check-only
+
+  - name: autofix
+    image: python:3.11
+    when:
+      branch:
+        - main
+    commands:
+      - apt update && apt install -y bash curl
+      - pip install --quiet black isort
+      - curl -sL https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64 -o /usr/local/bin/shfmt
+      - chmod +x /usr/local/bin/shfmt
+      - shfmt -w -i 2 -ci -s $(find scripts/ -name "*.sh")
+      - black scripts/
+      - isort scripts/
+      - chmod +x $(find scripts/ -name "*.sh" -o -name "*.py")
+      - git config --global user.email "ci@wheelzone.ai"
+      - git config --global user.name "WZ Auto Fixer"
+      - git add scripts/
+      - git commit -m "ci: autofix formatting (shfmt, black, isort)" || echo "Nothing to commit"
+      - git push
