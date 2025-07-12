@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
 #!/usr/bin/env bash
 
 # regen-core.sh — Валидация и восстановление core.yaml

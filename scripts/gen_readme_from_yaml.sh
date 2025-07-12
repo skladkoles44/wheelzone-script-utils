@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
 #!/bin/bash
 # Автогенератор README.md на основе wz_ai_rule.yml
 

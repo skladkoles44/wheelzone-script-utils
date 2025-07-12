@@ -1,86 +1,86 @@
+#!/data/data/com.termux/files/usr/bin/bash
 #!/usr/bin/env bash
-# wz_chatend.sh v2.4 — генератор отчётов завершённых чатов (Markdown+YAML)
-# Требования: bash, sha256sum, uuidgen, python3
+# WheelZone ChatEnd Generator v1.4.3 (Android 15 HyperOS Optimized)
+set -eo pipefail
+shopt -s nullglob failglob nocasematch
 
-set -euo pipefail
+# === Конфигурация ===
+readonly DEFAULT_OUTPUT_DIR="${HOME}/wz-wiki/WZChatEnds"
+readonly TIMESTAMP="$(date +%Y%m%d-%H%M%S-%3N)"
+readonly UUID="$(
+  {
+    cat /proc/sys/kernel/random/uuid 2>/dev/null || 
+    uuidgen 2>/dev/null ||
+    python3 -c 'import uuid; print(uuid.uuid4().hex)' 2>/dev/null ||
+    od -An -tx8 -N16 /dev/urandom | tr -d ' ' | fold -w32 | head -n1
+  } | tr '[:upper:]' '[:lower:]' | head -c36
+)"
+readonly SLUG="chatend_${TIMESTAMP}_${UUID:0:8}"
 
-INSIGHTS_FILE="${INSIGHTS_FILE:-$HOME/wzbuffer/tmp_insights.txt}"
-OUTPUT_DIR="${OUTPUT_DIR:-$HOME/wz-knowledge/WZChatEnds}"
-SCRIPT_VERSION="2.4"
+# === Безопасный парсинг ===
+declare -A ARGS=(
+  [input]=""
+  [output_dir]="$DEFAULT_OUTPUT_DIR"
+  [auto]=false
+  [git]=false
+)
 
-generate_sha256() {
-  sha256sum "$1" | awk '{print $1}'
-}
+while (( $# )); do
+  case "${1,,}" in
+    --from-markdown|--input)
+      [[ -z "${2:-}" ]] && { echo >&2 "[ERRO] Пустой --from-markdown"; exit 1; }
+      ARGS[input]="$(realpath -e -- "$2" 2>/dev/null || { echo >&2 "[ERRO] Неверный путь: $2"; exit 1; })"
+      shift 2
+      ;;
+    --output-dir|--out)
+      [[ -z "${2:-}" ]] && { echo >&2 "[ERRO] Пустой --output-dir"; exit 1; }
+      ARGS[output_dir]="$(realpath -m -- "$2")"
+      shift 2
+      ;;
+    --auto) ARGS[auto]=true; shift ;;
+    --git) ARGS[git]=true; shift ;;
+    --) shift; break ;;
+    *) echo >&2 "[ERRO] Неизвестный аргумент: $1"; exit 1 ;;
+  esac
+done
 
-generate_uuid_from_file() {
-  python3 -c "import uuid; print(str(uuid.uuid5(uuid.NAMESPACE_URL, open('$1').read())))"
-}
+# === Валидация ===
+[[ -z "${ARGS[input]}" ]] && { echo >&2 "[ERRO] Требуется --from-markdown"; exit 1; }
+[[ -r "${ARGS[input]}" ]] || { echo >&2 "[ERRO] Нет доступа: ${ARGS[input]}"; exit 1; }
+mkdir -p "${ARGS[output_dir]}" || { echo >&2 "[ERRO] Ошибка создания ${ARGS[output_dir]}"; exit 1; }
 
-chatend_metadata_block() {
-  local filename="$1"
-  local uuid="$2"
-  local slug="$3"
-  local sha256_hash="$4"
-  local date_now
-  date_now=$(date +"%Y-%m-%d")
+# === Атомарная запись ===
+TEMP_OUT="${ARGS[output_dir]}/${SLUG}.md.tmp"
+FINAL_OUT="${ARGS[output_dir]}/${SLUG}.md"
 
-  echo "---"
-  echo "uuid: $uuid"
-  echo "slug: $slug"
-  echo "filename: \"${filename}\""
-  echo "date: \"$date_now\""
-  echo "sha256: \"$sha256_hash\""
-  echo "generator: wz_chatend.sh v$SCRIPT_VERSION"
-  echo "format: markdown+yaml"
-  echo "---"
-}
+{
+  printf "---\nuuid: %s\nslug: %s\ntimestamp: %s\nsource: %s\nauto: %s\n---\n\n" \
+    "$UUID" "$SLUG" "$TIMESTAMP" "${ARGS[input]}" "${ARGS[auto]}"
+  dd if="${ARGS[input]}" bs=64K 2>/dev/null
+} > "$TEMP_OUT" && 
+mv -f "$TEMP_OUT" "$FINAL_OUT"
 
-main() {
-  if [[ ! -f "$INSIGHTS_FILE" ]]; then
-    echo "Файл $INSIGHTS_FILE не найден." >&2
-    exit 1
+echo "[INFO] Сохранено: $FINAL_OUT" >&2
+
+# === Git для HyperOS ===
+if "${ARGS[git]}"; then
+  if ! command -v git >/dev/null; then
+    echo >&2 "[WARN] Git не найден"
+    exit 0
   fi
 
-  mkdir -p "$OUTPUT_DIR"
+  (
+    cd "${ARGS[output_dir]}/.." || exit 1
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      echo >&2 "[ERRO] Не git-репозиторий"
+      exit 1
+    fi
 
-  local date_str slug filename uuid hash
-  date_str=$(date +"%Y-%m-%d")
-  slug=$(grep -m1 '^SLUG:' "$INSIGHTS_FILE" | cut -d':' -f2- | xargs | tr ' ' '_' | tr -cd '[:alnum:]_-')
-  slug=${slug:-no-slug}
-  filename="chat_${date_str}_${slug}.md"
-  filepath="$OUTPUT_DIR/$filename"
-
-  cp "$INSIGHTS_FILE" "$filepath"
-
-  hash=$(generate_sha256 "$filepath")
-  uuid=$(generate_uuid_from_file "$filepath")
-
-  {
-    echo ""
-    chatend_metadata_block "$filename" "$uuid" "$slug" "$hash"
-  } >> "$filepath"
-
-  echo "[+] ChatEnd отчёт сохранён: $filepath"
-}
-
-main "$@"
-
-# === Автофиксация восстановления rclone.conf ===
-if [[ -f "$HOME/.config/rclone/rclone.conf" ]]; then
-  echo "🧩 Обнаружен rclone.conf — создаю chatend-запись..."
-  OUT="$HOME/wz-wiki/WZChatEnds/chat_$(date +%Y%m%d)_auto_rclone_restore.yaml"
-  REMOTE=$(grep -o '^\[[^]]*\]' ~/.config/rclone/rclone.conf | tr -d '[]')
-  EXPIRY=$(grep -o '"expiry":"[^"]*"' ~/.config/rclone/rclone.conf | cut -d':' -f2 | tr -d '"')
-
-  cat > "$OUT" <<EOR
-chatend:
-  id: rclone_restore_$(date +%s)
-  title: Автофиксация восстановления rclone.conf ($REMOTE)
-  type: chatend
-  remote: $REMOTE
-  token_expiry: $EXPIRY
-  status: completed
-  created_at: "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-  context: Termux / Android / WheelZone
-EOR
+    git -c core.sshCommand="ssh -o BatchMode=yes" \
+        -c commit.gpgsign=false \
+        add -- "$(basename -- "${ARGS[output_dir]}")" &&
+    git commit -m "chatend: $SLUG" &&
+    { git config remote.origin.url &>/dev/null && git pull --rebase --autostash || :; } &&
+    git push
+  ) || { echo >&2 "[ERRO] Ошибка git"; exit 1; }
 fi
