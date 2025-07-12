@@ -1,10 +1,11 @@
-set -euo pipefail
+#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 
 # WZ — Отключение от приватной сети с автоуправлением сервером
 
-TOKEN="$1"                 # API токен CloudVPS
-VPC_ID="$2"               # ID приватной сети
-REGLET_ID="$3"           # ID сервера (реглета)
+TOKEN="$1"     # API токен CloudVPS
+VPC_ID="$2"    # ID приватной сети
+REGLET_ID="$3" # ID сервера (реглета)
 
 API="https://api.cloudvps.reg.ru/v1"
 HEADERS=(-H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json")
@@ -14,12 +15,12 @@ echo "[I] Проверка статуса сервера $REGLET_ID"
 STATUS=$(curl -s -X GET "${HEADERS[@]}" "$API/reglets/$REGLET_ID" | jq -r '.reglet.status')
 
 if [[ "$STATUS" != "active" ]]; then
-  echo "[I] Сервер выключен. Включаем..."
-  curl -s -X POST "${HEADERS[@]}" -d '{"type": "start"}' "$API/reglets/$REGLET_ID/actions" >/dev/null
-  echo "[I] Ожидание загрузки сервера..."
-  sleep 20
+	echo "[I] Сервер выключен. Включаем..."
+	curl -s -X POST "${HEADERS[@]}" -d '{"type": "start"}' "$API/reglets/$REGLET_ID/actions" >/dev/null
+	echo "[I] Ожидание загрузки сервера..."
+	sleep 20
 else
-  echo "[I] Сервер уже включён."
+	echo "[I] Сервер уже включён."
 fi
 
 # === Отключение от приватной сети ===

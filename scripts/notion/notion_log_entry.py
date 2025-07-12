@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/python3
 """
 Notion Logger CLI v2.3 — Финальная проверенная версия
