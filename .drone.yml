@@ -1,9 +1,16 @@
 kind: pipeline
 type: docker
-name: main
+name: check-scripts
 
 steps:
-  - name: exec-fix
+  - name: check-bash
     image: bash:5
     commands:
-      - bash .drone/fix_exec_headers.yaml
+      - find scripts/ -name "*.sh" -exec bash -n {} \;
+
+  - name: check-python
+    image: python:3.11
+    commands:
+      - pip install --quiet black
+      - find scripts/ -name "*.py" -exec python3 -m py_compile {} \;
+      - black --check scripts/
