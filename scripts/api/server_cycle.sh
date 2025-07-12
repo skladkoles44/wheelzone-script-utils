@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 
 # === Конфигурация ===
 TOKEN_FILE="$HOME/.wz_api_token"
-SERVER_ID=4957608  # Sapphire Holmium (IP: 79.174.85.106)
-DELAY_MINUTES=10   # Время работы сервера в минутах
+SERVER_ID=4957608 # Sapphire Holmium (IP: 79.174.85.106)
+DELAY_MINUTES=10  # Время работы сервера в минутах
 
 API="https://api.cloudvps.reg.ru/v1"
 AUTH="Authorization: Bearer $(cat "$TOKEN_FILE")"
@@ -13,12 +14,12 @@ AUTH="Authorization: Bearer $(cat "$TOKEN_FILE")"
 status=$(curl -s -H "$AUTH" "$API/reglets/$SERVER_ID" | grep -Po '"status":\s*"\K[^"]+')
 
 if [[ "$status" == "off" ]]; then
-  echo "[INFO] Сервер выключен. Пытаемся включить..."
-  curl -s -X POST -H "$AUTH" "$API/reglets/$SERVER_ID/actions/start"
-  echo "[WAIT] Ожидание загрузки сервера (60 сек)..."
-  sleep 60
+	echo "[INFO] Сервер выключен. Пытаемся включить..."
+	curl -s -X POST -H "$AUTH" "$API/reglets/$SERVER_ID/actions/start"
+	echo "[WAIT] Ожидание загрузки сервера (60 сек)..."
+	sleep 60
 else
-  echo "[INFO] Сервер уже активен. Пропускаем включение."
+	echo "[INFO] Сервер уже активен. Пропускаем включение."
 fi
 
 # === Работа сервера ===

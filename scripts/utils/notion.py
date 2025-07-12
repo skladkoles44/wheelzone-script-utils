@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/python3
 # 📛 File: notion.py
 # 🧠 Purpose: Send log events (like diagram generation) to a Notion database
