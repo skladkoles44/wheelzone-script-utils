@@ -4,13 +4,17 @@ name: check-scripts
 
 steps:
   - name: check-bash
-    image: bash:5
+    image: koalaman/shellcheck-alpine
     commands:
-      - find scripts/ -name "*.sh" -exec bash -n {} \;
+      - shellcheck $(find scripts/ -name "*.sh")
+      - apk add --no-cache shfmt
+      - shfmt -d -i 2 -ci -s $(find scripts/ -name "*.sh")
 
   - name: check-python
     image: python:3.11
     commands:
-      - pip install --quiet black
+      - pip install --quiet black flake8 isort
       - find scripts/ -name "*.py" -exec python3 -m py_compile {} \;
       - black --check scripts/
+      - flake8 scripts/
+      - isort scripts/ --check-only
