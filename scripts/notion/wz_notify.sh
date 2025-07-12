@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 # wz_notify.sh v7.4.0 — Уведомления: Notion, Termux, Telegram (Termux-ready, fallback-proof)
 
 set -eo pipefail

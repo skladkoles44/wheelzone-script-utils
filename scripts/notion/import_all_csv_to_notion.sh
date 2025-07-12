@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 set -e
 
 CSV_DIR="/storage/emulated/0/Notion_Templates"

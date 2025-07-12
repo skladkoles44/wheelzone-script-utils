@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 #!/bin/bash
 # WZ Rule Checker v4.0 — универсальный валидатор и автофикс (WBP Fusion)
 

@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 
 # 📛 Файл: wz_generate_diagram.sh
 # 🧠 Назначение: генерирует Markdown и Mermaid-диаграммы структуры Git-репозиториев

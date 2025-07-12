@@ -1,4 +1,3 @@
-#!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 REPO="$HOME/wz-knowledge"
 RULES_DIR="$REPO/rules"
