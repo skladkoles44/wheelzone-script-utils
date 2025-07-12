@@ -32,11 +32,11 @@ git -C "$REPO_DIR" add "docs/architecture/.gitkeep"
 # Markdown
 echo "{\"level\":\"INFO\",\"ts\":\"$DATE\",\"event\":\"gen_markdown\",\"msg\":\"Start генерация Markdown\"}" >>"$LOG_FILE"
 {
-	printf "# 📁 Репозиторий: wz-wiki\n" --
+	printf -- "# 📁 Репозиторий: wz-wiki\n"
 	cd "$HOME/wz-wiki"
 	find . -type f -print0 | LC_ALL=C sort -z | tr '\0' '\n' | sed 's|^|-- |'
 
-	printf "\n---\n\n# 📁 Репозиторий: wheelzone-script-utils\n" --
+	printf -- "\n---\n\n# 📁 Репозиторий: wheelzone-script-utils\n"
 	cd "$HOME/wheelzone-script-utils"
 	find . -type f -print0 | LC_ALL=C sort -z | tr '\0' '\n' | sed 's|^|-- |'
 } >"$ARCH_DIR/git_repository_tree.md"
