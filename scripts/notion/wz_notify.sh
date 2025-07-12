@@ -44,7 +44,7 @@ done
 ### === INTERNAL ===
 generate_event_id() {
   if command -v iconv >/dev/null; then
-    printf '%s' "$TITLE" | iconv -t ascii//TRANSLIT//IGNORE 2>/dev/null |
+    printf -- '%s' "$TITLE" | iconv -t ascii//TRANSLIT//IGNORE 2>/dev/null |
       tr -dc 'a-zA-Z0-9 ' | sed -e 's/  */ /g' -e 's/^ //' -e 's/ $//' |
       tr ' ' '-' | head -c 48
   else
