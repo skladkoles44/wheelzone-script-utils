@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 
 CONFIG_FILE="$HOME/wheelzone-script-utils/configs/rclone.conf"

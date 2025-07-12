@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/python3
+#!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 
 set -eo pipefail
@@ -118,8 +118,8 @@ log_json() {
 }
 
 log_permalog() {
-	printf '%s — [%s] %s\n' "$(date +%FT%T)" "$TYPE" "$TITLE" >>"$PERMALOG_DIR/permalog.log" --
-	printf "- type: %s\n  title: %s\n  ts: %s\n" "$TYPE" "$TITLE" "$(date +%FT%T)" >>"$LOG_DIR/permalog.yaml" --
+	printf '%s — [%s] %s\n' "$(date +%FT%T)" "$TYPE" "$TITLE" -- >>"$PERMALOG_DIR/permalog.log"
+	printf -- "- type: %s\n  title: %s\n  ts: %s\n" "$TYPE" "$TITLE" "$(date +%FT%T)" -- >>"$LOG_DIR/permalog.yaml"
 }
 
 ### === MAIN ===
