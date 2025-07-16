@@ -1,0 +1,68 @@
+core:
+  id: WZ_CORE_SINGULARITY
+  version: 3.0.0
+  layers:
+    logic:
+      modules:
+        - id: cli_interface
+          description: Unified CLI interface for mobile and server-side
+          version: 2.1.0
+          dependencies:
+            - bash
+            - python
+            - termux-api
+
+        - id: rule_engine
+          description: AI-Driven Rule Engine (wz_ai_rule.sh V4)
+          version: 4.0.0
+          dependencies:
+            - registry.yaml
+            - core_reactor.py
+
+        - id: meta_audit
+          description: Self-auditing and anomaly detection
+          version: 1.5.2
+          ghost_commands:
+            - wz core audit --deep
+          dependencies:
+            - quantum_log_engine
+
+    log:
+      modules:
+        - id: quantum_log_engine
+          description: Quantum-safe logging with entropy, UUID, and signatures
+          version: 3.2.1
+          parameters:
+            entropy_source: external
+            session_persistence: quantum_cache
+            signature_algorithm: BLAKE2b
+
+    recovery:
+      modules:
+        - id: meta_fallback
+          description: Meta-Fallback mechanisms
+          version: 1.3.0
+          recovery_strategies:
+            - cold_restart
+            - quantum_state_restore
+          auto_anomaly_recovery: true
+
+    chaos-protection:
+      modules:
+        - id: exocore_defense
+          description: Fractal Exocore protection mechanisms
+          version: 1.0.0
+          protections:
+            - rate_limiting
+            - auto_quarantine
+            - self_destruct_abort
+
+shadow_api:
+  socket_interface: true
+  ai_extensions:
+    - name: core_reactor
+      socket_path: /var/run/wz_core_reactor.sock
+
+meta:
+  generated_at: 2025-07-12T10:25:00Z
+  signature: "9f0c1a8db7f94f82b3e9f6c6f1ad14e3"
