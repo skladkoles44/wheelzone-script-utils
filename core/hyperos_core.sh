@@ -90,6 +90,7 @@ main() {
 __secure_log "🧠 Ядро запущено пользователем $(whoami)"
 __secure_log "🧠 Ядро запущено пользователем $(whoami)"
     __secure_log "System initialized (1000x verified)"
+wz_notify.sh --type core --title "HyperOS ядро запущено" --permalog || true
 }
 
 ### ████████ Execution Guard ████████
