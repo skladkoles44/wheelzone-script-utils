@@ -2,6 +2,13 @@
 
 set -e
 
+# 🚀 [0/10] Запуск HyperOS ядра
+CORE=~/wheelzone-script-utils/core/hyperos_core.sh
+chmod +x "$CORE"
+"$CORE" --armor &
+echo "✅ Ядро HyperOS запущено в фоне."
+
+
 echo "🚀 [1/10] Добавление CI badge в README..."
 REPO=~/wz-wiki
 BADGE='[![CI](https://drone.wheelzone.ai/api/badges/wz-wiki/status.svg)](https://drone.wheelzone.ai/wz-wiki)'
