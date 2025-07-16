@@ -1,0 +1,22 @@
+
+- uuid: prompt-codetoprod-prod
+  title: "prod"
+  path: prompts/CodeToPROD/prod.md
+  type: prompt
+  tags: [PROD, PROMPT, codetoprod, ci-ready]
+  version: 1.2
+  linkedTo:
+    - chatend
+    - ci
+    - wheelzone-core
+
+- uuid: prompt-codetoprod-prodlite
+  title: "prodLite"
+  path: prompts/CodeToPROD/prodLite.md
+  type: prompt
+  tags: [PROD, PROMPT, codetoprod, lite]
+  version: 1.1
+  linkedTo:
+    - chatend
+    - lightweight
+    - refactor
