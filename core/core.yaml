@@ -64,5 +64,9 @@ shadow_api:
       socket_path: /var/run/wz_core_reactor.sock
 
 meta:
+  principles:
+    - self_correction
+  principles:
+    - self_correction
   generated_at: 2025-07-12T10:25:00Z
   signature: "9f0c1a8db7f94f82b3e9f6c6f1ad14e3"
