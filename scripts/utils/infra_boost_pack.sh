@@ -59,7 +59,7 @@ grep -q 'infra_boost_pack.sh' "$REG" || echo "- script: scripts/utils/infra_boos
 echo "✅ Обновлён реестр."
 
 echo "🚀 [7/10] Добавление wz_notify в CI"
-NOTIFY_LINE='./scripts/notion/wz_notify.sh --type ci --title "ChatEnd complete"'
+NOTIFY_LINE='./scripts/notion/wz_notify.sh --type ci --title "ChatEnd complete" --permalog'
 grep -q "$NOTIFY_LINE" "$DRONE_FILE" || echo "
 - name: notify chatend
   image: bash
