@@ -87,6 +87,7 @@ main() {
         trap 'termux-wake-unlock' EXIT
     } 2>/dev/null || __secure_log "Wake lock failed"
 
+__secure_log "🧠 Ядро запущено пользователем $(whoami)"
     __secure_log "System initialized (1000x verified)"
 }
 
