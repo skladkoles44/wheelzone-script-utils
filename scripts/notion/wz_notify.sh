@@ -77,7 +77,14 @@ generate_event_id() {
 	fi
 }
 EVENT="$(generate_event_id)"
-SOURCE="wz_notify.sh"
+SOURCE="wz_notify.sh" --permalog --permalog --permalog --permalog --permalog --permalog --permalog
+# PERMALOGv3_1752698726
+# PERMALOGv3_1752698620
+# PERMALOGv3_1752698523
+# PERMALOGv3_1752698383
+# PERMALOGv3_1752698177
+# PERMALOGv3_1752698065
+# PERMALOGv3_1752697940
 
 ### === CHANNELS ===
 notify_notion() {
