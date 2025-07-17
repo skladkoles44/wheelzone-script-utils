@@ -1,99 +1,237 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# WheelZone Infra Boost Pack v1.6.3 (Production-Grade)
+# License: Apache 2.0
 
-set -e
+set -euo pipefail
+IFS=$'\n\t'
+shopt -s nullglob dotglob
 
-# 🚀 [0/10] Запуск HyperOS ядра
-CORE=~/wheelzone-script-utils/core/hyperos_core.sh
-chmod +x "$CORE"
-"$CORE" --armor &
-echo "✅ Ядро HyperOS запущено в фоне."
+# ==================== CONFIGURATION ====================
+: "${TMPDIR:=/data/data/com.termux/files/usr/tmp}"
+: "${LOCK_TIMEOUT:=300}"
+: "${CMD_TIMEOUT:=600}"
+: "${MAX_LOG_SIZE:=10485760}"  # 10MB
+: "${MAX_LOG_FILES:=5}"
 
+readonly VERSION="1.6.3"
+readonly SCRIPT_NAME=$(basename "$0")
+readonly SCRIPT_DIR=$(dirname "$(realpath -m "$0")")
+readonly LOG_DIR="$HOME/wzbuffer/logs"
+readonly LOGFILE="$LOG_DIR/${SCRIPT_NAME%.*}.log"
+readonly REPO_DIR="$HOME/wz-wiki"
+readonly LOCKFILE="$TMPDIR/${SCRIPT_NAME}.lock"
+readonly PIDFILE="$TMPDIR/${SCRIPT_NAME}.pid"
+readonly CONFIG_FILE="$HOME/.config/wzbootstrap.conf"
 
-echo "🚀 [1/10] Добавление CI badge в README..."
-REPO=~/wz-wiki
-BADGE='[![CI](https://drone.wheelzone.ai/api/badges/wz-wiki/status.svg)](https://drone.wheelzone.ai/wz-wiki)'
-grep -q "$BADGE" "$REPO/README.md" || echo -e "\n$BADGE" >> "$REPO/README.md"
+# Security
+readonly EXPECTED_SHA256="put-your-sha-here"
+readonly REQUIRED_UMASK=0027
+readonly ALLOWED_ROOT_CMDS=("git" "tmux" "flock")
 
-echo "✅ CI badge вставлен."
+# ==================== INITIALIZATION ====================
+mkdir -p "$LOG_DIR" "$TMPDIR" || {
+  echo "❌ Failed to create required directories" >&2
+  exit 1
+}
 
-echo "🚀 [2/10] Проверка наличия Drone job на rules/"
-DRONE_FILE="$REPO/.drone.yml"
-RULE_JOB=$(grep -A2 "rules/" "$DRONE_FILE" | grep check_rule.sh || true)
-if [[ -z "$RULE_JOB" ]]; then
-cat >> "$DRONE_FILE" <<'BLOCK'
+exec > >(tee -a "$LOGFILE") 2>&1
 
-- name: check rules
-  image: bash
-  commands:
-    - ./scripts/utils/check_rule.sh
-  when:
-    changes:
-      - rules/**
-BLOCK
-echo "✅ CI проверка правил добавлена."
-else
-echo "⚠️ Проверка уже есть."
-fi
+rotate_logs() {
+  if [[ -f "$LOGFILE" && $(stat -c %s "$LOGFILE") -gt $MAX_LOG_SIZE ]]; then
+    for i in $(seq "$MAX_LOG_FILES" -1 1); do
+      [[ -f "${LOGFILE}.${i}" ]] && mv "${LOGFILE}.${i}" "${LOGFILE}.$((i+1))"
+    done
+    mv "$LOGFILE" "${LOGFILE}.1"
+  fi
+}
 
-echo "🚀 [3/10] Установка мониторинговых утилит..."
-pkg install -y htop net-tools ripgrep fzf tmux > /dev/null
+# ==================== SECURITY CHECKS ====================
+validate_environment() {
+  local actual_sha
+  actual_sha=$(sha256sum "$0" | awk '{print $1}')
+  if [[ "$EXPECTED_SHA256" != "$actual_sha" ]]; then
+    echo "❌ Script integrity check failed!" >&2
+    exit 1
+  fi
 
-echo "✅ Установлено: glances, vnstat, ripgrep, fzf, tmux"
+  if [[ $(id -u) -eq 0 ]]; then
+    echo "⚠️ Running as root - restricting execution scope" >&2
+    readonly RESTRICT_ROOT=true
+  else
+    readonly RESTRICT_ROOT=false
+  fi
 
-echo "🚀 [4/10] Связка ChatEnd ↔ ChatLog"
-CHATEND_SH=~/wheelzone-script-utils/scripts/wz_chatend.sh
-grep -q 'chatlog_path:' "$CHATEND_SH" || sed -i '/^echo "insights_file:/a echo "chatlog_path: chatlog/$(basename "$CHAT_FILE")" >> "$END_FILE"' "$CHATEND_SH"
+  umask "$REQUIRED_UMASK" || {
+    echo "❌ Failed to set secure umask" >&2
+    exit 1
+  }
+}
 
-echo "✅ Связь chatlog добавлена."
+# ==================== LOCKING MECHANISM ====================
+acquire_lock() {
+  local lock_acquired=false
 
-echo "🚀 [5/10] Синхронизация WZChatEnds/"
-cd "$REPO"
-git add WZChatEnds/
-git commit -m "docs: sync WZChatEnds" || echo "⚠️ Нечего коммитить"
-git push || echo "⚠️ Push не выполнен"
+  if command -v flock >/dev/null; then
+    exec {LOCKFD}>"$LOCKFILE" || return 1
+    if flock -w "$LOCK_TIMEOUT" -n "$LOCKFD"; then
+      lock_acquired=true
+    fi
+  else
+    if [[ ! -e "$LOCKFILE" ]] && ( set -o noclobber; echo $$ > "$LOCKFILE" ) 2>/dev/null; then
+      lock_acquired=true
+      trap 'rm -f "$LOCKFILE"; exit' EXIT
+    elif [[ -e "$LOCKFILE" ]]; then
+      if kill -0 "$(cat "$LOCKFILE")" 2>/dev/null; then
+        echo "🔒 Script already running (PID $(cat "$LOCKFILE"))" >&2
+        exit 1
+      else
+        echo "⚠️ Removing stale lockfile" >&2
+        rm -f "$LOCKFILE"
+        echo $$ > "$LOCKFILE"
+        trap 'rm -f "$LOCKFILE"; exit' EXIT
+        lock_acquired=true
+      fi
+    fi
+  fi
 
-echo "🚀 [6/10] Обновление registry.yaml"
-REG="$REPO/registry/registry.yaml"
-grep -q 'infra_boost_pack.sh' "$REG" || echo "- script: scripts/utils/infra_boost_pack.sh" >> "$REG"
+  if ! $lock_acquired; then
+    echo "❌ Failed to acquire lock after $LOCK_TIMEOUT seconds" >&2
+    exit 1
+  fi
 
-echo "✅ Обновлён реестр."
+  echo $$ > "$PIDFILE"
+}
 
-echo "🚀 [7/10] Добавление wz_notify в CI"
-NOTIFY_LINE='./scripts/notion/wz_notify.sh --type ci --title "ChatEnd complete" --permalog'
-grep -q "$NOTIFY_LINE" "$DRONE_FILE" || echo "
-- name: notify chatend
-  image: bash
-  commands:
-    - $NOTIFY_LINE" >> "$DRONE_FILE"
+# ==================== LOGGING SYSTEM ====================
+log() {
+  local level="$1"
+  local message="$2"
+  local timestamp
+  timestamp=$(date '+%Y-%m-%d %H:%M:%S.%3N')
+  echo "[$timestamp] [$level] $message"
+}
 
-echo "✅ wz_notify.sh вставлен."
+# ==================== COMMAND EXECUTION ====================
+safe_exec() {
+  local cmd=("$@")
+  local attempt=0
+  local max_attempts=3
+  local delay=5
+  local exit_code=0
 
-echo "🚀 [8/10] Создание README_infra.md"
-mkdir -p "$REPO/docs/architecture/"
-cat > "$REPO/docs/architecture/README_infra.md" <<DOC
-# 🌐 WheelZone Infrastructure Overview
+  if $DRY_RUN; then
+    log "INFO" "[DRY-RUN] ${cmd[*]}"
+    return 0
+  fi
 
-- VPS:
-  - Sapphire Holmium — prod backend + Drone
-  - Yellow Hydrogenium — dev/test + runner
-  - Sorting Node — архив + runner
+  if $RESTRICT_ROOT && [[ $(id -u) -eq 0 ]]; then
+    local cmd_base
+    cmd_base=$(basename "${cmd[0]}")
+    if ! printf '%s\n' "${ALLOWED_ROOT_CMDS[@]}" | grep -q "^${cmd_base}$"; then
+      log "ERROR" "Root execution denied for: ${cmd[*]}"
+      return 1
+    fi
+  fi
 
-- GitHub: wz-wiki, wheelzone-script-utils
-- Termux: Android CLI
-- CI: Drone CI + auto ChatEnd + rules
-- Логгирование: chatend_summary.csv, todo.csv, script_log.csv
-DOC
+  log "DEBUG" "Executing: ${cmd[*]}"
+  
+  while (( attempt < max_attempts )); do
+    (( attempt++ ))
+    if timeout "$CMD_TIMEOUT" "${cmd[@]}"; then
+      log "INFO" "✅ Success: ${cmd[*]}"
+      return 0
+    else
+      exit_code=$?
+      log "WARN" "Attempt $attempt failed: ${cmd[*]} (code $exit_code)"
+      sleep "$delay"
+    fi
+  done
 
-git add "$REPO/docs/architecture/README_infra.md"
-git commit -m "docs: добавлен инфраструктурный README" || echo "⚠️ Уже был"
-git push || echo "⚠️ Push не выполнен"
+  log "ERROR" "❌ Command failed: ${cmd[*]}"
+  return "$exit_code"
+}
 
-echo "🚀 [9/10] Стопы для резервного копирования"
-mkdir -p ~/wzbuffer/backup_stop
-echo '/storage/emulated/0/sort /storage/emulated/0/backup' > ~/wzbuffer/backup_stop/paths.txt
+# ==================== GIT OPERATIONS ====================
+has_git_changes() {
+  git status --porcelain | grep -q .
+}
 
-echo "✅ Путь для бэкапов готов."
+git_safe_push() {
+  local force_push="${1:-false}"
+  local branch
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  local remote="origin"
 
-echo "🚀 [10/10] Финализация"
-echo "🎉 Скрипт завершён. Всё готово к следующему этапу."
-~/wheelzone-script-utils/scripts/notion/wz_notify.sh --type ci --title "infra_boost_pack завершён"
+  if $force_push && [[ "$branch" == "main" || "$branch" == "master" ]]; then
+    read -t 30 -p "⚠️ Force push to $branch? (y/N): " confirm
+    [[ "$confirm" =~ ^[Yy]$ ]] || return 1
+    safe_exec git push --force-with-lease "$remote" "$branch"
+  else
+    safe_exec git push "$remote" "$branch"
+  fi
+}
+
+# ==================== MAIN LOGIC ====================
+main() {
+  rotate_logs
+  validate_environment
+  acquire_lock
+
+  log "INFO" "🚀 Starting $SCRIPT_NAME v$VERSION"
+  log "INFO" "Environment: $(uname -a)"
+  log "INFO" "User: $(id)"
+  log "INFO" "Args: $*"
+
+  [[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE"
+
+  if $REPAIR_MODE; then
+    log "INFO" "🔧 Repair mode active"
+    safe_exec git reset --hard HEAD
+    safe_exec git clean -fd
+  fi
+
+  if has_git_changes; then
+    safe_exec git add -A
+    safe_exec git commit -m "Auto update by $SCRIPT_NAME"
+    git_safe_push "$FORCE_PUSH"
+  else
+    log "INFO" "🟢 No changes to commit"
+  fi
+
+  if $RUN_CHATEND && [[ -x "$CHATEND_SCRIPT" ]]; then
+    log "INFO" "▶️ Running ChatEnd script"
+    safe_exec "$CHATEND_SCRIPT"
+  fi
+
+  log "INFO" "✅ Completed successfully"
+}
+
+# ==================== ARGUMENT PARSING ====================
+declare DRY_RUN=false
+declare SILENT=false
+declare REPAIR_MODE=false
+declare RUN_CHATEND=false
+declare FORCE_PUSH=false
+declare DEBUG=false
+readonly CHATEND_SCRIPT="$HOME/wheelzone-script-utils/scripts/ci/wz_chatend.sh"
+
+parse_args() {
+  while (( $# > 0 )); do
+    case "$1" in
+      --dry-run) DRY_RUN=true ;;
+      --silent) SILENT=true ;;
+      --repair) REPAIR_MODE=true ;;
+      --run-chatend) RUN_CHATEND=true ;;
+      --force-push) FORCE_PUSH=true ;;
+      --debug) DEBUG=true ;;
+      --version) echo "$VERSION"; exit 0 ;;
+      *) log "ERROR" "Unknown argument: $1"; exit 1 ;;
+    esac
+    shift
+  done
+}
+
+parse_args "$@"
+main "$@"
+
+exit 0
