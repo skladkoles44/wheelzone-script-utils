@@ -14,6 +14,7 @@ create_rule() {
 	[[ -d "$RULES_DIR" ]] || mkdir -p "$RULES_DIR"
 	printf -- "# %s\nUUID: %s\nCreated: %s\n\nContent: %s\n" "$title" "$uuid" "$created" "$title" -- >"$file"
 	echo "[WZ] Правило создано: $file"
+    notion_log_entry.py --type rule --title "$title" --uuid "$uuid" --file "$file" --created "$created" --source wz_sync_rules.sh
 }
 update_registry() {
 	local rule_file uuid created tags name
