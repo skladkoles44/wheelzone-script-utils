@@ -1,0 +1,5 @@
+agent: Refiner
+description: Рефакторит, удаляет избыточность, упрощает
+model: gpt-4o
+entrypoint: gpt_refine_code()
+tags: [refactor, simplify, optimize]

@@ -1,0 +1,5 @@
+agent: Harmonizer
+description: Приводит код к стандартам, стилям и формату WBP
+model: gpt-3.5
+entrypoint: harmonize_code_to_wbp()
+tags: [style, format, standard, wbprules]
