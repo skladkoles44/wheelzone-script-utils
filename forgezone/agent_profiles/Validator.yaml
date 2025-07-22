@@ -1,0 +1,5 @@
+agent: Validator
+description: Проверяет на ошибки, запускает линтеры и тесты
+model: shellcheck/mypy/pylint/pytest
+entrypoint: run_validators()
+tags: [validate, test, lint, static_analysis]

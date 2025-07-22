@@ -1,0 +1,5 @@
+input: script1.sh
+pipeline: default_refinement
+timestamp: 2025-07-22T09:43:38.652712
+result: script1_34059168_refined.sh
+status: placeholder

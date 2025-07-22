@@ -1,0 +1,5 @@
+agent: Critic
+description: Безжалостный аудит — разрушает плохой код
+model: suicide_critic
+entrypoint: gpt_suicide_critic()
+tags: [audit, security, destruction, sanity_check]

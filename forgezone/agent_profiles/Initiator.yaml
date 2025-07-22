@@ -1,0 +1,5 @@
+agent: Initiator
+description: Генерирует идеи, код, архитектуру
+model: gpt-4
+entrypoint: gpt_generate_code()
+tags: [generate, ideation, raw]

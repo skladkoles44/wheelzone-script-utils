@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
-echo "[wz_notify] ⚠️ Этот скрипт отключён: $(realpath "$0")"
-echo "❗ Используй вместо него: ~/wheelzone-script-utils/core/wz_notify.sh"
-exit 1
+[ -f ~/wheelzone/secrets/tokens.env ] && source ~/wheelzone/secrets/tokens.env
+CHAT_ID="-1001975043439"
+MESSAGE="✅ Успешный Push: изменения загружены в Git, Drive и Яндекс.Диск"
+
+curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+     -d chat_id="$CHAT_ID" \
+     -d text="$MESSAGE"
+

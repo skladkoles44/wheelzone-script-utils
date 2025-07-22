@@ -1,0 +1,27 @@
+# default_refinement — базовый цикл AI-обработки
+pipeline_name: default_refinement
+
+steps:
+  - agent: Initiator
+    model: gpt-4
+    description: "Генерация кода/идеи"
+  
+  - agent: Refiner
+    model: gpt-4o
+    description: "Оптимизация, удаление избыточности"
+
+  - agent: Critic
+    model: suicide_critic
+    description: "Жесткий аудит, обнаружение ошибок"
+
+  - agent: Validator
+    model: bash/python tools
+    description: "Shellcheck, mypy, test-run"
+
+  - agent: Harmonizer
+    model: gpt-3.5
+    description: "Приведение к стандартам WBP"
+
+  - agent: Registrar
+    model: bash/git
+    description: "Логирование, ChatEnd, git push"
