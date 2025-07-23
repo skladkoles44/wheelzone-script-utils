@@ -1,6 +1,3 @@
-: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
-mkdir -p "$WZ_LOG_DIR"
-
 #!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 

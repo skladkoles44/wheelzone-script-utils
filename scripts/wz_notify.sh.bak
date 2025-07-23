@@ -1,9 +1,6 @@
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 
-: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
-mkdir -p "$WZ_LOG_DIR"
-
 #!/data/data/com.termux/files/usr/bin/bash
 # WZ Notify v2.5.0 — Fractal Notification Bridge (CI+Termux+Notion+Offline, optimized)
 

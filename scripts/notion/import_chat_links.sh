@@ -1,0 +1,22 @@
+: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
+mkdir -p "$WZ_LOG_DIR"
+
+: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
+mkdir -p "$WZ_LOG_DIR"
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+PY_SCRIPT="$SCRIPT_DIR/import_chat_links.py"
+LOG_FILE="$HOME/wzbuffer/logs/import_chat_links_run.log"
+ENV_FILE="$HOME/.env.notion"
+
+if [ ! -f "$ENV_FILE" ]; then
+  echo "[ERROR] .env.notion not found: $ENV_FILE" | tee -a "$LOG_FILE"
+  exit 1
+fi
+
+echo "[INFO] Starting import at $(date -Iseconds)" | tee -a "$LOG_FILE"
+python3 "$PY_SCRIPT" "$@" 2>&1 | tee -a "$LOG_FILE"
+echo "[INFO] Finished import at $(date -Iseconds)" | tee -a "$LOG_FILE"
