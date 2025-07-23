@@ -103,3 +103,4 @@ case "$1" in
 	exit 1
 	;;
 esac
+echo "{\"ts\":\"$(date -Iseconds)\",\"script\":\"regen-core\",\"event\":\"done\"}"

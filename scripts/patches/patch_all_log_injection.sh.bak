@@ -1,0 +1,132 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -eo pipefail
+shopt -s failglob nullglob
+
+readonly LOG_SUCCESS='\033[1;32m✔\033[0m'
+readonly LOG_ERROR='\033[1;31m✖\033[0m'
+readonly LOCK_FILE="/tmp/wheelzone_patch.lock"
+readonly MAX_RETRIES=3
+readonly RETRY_DELAY=2
+
+log() { echo -e "$(date +'%Y-%m-%d %H:%M:%S') ${LOG_SUCCESS} $1"; }
+err() { echo -e "$(date +'%Y-%m-%d %H:%M:%S') ${LOG_ERROR} $1" >&2; }
+
+acquire_lock() {
+
+    local retry=0
+
+    while (( retry < MAX_RETRIES )); do
+
+        if [[ -f "$LOCK_FILE" ]]; then
+
+            local pid
+
+            pid=$(cat "$LOCK_FILE" 2>/dev/null)
+
+            if [[ -n "$pid" && "$pid" =~ ^[0-9]+$ ]]; then
+
+                if ! ps -p "$pid" > /dev/null 2>&1; then
+
+                    rm -f "$LOCK_FILE"
+
+                    log "Удалён устаревший lock-файл (PID $pid)"
+
+                else
+
+                    err "Lock-файл занят активным PID: $pid"
+
+                fi
+
+            else
+
+                err "Lock-файл повреждён, удаляю"
+
+                rm -f "$LOCK_FILE"
+
+            fi
+
+        fi
+
+        if ( set -o noclobber; echo "$$" > "$LOCK_FILE" ) 2>/dev/null; then
+
+            trap 'rm -f "$LOCK_FILE"' EXIT INT TERM HUP
+
+            log "Блокировка получена (PID $$)"
+
+            return 0
+
+        fi
+
+        sleep "$RETRY_DELAY"
+
+        ((retry++))
+
+    done
+
+    err "Не удалось получить блокировку после $MAX_RETRIES попыток"
+
+    return 1
+
+}
+
+validate_input() {
+    [[ $# -eq 3 ]] || { err "Неверное количество аргументов (ожидалось 3, получено $#)"; return 1; }
+    [[ -n "$1" && -n "$2" && -n "$3" ]] || { err "Пустые аргументы не допускаются"; return 1; }
+    local file="$1"
+    [[ -f "$file" ]] || { err "Файл не существует: $file"; return 1; }
+    [[ -w "$file" ]] || { err "Нет прав на запись: $file"; return 1; }
+    return 0
+}
+
+escape_sed() {
+    printf '%s' "$1" | sed -e 's/[\/&]/\\&/g' -e 's/[$]/\\&/g' -e 's/[\]/\\&/g'
+}
+
+insert_log_after_marker() {
+    local file="$1" marker="$2" message="$3"
+    validate_input "$file" "$marker" "$message" || return 1
+    if ! grep -qE "$marker" "$file"; then
+        err "Маркер не найден: '$marker' в $file"
+        return 1
+    fi
+    local esc_marker esc_message
+    esc_marker=$(escape_sed "$marker")
+    esc_message=$(escape_sed "$message")
+    sed -i "/$esc_marker/a\\
+log \"$esc_message\"
+" "$file"
+    log "✅ [$file] Вставлен лог после: $marker"
+}
+
+main() {
+    acquire_lock || exit 1
+
+    # Обновлённый список скриптов и маркеров
+    declare -a files markers messages
+
+    files+=(
+        "$HOME/wheelzone-script-utils/scripts/regen-core.sh"
+        "$HOME/wheelzone-script-utils/scripts/utils/wz_generate_diagram.sh"
+        "$HOME/wheelzone-script-utils/scripts/notion/import_tasks_from_md.py"
+        "$HOME/wheelzone-script-utils/scripts/notion/register_notion_tools.sh"
+    )
+
+    markers+=(
+        'core\.yaml'
+        'Диаграмма успешно сгенерирована'
+        'Imported'
+        'Скрипт успешно зарегистрирован'
+    )
+
+    messages+=(
+        '✔ Завершено: обновление core.yaml'
+        '✔ Завершено: генерация диаграммы'
+        '✔ Завершено: импорт задач в Notion'
+        '✔ Завершено: регистрация Notion-инструментов'
+    )
+
+    for i in "${!files[@]}"; do
+        insert_log_after_marker "${files[$i]}" "${markers[$i]}" "${messages[$i]}" || continue
+    done
+}
+main "$@"

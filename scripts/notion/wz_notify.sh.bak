@@ -1,0 +1,115 @@
+: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
+mkdir -p "$WZ_LOG_DIR"
+
+: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
+mkdir -p "$WZ_LOG_DIR"
+
+: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
+mkdir -p "$WZ_LOG_DIR"
+
+#!/data/data/com.termux/files/usr/bin/bash
+# WZ Notify v2.2.2 — Termux+Notion notification wrapper (fully optimized)
+
+set -euo pipefail
+IFS=$'\n\t'
+SCRIPT_NAME="wz_notify.sh"
+ENV_FILE="$HOME/.env.wzbot"
+readonly WZ_HOME="$HOME/wheelzone-script-utils"
+LOG_FILE="$WZ_HOME/logs/permalog.log"
+NOTION_VERSION="2022-06-28"
+PERMALOG=false
+DRYRUN=false
+TERMUX_NOTIFY_CMD=$(command -v termux-notification)
+
+# === Load env safely ===
+if [ -f "$ENV_FILE" ]; then
+  while IFS='=' read -r key value; do
+    case "$key" in
+      NOTION_API_TOKEN|NOTION_TOKEN|NOTION_LOG_DB_ID)
+        export "$key"="${value//[\"\']/}"
+        ;;
+    esac
+  done < <(grep -E '^(NOTION_API_TOKEN|NOTION_TOKEN|NOTION_LOG_DB_ID)=' "$ENV_FILE")
+fi
+
+export NOTION_API_TOKEN="${NOTION_API_TOKEN:-${NOTION_TOKEN:-}}"
+export NOTION_LOG_DB_ID="${NOTION_LOG_DB_ID:-23669d2c17828021964fe59b8b635fc7}"
+
+# === Args ===
+TYPE="script-event"
+TITLE="WZ Notify"
+MESSAGE="Default message"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --type) TYPE="${2//[^a-zA-Z0-9_-]/}"; shift ;;
+    --title) TITLE="${2//[^a-zA-Z0-9 .,!?-]/}"; shift ;;
+    --message) MESSAGE="${2}"; shift ;;
+    --permalog) PERMALOG=true ;;
+    --dry-run) DRYRUN=true ;;
+    --logonly) PERMALOG=true; DRYRUN=true ;;
+    --help)
+      echo "Usage: $SCRIPT_NAME [--type t] [--title t] [--message m] [--permalog] [--dry-run] [--logonly]"
+      exit 0
+      ;;
+    *) echo "Unknown arg: $1"; exit 1 ;;
+  esac
+  shift
+done
+
+TIMESTAMP=$(date -u +%FT%TZ)
+
+# === Local notification ===
+[ -n "$TERMUX_NOTIFY_CMD" ] && (
+  "$TERMUX_NOTIFY_CMD" --title "$TITLE" --content "$MESSAGE" --id 777 &
+) >/dev/null 2>&1
+
+# === JSON payload ===
+printf -v JSON_PAYLOAD '{
+  "parent": { "database_id": "%s" },
+  "properties": {
+    "Name": { "title": [ { "text": { "content": "%s" } } ] },
+    "Type": { "select": { "name": "%s" } },
+    "Message": { "rich_text": [ { "text": { "content": "%s" } } ] },
+    "Timestamp": { "date": { "start": "%s" } }
+  }
+}' "$NOTION_LOG_DB_ID" "$TITLE" "$TYPE" "$MESSAGE" "$TIMESTAMP"
+
+# === Dry run ===
+if [ "$DRYRUN" = true ]; then
+  echo "[DRY-RUN] Would send:"
+  echo "$JSON_PAYLOAD"
+  exit 0
+fi
+
+# === Network check ===
+if ! ping -c1 api.notion.com >/dev/null 2>&1; then
+  echo "[⚠️] Network unavailable" >&2
+  exit 3
+fi
+
+# === Notion API call ===
+RESPONSE=$(curl -sS -X POST "https://api.notion.com/v1/pages" \
+  -H "Authorization: Bearer $NOTION_API_TOKEN" \
+  -H "Notion-Version: $NOTION_VERSION" \
+  -H "Content-Type: application/json" \
+  -d "$JSON_PAYLOAD")
+
+# === Error handling ===
+if echo "$RESPONSE" | jq -e '.object == "error"' >/dev/null; then
+  echo -n "[❌] Notion API error: " && jq -r '.message' <<<"$RESPONSE"
+  exit 1
+else
+  echo "[✅] Notification sent to Notion."
+fi
+
+# === Logging ===
+if [ "$PERMALOG" = true ]; then
+  {
+    echo "=== $(date +'%Y-%m-%d %H:%M:%S') ==="
+    echo "Event: $TYPE"
+    echo "Title: $TITLE"
+    [ "$MESSAGE" != "Default message" ] && echo "Message: $MESSAGE"
+    echo ""
+  } >> "$LOG_FILE"
+fi

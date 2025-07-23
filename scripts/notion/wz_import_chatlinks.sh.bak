@@ -7,9 +7,6 @@ mkdir -p "$WZ_LOG_DIR"
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 
-: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
-mkdir -p "$WZ_LOG_DIR"
-
 #!/data/data/com.termux/files/usr/bin/bash
 # WheelZone Import ChatLinks v1.0 (оптимизированная версия)
 

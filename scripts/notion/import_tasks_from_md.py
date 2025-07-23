@@ -161,6 +161,7 @@ class NotionTaskImporter:
                         time.sleep((attempt + 1) * 2)
 
         self.logger.info(f"🎯 Imported {self.success}/{self.total} tasks successfully.")
+log "✔ Завершено: импорт задач в Notion"
 
 
 if __name__ == "__main__":
