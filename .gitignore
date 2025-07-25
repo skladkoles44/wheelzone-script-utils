@@ -3,3 +3,5 @@ configs/.env.notion
 .env.notion.example
 .env.notion
 configs/.env.notion
+termux_logs/permalog.ndjson
+termux_logs/permalog.ndjson
