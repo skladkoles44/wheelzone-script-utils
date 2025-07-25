@@ -1,7 +1,40 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# Wrapper for wz_notify.py v3.4.0
+# WZ Notify (adaptive version)
+set -euo pipefail
+IFS=$'\n\t'
 
-SCRIPT="$HOME/wheelzone-script-utils/scripts/notion/wz_notify.py"
-PYTHON=$(which python3)
+# ==== defaults ====
+TITLE="WZ Notify"
+MSG=""
+PRIORITY="high"
 
-exec "$PYTHON" "$SCRIPT" "$@"
+# ==== parse args ====
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --msg)
+      MSG="$2"
+      shift 2
+      ;;
+    --title)
+      TITLE="$2"
+      shift 2
+      ;;
+    --priority)
+      PRIORITY="$2"
+      shift 2
+      ;;
+    *)
+      echo "❌ ERROR: Unknown argument: $1" >&2
+      exit 1
+      ;;
+  esac
+done
+
+# ==== notify ====
+if [[ -n "$MSG" ]]; then
+  if command -v termux-notification >/dev/null 2>&1; then
+    termux-notification --title "$TITLE" --content "$MSG" --priority "$PRIORITY"
+  else
+    echo "📢 [$TITLE] $MSG"
+  fi
+fi
