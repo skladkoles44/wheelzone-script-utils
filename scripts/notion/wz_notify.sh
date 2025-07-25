@@ -1,40 +1,27 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# WZ Notify (adaptive version)
-set -euo pipefail
-IFS=$'\n\t'
+set -e
 
-# ==== defaults ====
-TITLE="WZ Notify"
-MSG=""
-PRIORITY="high"
+# WZ Notify Wrapper v2.5 — Dual Backend (legacy + atomic)
 
-# ==== parse args ====
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --msg)
-      MSG="$2"
-      shift 2
-      ;;
-    --title)
-      TITLE="$2"
-      shift 2
-      ;;
-    --priority)
-      PRIORITY="$2"
-      shift 2
-      ;;
-    *)
-      echo "❌ ERROR: Unknown argument: $1" >&2
-      exit 1
-      ;;
-  esac
+SCRIPT_DIR="$(dirname "$0")"
+LEGACY_PY="$SCRIPT_DIR/wz_notify.py"
+ATOMIC_PY="$SCRIPT_DIR/wz_notify_atomic.py"
+
+USE_ATOMIC=false
+
+# Фильтрация аргументов
+FILTERED_ARGS=()
+for arg in "$@"; do
+  if [[ "$arg" == "--atomic" ]]; then
+    USE_ATOMIC=true
+  else
+    FILTERED_ARGS+=("$arg")
+  fi
 done
 
-# ==== notify ====
-if [[ -n "$MSG" ]]; then
-  if command -v termux-notification >/dev/null 2>&1; then
-    termux-notification --title "$TITLE" --content "$MSG" --priority "$PRIORITY"
-  else
-    echo "📢 [$TITLE] $MSG"
-  fi
+# Запуск соответствующего движка
+if $USE_ATOMIC; then
+  exec python3 "$ATOMIC_PY" "${FILTERED_ARGS[@]}"
+else
+  exec python3 "$LEGACY_PY" "${FILTERED_ARGS[@]}"
 fi
