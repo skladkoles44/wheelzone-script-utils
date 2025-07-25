@@ -1,0 +1,48 @@
+{
+  "id": "a1995cbf-0ac9-4489-a84b-0f9c78e9bf7a",
+  "timestamp": "2025-07-22T14:07:12Z",
+  "type": "system",
+  "severity": "info",
+  "title": "✅ Перезапись фикса jq",
+  "message": "Добавлен echo для записи в permalog.ndjson"
+}
+{
+  "id": "59483ade-5c52-4be0-957a-9338d6f54a20",
+  "timestamp": "2025-07-22T14:10:35Z",
+  "type": "system",
+  "severity": "info",
+  "title": "💡 Исправление интерполяции JSON",
+  "message": "Фикс битого NDJSON: переменные теперь подставляются"
+}
+{"ts":"2025-07-23T17:00:17+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:02:12+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:03:23+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:10:06+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:26:10+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:26:21+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:26:24+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:26:26+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:35:25+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:39:33+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:40:37+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:45:29+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T17:50:11+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T18:02:02+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T18:55:26+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T20:24:27+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-23T22:01:53+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-24T06:59:48+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"ts":"2025-07-24T09:29:52+03:00","type":"--type","message":""system\n"","severity":"info"}
+{"timestamp":"2025-07-24T07:17:24Z","type":"core","msg":"🚀 Запущено построение ядра WheelZone Core","severity":"info"}
+{"timestamp":"2025-07-24T08:02:02Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-24T09:06:57Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-24T09:26:31Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-24T09:27:36Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-24T12:02:27Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-24T12:09:51Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-24T20:28:44Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-24T21:20:15Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-24T21:22:08Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-25T04:36:08Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-25T05:29:21Z","type":"--type","msg":"system","severity":"--severity"}
+{"timestamp":"2025-07-25T09:31:54Z","type":"--type","msg":"system","severity":"--severity"}

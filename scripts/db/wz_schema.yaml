@@ -1,0 +1,85 @@
+schema: wz
+version: 1.0
+tables:
+  - name: rules
+    columns:
+      - id: uuid, primary
+      - slug: text, unique
+      - content: text
+      - created_at: timestamp, default=now()
+
+  - name: chatends
+    columns:
+      - id: uuid, primary
+      - file_name: text, unique
+      - summary: text
+      - created_at: timestamp, default=now()
+
+  - name: tasks
+    columns:
+      - id: uuid, primary
+      - title: text
+      - status: text, default='pending'
+      - due_date: timestamp
+      - created_at: timestamp, default=now()
+
+  - name: insights
+    columns:
+      - id: uuid, primary
+      - content: text
+      - source: text
+      - tags: text[]
+      - created_at: timestamp, default=now()
+
+  - name: log_events
+    columns:
+      - id: uuid, primary
+      - event_type: text
+      - message: text
+      - severity: text
+      - source: text
+      - created_at: timestamp, default=now()
+
+  - name: agents
+    columns:
+      - id: uuid, primary
+      - name: text
+      - role: text
+      - status: text
+      - meta: jsonb
+      - created_at: timestamp, default=now()
+
+  - name: registry
+    columns:
+      - id: uuid, primary
+      - name: text
+      - kind: text
+      - path: text
+      - version: text
+      - tags: text[]
+      - status: text
+      - created_at: timestamp, default=now()
+
+  - name: chat_links
+    columns:
+      - id: uuid, primary
+      - from_chat: uuid
+      - to_chat: uuid
+      - relation: text
+      - created_at: timestamp, default=now()
+
+  - name: script_events
+    columns:
+      - id: uuid, primary
+      - script: text
+      - status: text
+      - message: text
+      - context: jsonb
+      - created_at: timestamp, default=now()
+
+  - name: core_meta
+    columns:
+      - id: uuid, primary
+      - key: text
+      - value: text
+      - updated_at: timestamp, default=now()
