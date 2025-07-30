@@ -1,3 +1,5 @@
+
+from scripts.utils.generate_uuid import generate_quantum_uuid as __uuid__
 #!/usr/bin/env python3
 # wz_notify.py v3.5.0 — PlatinumNotifier (WBP, Termux-compatible)
 
@@ -51,7 +53,7 @@ class PlatinumNotifier:
         return env_vars
 
     def _generate_entropy_id(self):
-        return uuid.uuid4().hex
+        return __uuid__().hex
 
     def _generate_headers(self):
         return {
