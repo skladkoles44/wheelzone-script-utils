@@ -1,3 +1,5 @@
+
+source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 
@@ -19,7 +21,7 @@ readonly TIMESTAMP="$(date +%Y%m%d-%H%M%S-%3N)"
 readonly UUID="$(
 	{
 		cat /proc/sys/kernel/random/uuid 2>/dev/null ||
-			uuidgen 2>/dev/null ||
+			$(generate_quantum_uuid) 2>/dev/null ||
 			python3 -c 'import uuid; print(uuid.uuid4().hex)' 2>/dev/null ||
 			od -An -tx8 -N16 /dev/urandom | tr -d ' ' | fold -w32 | head -n1
 	} | tr '[:upper:]' '[:lower:]' | head -c36

@@ -1,10 +1,12 @@
+
+source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"
 #!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 REPO="$HOME/wz-knowledge"
 RULES_DIR="$REPO/rules"
 REGISTRY="$REPO/registry.yaml"
 BRANCH="main"
-generate_uuid() { command -v uuidgen >/dev/null && uuidgen | cut -d'-' -f1 || python3 -c "import uuid; print(str(uuid.uuid4())[:8])"; }
+generate_uuid() { command -v $(generate_quantum_uuid) >/dev/null && $(generate_quantum_uuid) | cut -d'-' -f1 || python3 -c "import uuid; print(str(uuid.uuid4())[:8])"; }
 timestamp() { date -u +"%Y-%m-%dT%H:%M:%SZ"; }
 create_rule() {
 	local title="$1" uuid created file
