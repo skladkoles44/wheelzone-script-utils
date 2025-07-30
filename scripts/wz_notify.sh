@@ -1,3 +1,5 @@
+
+source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 
@@ -17,7 +19,7 @@ LOG_FILE="$WZ_HOME/logs/permalog.log"
 NOTION_VERSION="2022-06-28"
 readonly IS_TERMUX=$([ -n "$(command -v termux-notification)" ] && echo true || echo false)
 NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-SESSION_ID=$(uuidgen | tr 'A-Z' 'a-z' | cut -d'-' -f1)
+SESSION_ID=$($(generate_quantum_uuid) | tr 'A-Z' 'a-z' | cut -d'-' -f1)
 TRACE_ID="${WZ_TRACE_ID:-$SESSION_ID}"
 
 # === Defaults ===

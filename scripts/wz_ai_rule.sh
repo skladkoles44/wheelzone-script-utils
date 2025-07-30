@@ -1,3 +1,5 @@
+
+source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"
 #!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 # WheelZone AI Rule Interface v3.1 (OpenRouter + AutoModel + YAML)
@@ -17,14 +19,14 @@ init_env() {
 	mkdir -p "$RULES_DIR" "$CACHE_DIR" || return 1
 	[ -f "$REGISTRY" ] || echo "rules: []" >"$REGISTRY"
 	touch "$LOG_FILE" || return 1
-	for cmd in curl python3 git uuidgen; do
+	for cmd in curl python3 git $(generate_quantum_uuid); do
 		command -v "$cmd" >/dev/null || pkg install -y "$cmd" >/dev/null 2>&1
 	done
 	python3 -c "import yaml" 2>/dev/null || pip install --quiet pyyaml >/dev/null
 }
 
 gen_uuid() {
-	uuidgen | tr '[:upper:]' '[:lower:]' | cut -d'-' -f1
+	$(generate_quantum_uuid) | tr '[:upper:]' '[:lower:]' | cut -d'-' -f1
 }
 
 auto_select_model() {
