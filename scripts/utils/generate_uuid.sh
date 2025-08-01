@@ -1,41 +1,27 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# generate_uuid.sh v4.1.0 — WZ Unified UUID Generator (Fractal)
-set -euo pipefail
-IFS=$'\n\t'
+# generate_uuid.sh v4.2.0 — WZ Unified UUID Generator (Fractal-Safe)
 
-SCRIPT_DIR="${0%/*}"
-PY_GENERATOR="$SCRIPT_DIR/generate_uuid.py"
-VERSION="4.1.0"
+set -eo pipefail
+shopt -s nocasematch
 
-generate_uuid() {
-  if command -v python3 &>/dev/null && [ -f "$PY_GENERATOR" ]; then
-    python3 "$PY_GENERATOR" "$@"
-  else
-    python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py | tr '[:upper:]' '[:lower:]'
-  fi
-}
+VERSION="4.2.0"
+DEFAULT_FORMAT="fractal"
+SCRIPT_NAME="${0##*/}"
 
-case "${1:-}" in
-  --help|-h)
-    echo "WZ UUID Generator v$VERSION"
-    echo "Usage: $(basename "$0") [--slug | --time | --quantum]"
-    exit 0
-    ;;
-  --version)
-    echo "$VERSION"
-    exit 0
-    ;;
-  --slug)
-    uuid=$(generate_uuid)
-    echo "${uuid:0:8}"
-    ;;
-  --time)
-    echo "$(date +%Y%m%d)-$(generate_uuid | cut -c1-6)"
-    ;;
-  --quantum)
-    echo "uuid-$(date +%Y%m%d%H%M%S)-$(generate_uuid | cut -c1-6)"
-    ;;
-  *)
-    generate_uuid
-    ;;
-esac
+log() { echo -e "\033[1;32m[+]\033[0m $1"; }
+err() { echo -e "\033[1;31m[ERR]\033[0m $1" >&2; exit 1; }
+warn() { echo -e "\033[1;33m[!]\033[0m $1"; }
+
+usage() {
+  cat <<EOF
+$SCRIPT_NAME v$VERSION — Генератор UUID + slug для WheelZone (Fractal-safe)
+
+Usage:
+  $SCRIPT_NAME                  # UUID + slug auto
+  $SCRIPT_NAME --slug foo-bar  # Только slug (валидируется)
+  $SCRIPT_NAME --help          # Показать справку
+  $SCRIPT_NAME --version       # Версия
+
+Slug правила:
+  - Только строчные буквы, цифры и дефисы (a-z0-9-)
+  - Без пробелов, подчёркиваний, спецсимволов
