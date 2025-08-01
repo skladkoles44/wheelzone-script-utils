@@ -1,19 +1,41 @@
-
-source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"
 #!/data/data/com.termux/files/usr/bin/bash
-# generate_uuid.sh — Универсальный UUID-генератор (Termux/VPS)
-
+# generate_uuid.sh v4.1.0 — WZ Unified UUID Generator (Fractal)
 set -euo pipefail
 IFS=$'\n\t'
 
-generate_quantum_uuid() {
-  if command -v $(generate_quantum_uuid) >/dev/null 2>&1; then
-    $(generate_quantum_uuid)
-  elif [[ -f /proc/sys/kernel/random/uuid ]]; then
-    cat /proc/sys/kernel/random/uuid
+SCRIPT_DIR="${0%/*}"
+PY_GENERATOR="$SCRIPT_DIR/generate_uuid.py"
+VERSION="4.1.0"
+
+generate_uuid() {
+  if command -v python3 &>/dev/null && [ -f "$PY_GENERATOR" ]; then
+    python3 "$PY_GENERATOR" "$@"
   else
-    date +%s%N | sha256sum | base64 | head -c 32
+    python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py | tr '[:upper:]' '[:lower:]'
   fi
 }
 
-generate_quantum_uuid "$@"
+case "${1:-}" in
+  --help|-h)
+    echo "WZ UUID Generator v$VERSION"
+    echo "Usage: $(basename "$0") [--slug | --time | --quantum]"
+    exit 0
+    ;;
+  --version)
+    echo "$VERSION"
+    exit 0
+    ;;
+  --slug)
+    uuid=$(generate_uuid)
+    echo "${uuid:0:8}"
+    ;;
+  --time)
+    echo "$(date +%Y%m%d)-$(generate_uuid | cut -c1-6)"
+    ;;
+  --quantum)
+    echo "uuid-$(date +%Y%m%d%H%M%S)-$(generate_uuid | cut -c1-6)"
+    ;;
+  *)
+    generate_uuid
+    ;;
+esac

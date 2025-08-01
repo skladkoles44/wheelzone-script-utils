@@ -21,8 +21,8 @@ readonly TIMESTAMP="$(date +%Y%m%d-%H%M%S-%3N)"
 readonly UUID="$(
 	{
 		cat /proc/sys/kernel/random/uuid 2>/dev/null ||
-			$(generate_quantum_uuid) 2>/dev/null ||
-			python3 -c 'import uuid; print(uuid.uuid4().hex)' 2>/dev/null ||
+			$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py) 2>/dev/null ||
+			python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py --slug 2>/dev/null ||
 			od -An -tx8 -N16 /dev/urandom | tr -d ' ' | fold -w32 | head -n1
 	} | tr '[:upper:]' '[:lower:]' | head -c36
 )"

@@ -12,7 +12,7 @@ mkdir -p "$(dirname "$LOGFILE")"
 LABEL="${1:-moment}"
 MESSAGE="${2:-"Зафиксирован важный момент"}"
 TYPE="${3:-turning_point}"
-UUID=$($(generate_quantum_uuid) 2>/dev/null || date +%s%N)
+UUID=$($(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py) 2>/dev/null || date +%s%N)
 
 TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
