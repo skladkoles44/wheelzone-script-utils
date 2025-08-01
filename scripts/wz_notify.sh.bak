@@ -1,3 +1,4 @@
+export SESSION_ID="${SESSION_ID:-$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py | cut -d'-' -f1)}"
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 
