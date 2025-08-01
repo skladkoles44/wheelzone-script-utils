@@ -1,73 +1,134 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# WheelZone Rule Registry Sync v2.1.2 — Fractal CLI Edition
 
-source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"
-#!/data/data/com.termux/files/usr/bin/bash
-#!/data/data/com.termux/files/usr/bin/bash
-REPO="$HOME/wz-knowledge"
-RULES_DIR="$REPO/rules"
-REGISTRY="$REPO/registry.yaml"
-BRANCH="main"
-generate_uuid() { command -v $(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py) >/dev/null && $(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py) | cut -d'-' -f1 || python3 -c "import uuid; print(str(uuid.uuid4())[:8])"; }
-timestamp() { date -u +"%Y-%m-%dT%H:%M:%SZ"; }
-create_rule() {
-	local title="$1" uuid created file
-	uuid=$(generate_uuid)
-	created=$(timestamp)
-	file="$RULES_DIR/rule_${uuid}.md"
-	[[ -d "$RULES_DIR" ]] || mkdir -p "$RULES_DIR"
-	printf -- "# %s\nUUID: %s\nCreated: %s\n\nContent: %s\n" "$title" "$uuid" "$created" "$title" -- >"$file"
-	echo "[WZ] Правило создано: $file"
-# TEMP_DISABLED # TEMP_DISABLED     notion_log_entry.py --type rule --title "$title" --uuid "$uuid" --file "$file" --created "$created" --source wz_sync_rules.sh
+set -eo pipefail
+[[ ! -x "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh" ]] && echo '[ERR] UUID generator missing' && exit 1
+shopt -s nullglob nocasematch
+
+# === Константы ===
+readonly WZ_DIR="$HOME/wz-wiki"
+readonly RULES_DIR="$WZ_DIR/rules"
+readonly REGISTRY="$WZ_DIR/registry/registry.yaml"
+readonly LOG="$HOME/.cache/wz_ai/sync_rules.log"
+readonly MAX_SIZE=100000
+
+# === Цветной вывод ===
+RED='\033[1;31m'; GREEN='\033[1;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
+die()   { echo -e "${RED}[ERR]${NC} $(date '+%Y-%m-%d %H:%M:%S') $1" >&2; exit 1; }
+log()   { echo -e "${GREEN}[+]${NC} $(date '+%H:%M:%S') $1"; }
+warn()  { echo -e "${YELLOW}[WARN]${NC} $(date '+%H:%M:%S') $1"; }
+
+# === YAML валидация ===
+validate_yaml() {
+    python3 -c "
+import sys, yaml
+try:
+    with open('$1') as f:
+        yaml.safe_load(f)
+    sys.exit(0)
+except Exception as e:
+    print(f'Invalid YAML: {str(e)}', file=sys.stderr)
+    sys.exit(1)
+"
 }
-update_registry() {
-	local rule_file uuid created tags name
-	[[ -f "$REGISTRY" ]] || : >"$REGISTRY"
-	{
-		printf -- "# 📘 Реестр правил WZ\ngenerated: %s\nrules:\n" "$(date +%F)" --
-		find "$RULES_DIR" -maxdepth 1 -name 'rule_*.md' -print0 | sort -z | while IFS= read -r -d '' rule_file; do
-			uuid=$(awk -F': ' '/^UUID:/{print $2}' "$rule_file")
-			created=$(awk -F': ' '/^Created:/{print $2}' "$rule_file")
-			tags=$(awk -F': ' '/^Tags:/{print $2}' "$rule_file" 2>/dev/null || echo "")
-			name=$(basename "$rule_file")
-			printf -- "  - file: %s\n    uuid: %s\n    created: %s\n    tags: [%s]\n" "$name" "$uuid" "$created" "$tags" --
-		done
-	} >"$REGISTRY"
-	echo "[✓] Синхронизация завершена → registry.yaml обновлён"
+
+# === Основной sync ===
+sync_registry() {
+    log "Начинаю синхронизацию"
+    local temp_registry="$REGISTRY.tmp"
+    cp "$REGISTRY" "$REGISTRY.bak" 2>/dev/null || echo "rules: []" > "$REGISTRY.bak"
+
+    python3 -c "
+import sys, yaml, os
+from pathlib import Path
+
+f_in = '$REGISTRY.bak'
+f_out = '$temp_registry'
+
+def load_registry():
+    try:
+        with open(f_in) as f:
+            data = yaml.safe_load(f) or {}
+        if not isinstance(data, dict):
+            raise ValueError('Invalid registry format')
+        return data
+    except:
+        return {'rules': []}
+
+registry = load_registry()
+existing = {r['slug'] for r in registry.get('rules', []) if isinstance(r, dict)}
+
+for file in Path('$RULES_DIR').glob('*.md'):
+    try:
+        if file.stat().st_size > $MAX_SIZE:
+            print(f'[WARN] Пропущен {file.name} (большой размер)', file=sys.stderr)
+            continue
+
+        with file.open() as f:
+            lines = [next(f) for _ in range(10)]
+
+        meta = {}
+        for line in lines:
+            if line.startswith('id:'): meta['id'] = line.split(':',1)[1].strip()
+            elif line.startswith('slug:'): meta['slug'] = line.split(':',1)[1].strip()
+            elif line.startswith('created:'): meta['created'] = line.split(':',1)[1].strip()
+
+        if not all(k in meta for k in ('id', 'slug')):
+            print(f'[WARN] Пропущен {file.name} (неполные метаданные)', file=sys.stderr)
+            continue
+
+        if meta['slug'] in existing:
+            print(f'[INFO] Уже в реестре: {meta["slug"]}', file=sys.stderr)
+            continue
+
+        registry['rules'].append({
+            'id': meta['id'],
+            'slug': meta['slug'],
+            'created': meta.get('created', '')
+        })
+        print(f'[+] Добавлен: {meta["slug"]}', file=sys.stderr)
+
+    except Exception as e:
+        print(f'[WARN] Ошибка файла {file.name}: {str(e)}', file=sys.stderr)
+
+if $DRY:
+    print('=== DRY RUN ===', file=sys.stderr)
+else:
+    with open(f_out, 'w') as f:
+        yaml.safe_dump(registry, f, allow_unicode=True, sort_keys=False)
+" >> "$LOG" 2>&1
+
+    [[ "$DRY" -eq 0 ]] && validate_yaml "$temp_registry" && mv "$temp_registry" "$REGISTRY"
+    log "Синхронизация завершена"
 }
-git_push() {
-	local msg="${1:-rule: обновлён реестр}"
-	(cd "$REPO" && git add rules/ registry.yaml &&
-		git commit -m "$msg" &&
-		git push origin "$BRANCH") || {
-		echo "[ERR] Git push не удался"
-		exit 1
-	}
+
+# === CLI ===
+show_help() {
+    echo -e "${GREEN}WZ Sync Rules CLI v2.1.2${NC}"
+    echo "Usage:"
+    echo "  $0 --sync         # Синхронизация"
+    echo "  $0 --dry-run      # Тестовый режим"
+    echo "  $0 --validate     # Проверка YAML"
+    echo "  $0 --help         # Подсказка"
+    exit 0
 }
+
 main() {
-	[[ -d "$REPO" ]] || {
-		echo "[ERR] Репозиторий $REPO не найден"
-		exit 1
-	}
-	case "${1:-}" in
-	--create)
-		[[ -n "${2:-}" ]] || {
-			echo "[ERR] Укажите название правила"
-			exit 1
-		}
-		create_rule "$2"
-		;;
-	--sync | "")
-		update_registry
-		;;
-	--commit)
-		git_push "${2:-rule: обновлён реестр}"
-		;;
-	*)
-		echo "📘 Использование:"
-		echo "  $0 --create \"Название правила\""
-		echo "  $0 --sync"
-		echo "  $0 --commit \"Комментарий\""
-		exit 1
-		;;
-	esac
+    [[ ! -d "$RULES_DIR" ]] && die "Директория $RULES_DIR не найдена"
+    mkdir -p "$(dirname "$LOG")" "$(dirname "$REGISTRY")"
+    DRY=0
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --sync) shift ;;
+            --dry-run) DRY=1; shift ;;
+            --validate) validate_yaml "$REGISTRY"; exit $? ;;
+            --help|-h) show_help ;;
+            *) die "Неизвестный параметр: $1" ;;
+        esac
+    done
+
+    sync_registry
 }
+
 main "$@"
