@@ -23,7 +23,7 @@ declare -rA CONFIG=(
 	[JSON_PATH]="$HOME/wz-wiki/WZChatEnds/data.json"
 	[GENERATOR]="$HOME/wheelzone-script-utils/scripts/notion/generate_notion_log_json.sh"
 	[LOGGER]="$HOME/wheelzone-script-utils/scripts/notion/notion_log_entry.py"
-	[LOCK_FILE]="/tmp/sync_chatend_to_notion.lock"
+	[LOCK_FILE]="$HOME/.cache/wz_locks/sync_chatend_to_notion.lock"
 )
 
 # Структурированное логирование
