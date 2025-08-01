@@ -1,29 +1,27 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# ChatEnd CI Runner — v1.1.0 (UUID Core Integrated)
-set -eo pipefail
+# wzdrone_chatend.sh — CI-интеграция генерации ChatEnd (Termux HyperOS совместимость)
+set -euo pipefail
 
-UUID_JSON=$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py --both)
-UUID=$(echo "$UUID_JSON" | jq -r '.uuid')
-SESSION_ID=$(echo "$UUID_JSON" | jq -r '.session_id')
+# === Настройка окружения ===
+CI_NODE="termux-hyperos"
+CI_SOURCE="ci/wzdrone_chatend.sh"
+CI_TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+CI_UUID="$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py --quantum)"
+SESSION_ID="${CI_UUID##*-}"
 
-echo "[CI] UUID: $UUID"
+echo "[CI] UUID: $CI_UUID"
 echo "[CI] SESSION_ID: $SESSION_ID"
 
-export SESSION_ID="$SESSION_ID"
+# === Генерация ChatEnd ===
+OUT_FILE="$(bash ~/wheelzone-script-utils/scripts/wz_chatend.sh --from-markdown ~/wzbuffer/end_blocks.txt)"
+echo "[INFO] Сохранено: $OUT_FILE"
 
-# Валидация UUID
-if ! echo "$UUID" | grep -Eq '^uuid-[0-9]{14}-[a-f0-9]{6}$'; then
-  echo "[CI][ERROR] UUID формат некорректен: $UUID"
-  echo "{\"error\": \"Invalid UUID format\", \"uuid\": \"$UUID\"}" > ~/wzbuffer/uuid_error_$(date +%s).json
-  exit 1
-fi
-
-# Вызов основного chatend-скрипта
-~/wheelzone-script-utils/scripts/wz_chatend.sh --ci
-
-# Логгируем в Notion
-~/wheelzone-script-utils/scripts/notion/wz_notify_log_uuid.py \
-  --uuid "$UUID" \
-  --session_id "$SESSION_ID" \
-  --source "wzdrone_chatend.sh" \
-  --status "validated"
+# === Логирование в Notion ===
+python3 ~/wheelzone-script-utils/scripts/notion/wz_notify_log_uuid.py \
+  --uuid "$CI_UUID" \
+  --type "chatend" \
+  --node "$CI_NODE" \
+  --source "$CI_SOURCE" \
+  --timestamp "$CI_TIMESTAMP" \
+  --title "✅ ChatEnd успешно сгенерирован" \
+  --message "Файл ${OUT_FILE##*/} создан через CI-процедуру на ${CI_NODE}"
