@@ -2,6 +2,9 @@
 # Notion Logger CLI v2.3 — Финальная проверенная версия для WheelZone
 
 import os, sys, argparse, json, requests
+import subprocess
+import subprocess
+import subprocess
 from datetime import datetime
 
 NOTION_TOKEN = os.getenv("NOTION_API_TOKEN") or os.getenv("NOTION_TOKEN")

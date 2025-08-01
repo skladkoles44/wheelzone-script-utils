@@ -1,0 +1,13 @@
+[Unit]
+Description=WheelZone UUID Generator Daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/generate_uuid.sh --quantum
+Restart=always
+Environment=WZ_ENV=production
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

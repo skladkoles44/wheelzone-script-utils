@@ -108,7 +108,7 @@ process_alert() {
   while read -r p; do [[ "$msg" =~ $p ]] && { sev="critical"; break; }; done < <(yq e '.escalation.critical_patterns[]?' "$cfg")
   [[ "$sev" == "info" ]] && while read -r p; do [[ "$msg" =~ $p ]] && { sev="warning"; break; }; done < <(yq e '.escalation.warning_patterns[]?' "$cfg")
 
-  sqlite3 "$db" "INSERT OR IGNORE INTO alerts VALUES ('$(uuidgen)', $(date +%s), '$hash', '$sev');"
+  sqlite3 "$db" "INSERT OR IGNORE INTO alerts VALUES ('$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py)', $(date +%s), '$hash', '$sev');"
   echo "$sev:$msg" >> "$comm"
 }
 
