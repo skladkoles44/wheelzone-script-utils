@@ -108,7 +108,7 @@ process_alert() {
   done < <(yq e '.escalation.warning_patterns[]?' "$config")
 
   sqlite3 "$cache_db" "INSERT OR IGNORE INTO alerts_$depth VALUES (
-    '$(uuidgen)', $(date +%s), '$msg_hash', '$severity'
+    '$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py)', $(date +%s), '$msg_hash', '$severity'
   );"
 }
 

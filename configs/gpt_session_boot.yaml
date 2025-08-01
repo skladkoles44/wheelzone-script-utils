@@ -1,0 +1,40 @@
+session_id: "auto"
+timestamp: "2025-08-01T14:52:00Z"
+
+identity:
+  user_device: "Termux (Android 15 / POCO / HyperOS)"
+  environment: "Termux + Git + VPS + Notion"
+  gpt_role: "Мозг инфраструктуры WheelZone"
+
+rules:
+  index: ~/wz-wiki/registry/rules_index.yaml
+  loaded_slugs:
+    - rule_awareness_system
+    - reuse_code_reference_behavior
+
+core_status:
+  chatend: active
+  rule_system: active
+  wz_notify: installed
+  drone_ci: partial
+  notion_log: enabled
+
+active_tasks:
+  - slug: auto-notion-import
+    description: "Импортировать задачи из Markdown в базу Notion"
+    source: wzdrone
+    status: in_progress
+
+session_focus:
+  topic: "Настройка boot-контекста"
+  intent: "Сделать GPT осведомлённым с первой строки"
+
+gpt_behaviors:
+  use_memory: true
+  prevent_duplicates: true
+  enforce_rule_index: true
+  allow_code_execution: false
+
+repositories:
+  wz-wiki: main
+  wheelzone-script-utils: main

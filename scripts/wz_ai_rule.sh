@@ -1,157 +1,132 @@
-
-source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"
 #!/data/data/com.termux/files/usr/bin/bash
-#!/data/data/com.termux/files/usr/bin/bash
-# WheelZone AI Rule Interface v3.1 (OpenRouter + AutoModel + YAML)
+# WheelZone AI Rule Interface v3.6 (Fractal Optimized)
 
-WZ_DIR="$HOME/wz-knowledge"
-RULES_DIR="$WZ_DIR/rules"
-REGISTRY="$WZ_DIR/registry.yaml"
-CACHE_DIR="$HOME/.cache/wz_ai"
-LOG_FILE="$CACHE_DIR/ai_rule.log"
-DEFAULT_TOKEN="pk-anon"
-OPENROUTER_URL="https://openrouter.ai/api/v1/chat/completions"
-AI_MODEL=""
-MANUAL_MODEL=""
-MODE=""
+set -eo pipefail
+shopt -s nocasematch
 
-init_env() {
-	mkdir -p "$RULES_DIR" "$CACHE_DIR" || return 1
-	[ -f "$REGISTRY" ] || echo "rules: []" >"$REGISTRY"
-	touch "$LOG_FILE" || return 1
-	for cmd in curl python3 git $(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py); do
-		command -v "$cmd" >/dev/null || pkg install -y "$cmd" >/dev/null 2>&1
-	done
-	python3 -c "import yaml" 2>/dev/null || pip install --quiet pyyaml >/dev/null
+# === Фрактальные примитивы ===
+die() { echo "[ERR] $1" >&2; exit 1; }
+warn() { echo "[WARN] $1" >&2; }
+log() { echo "[+] $1"; }
+
+# === Константы ===
+init_consts() {
+    WZ_DIR="$HOME/wz-wiki"
+    RULES_DIR="$WZ_DIR/rules"
+    REGISTRY="$WZ_DIR/registry/registry.yaml"
+    CACHE_DIR="$HOME/.cache/wz_ai"
+    LOG_FILE="$CACHE_DIR/ai_rule.log"
 }
 
-gen_uuid() {
-	$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py) | tr '[:upper:]' '[:lower:]' | cut -d'-' -f1
+# === Инициализация ===
+init_dirs() {
+    mkdir -p "$RULES_DIR" "$CACHE_DIR" || die "Не удалось создать директории"
 }
 
-auto_select_model() {
-	if [ -n "$MANUAL_MODEL" ]; then
-		AI_MODEL="$MANUAL_MODEL"
-	elif [ "$MODE" = "rule" ]; then
-		AI_MODEL="anthropic/claude-3-sonnet"
-	elif [ "$MODE" = "dry" ]; then
-		AI_MODEL="mistralai/mistral-7b-instruct"
-	else
-		AI_MODEL="cohere/command-r-plus"
-	fi
+# === Проверки ===
+check_deps() {
+    command -v python3 &>/dev/null || die "Python3 не установлен"
 }
 
-ai_request() {
-	local prompt="$1"
-	local cache_file="$CACHE_DIR/$(echo -n "$prompt$AI_MODEL" | md5sum | awk '{print $1}').txt"
-
-	if [ -f "$cache_file" ] && [ $(date +%s -r "$cache_file") -gt $(date -d '-5 days' +%s) ]; then
-		cat "$cache_file"
-		return 0
-	fi
-
-	local response=$(curl -sS "$OPENROUTER_URL" \
-		-H "Authorization: Bearer $DEFAULT_TOKEN" \
-		-H "Content-Type: application/json" \
-		-d '{
-        "model": "'"$AI_MODEL"'",
-        "messages": [{"role": "user", "content": "'"${prompt}"'"}],
-        "temperature": 0.2,
-        "max_tokens": 300
-      }')
-
-	local output=$(echo "$response" | python3 -c "import sys, json; print(json.load(sys.stdin)['choices'][0]['message']['content'].strip())" 2>/dev/null)
-
-	[ -n "$output" ] && echo "$output" >"$cache_file"
-	echo "$output"
+# === Help ===
+show_help() {
+    echo "Фрактальная система управления правилами:"
+    echo "Usage: $0 --create <slug> <content>"
+    echo "       $0 --help"
+    exit 0
 }
 
+# === Создание правила ===
 create_rule() {
-	local input="$1"
-	local uuid=$(gen_uuid)
-	local date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-	local file="$RULES_DIR/rule_${uuid}.md"
-	local prompt="Сформулируй строгое и лаконичное техническое правило на основе: '$input'. Ответь только текстом правила."
-
-	local result=$(ai_request "$prompt")
-	[ -z "$result" ] && echo "AI ошибка или пустой ответ" && return 1
-
-	cat >"$file" <<EOF2
-# $(echo "$input" | sed 's/`/\\`/g')
-UUID: $uuid
-Created: $date
-
-Правило: $(echo "$result" | sed 's/`/\\`/g')
-EOF2
-
-	python3 - "$REGISTRY" "$uuid" "$file" "$input" "$date" <<'PYTHON'
-import yaml, sys, os, tempfile
-regfile, uid, fpath, title, dt = sys.argv[1:6]
-with open(regfile) as f:
-    data = yaml.safe_load(f) or {"rules": []}
-if any(r.get("uuid") == uid for r in data["rules"]):
-    sys.exit(1)
-data["rules"].append({"uuid": uid, "file": os.path.relpath(fpath, os.path.dirname(regfile)), "title": title, "created_at": dt, "status": "active"})
-with tempfile.NamedTemporaryFile("w", delete=False) as tmp:
-    yaml.dump(data, tmp, allow_unicode=True, sort_keys=False)
-os.replace(tmp.name, regfile)
-PYTHON
-
-	(cd "$WZ_DIR" && git add "$file" "$REGISTRY" &&
-		git commit -m "auto: rule $uuid" --quiet &&
-		git pull --rebase --quiet &&
-		git push origin main --quiet) || echo "⚠️ Git ошибка"
-
-	echo "✅ $uuid"
-	echo "Файл: $file"
+    local slug="$1"
+    local content="$2"
+    
+    slug=$(clean_slug "$slug") || die "Недопустимый slug"
+    local rule_id=$(gen_uuid)
+    local rule_file="$RULES_DIR/${slug}.md"
+    
+    check_overwrite "$rule_file" || return 1
+    
+    create_rule_file "$rule_file" "$slug" "$content" || die "Ошибка записи правила"
+    update_registry "$slug" "$rule_id" || die "Ошибка обновления реестра"
+    
+    log "Правило создано: $rule_file"
+    log_event "$rule_id" "cli"
 }
 
-print_help() {
-	echo "Использование:"
-	echo "  $0 rule \"Текст правила\""
-	echo "  $0 --model MODEL rule \"Текст\""
-	echo "  $0 --model MODEL --dry-run \"Текст\""
-	echo "  $0 log"
-	echo "  $0 help"
+# === Вспомогательные фракталы ===
+clean_slug() { echo "$1" | tr -cd '[:alnum:]_-'; }
+gen_uuid() { bash $HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh 2>/dev/null || cat /proc/sys/kernel/random/uuid 2>/dev/null || date +"%s%N-%N"; }
+
+check_overwrite() {
+    [[ ! -f "$1" ]] && return 0
+    read -rp "[WARN] Файл $1 уже существует. Перезаписать? (y/N) " answer
+    [[ "$answer" == "y" ]]
 }
 
+create_rule_file() {
+    cat > "$1" <<EOR
+# Rule: $2
+
+$3
+EOR
+}
+
+
+log_event() {
+    python3 "$HOME/wheelzone-script-utils/scripts/notion/wz_notify_log_uuid.py" \
+        --type "ai_rule" \
+        --node "termux" \
+        --source "wz_ai_rule.sh" \
+        --title "🚦 Выполнение AI-правила" \
+        --message "Правило: $1 | Режим: $2" 2>> "$LOG_FILE" || \
+        warn "Логгер недоступен"
+}
+
+# === Фрактальный диспетчер ===
 main() {
-	init_env || {
-		echo "❌ init error"
-		exit 1
-	}
-
-	while [[ "$1" =~ ^-- ]]; do
-		case "$1" in
-		--model)
-			shift
-			MANUAL_MODEL="$1"
-			shift
-			;;
-		--dry-run)
-			MODE="dry"
-			shift
-			;;
-		--help | help)
-			print_help
-			exit 0
-			;;
-		*)
-			echo "Неизвестный параметр $1"
-			exit 1
-			;;
-		esac
-	done
-
-	case "$1" in
-	rule)
-		MODE="rule"
-		shift
-		auto_select_model
-		create_rule "$*"
-		;;
-	log) tail -n40 "$LOG_FILE" ;;
-	*) print_help ;;
-	esac
+    init_consts
+    init_dirs
+    check_deps
+    
+    case "$1" in
+        --create) shift; create_rule "$@" ;;
+        --help|-h) show_help ;;
+        *) die "Неизвестный параметр: $1"
+    esac
 }
+
 main "$@"
+update_registry() {
+    python3 -c "
+import sys, yaml, os
+f = '$REGISTRY'
+try:
+    os.makedirs(os.path.dirname(f), exist_ok=True)
+    if os.path.exists(f):
+        with open(f) as fp:
+            try:
+                data = yaml.safe_load(fp)
+                if not isinstance(data, dict):
+                    data = {}
+            except yaml.YAMLError:
+                data = {}
+    else:
+        data = {}
+
+    rules = data.get('rules', [])
+    if not isinstance(rules, list):
+        rules = []
+    if any(r.get('slug') == '$1' for r in rules if isinstance(r, dict)):
+        print('[WARN] Правило с таким slug уже существует', file=sys.stderr)
+        sys.exit(1)
+
+    rules.append({'id': '$2', 'slug': '$1'})
+    data['rules'] = rules
+    with open(f, 'w') as out:
+        yaml.safe_dump(data, out, allow_unicode=True)
+except Exception as e:
+    print('[ERR]', str(e), file=sys.stderr)
+    sys.exit(1)
+" 2>> "$LOG_FILE"
+}

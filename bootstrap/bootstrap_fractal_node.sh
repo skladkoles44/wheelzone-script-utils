@@ -16,7 +16,7 @@ generate_fractal_id() {
 # == 1. Dependencies ==
 check_dependencies() {
   echo "🔍 Проверка зависимостей..."
-  REQUIRED=(bash yq curl jq git uuidgen tree)
+  REQUIRED=(bash yq curl jq git python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py tree)
   MISSING=()
   for bin in "${REQUIRED[@]}"; do
     command -v "$bin" &>/dev/null || MISSING+=("$bin")
@@ -44,7 +44,7 @@ init_node() {
   fi
 
   NODE_ID=$(generate_fractal_id "$PLATFORM")
-  UUID=$(uuidgen)
+  UUID=$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py)
   SLUG="fractal-${PLATFORM}-$(date +%m%d)"
 
   declare -Ag DIRS=(
