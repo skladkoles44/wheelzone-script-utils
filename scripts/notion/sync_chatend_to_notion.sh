@@ -91,3 +91,10 @@ main() {
 main "$@"
 EOF &&
 	chmod 750 ~/wheelzone-script-utils/scripts/notion/sync_chatend_to_notion.sh
+
+# === Генерация лог-файла отчёта ===
+echo "🧠 Генерация лог-файла отчёта..."
+bash "$HOME/wheelzone-script-utils/scripts/notion/generate_notion_log_json.sh" --from-markdown || {
+  echo "❌ Ошибка при генерации отчёта. Проверь формат markdown-файла."
+  exit 1
+}
