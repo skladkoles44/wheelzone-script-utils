@@ -1,0 +1,8 @@
+# AI Heartbeat (каждые 5 мин)
+*/5 * * * * bash ~/wheelzone-script-utils/scripts/ai/wz_ai_autolog.sh "heartbeat" date uptime
+
+# Память каждые 10 мин
+*/10 * * * * bash ~/wheelzone-script-utils/scripts/ai/wz_ai_autolog.sh "mem" free -h
+
+# Проверка git + rclone
+0 * * * * bash ~/wheelzone-script-utils/scripts/ai/wz_ai_autolog.sh "ci-check" which git rclone python3
