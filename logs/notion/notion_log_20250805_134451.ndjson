@@ -1,0 +1,2 @@
+{"timestamp": "2025-08-05T10:18:32.616690", "request_id": "c7b91cd99e734b3e90091ead85cd8006", "request": {"type": "test", "title": "Log test"}, "response": {"status": "mocked", "request_id": "c7b91cd99e734b3e90091ead85cd8006", "timestamp": "2025-08-05T10:18:32.616590"}}
+{"timestamp": "2025-08-05T10:21:45.827607+00:00", "request_id": "c4d7921fd202e8de7816244c2f211d73", "request": {"type": "test", "title": "UTC Patch Test"}, "response": {"status": "mocked", "request_id": "c4d7921fd202e8de7816244c2f211d73", "timestamp": "2025-08-05T10:21:45.827591+00:00"}}
