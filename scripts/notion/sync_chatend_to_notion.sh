@@ -40,17 +40,6 @@ log() {
 acquire_lock() {
 	exec 9>"${CONFIG[LOCK_FILE]}" || {
 		log "ERROR" "Не удалось открыть lock-файл"
-		return 1
-	}
-	flock -n 9 || {
-		local pid
-		pid=$(cat "${CONFIG[LOCK_FILE]}" 2>/dev/null || echo "unknown")
-		log "ERROR" "Процесс уже выполняется (PID: $pid)"
-		return 1
-	}
-	echo $$ >&9
-	trap 'rm -f "${CONFIG[LOCK_FILE]}"; exec 9>&-; trap - EXIT' EXIT
-}
 
 # Валидация зависимостей
 validate_dependencies() {
@@ -98,3 +87,12 @@ bash "$HOME/wheelzone-script-utils/scripts/notion/generate_notion_log_json.sh" -
   echo "❌ Ошибка при генерации отчёта. Проверь формат markdown-файла."
   exit 1
 }
+    flock -n 9 || {
+        pid=$(cat "${CONFIG[LOCK_FILE]}" 2>/dev/null)
+        pid=${pid:-unknown}
+        echo "{\"time\":\"$(date -Iseconds)\",\"level\":\"ERROR\",\"message\":\"Процесс уже выполняется (PID: $pid)\"}"
+        return 1
+    }
+
+    echo "$$" > "${CONFIG[LOCK_FILE]}"
+    trap 'rm -f "${CONFIG[LOCK_FILE]}"; trap - EXIT' EXIT
