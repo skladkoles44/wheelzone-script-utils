@@ -1,182 +1,139 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# === Комплексный тест wz_chatend.sh v3.2 ===
-
-# Автоматически определяем путь к скрипту
-find_script_path() {
-    local possible_paths=(
-        "$HOME/wheelzone-script-utils/scripts/chatend/wz_chatend.sh"
-        "$HOME/wheelzone-script-utils/scripts/wz_chatend.sh"
-    )
-    
-    for path in "${possible_paths[@]}"; do
-        if [[ -f "$path" ]]; then
-            echo "$path"
-            return 0
-        fi
-    done
-    
-    echo "Не удалось найти wz_chatend.sh!" >&2
-    return 1
-}
+# === Комплексный тест wz_chatend.sh v3.3 ===
 
 # Конфигурация
 TEST_DIR="$HOME/wzbuffer/chatend_test"
 LOG_FILE="$TEST_DIR/test.log"
-SCRIPT_PATH=$(find_script_path)
+SCRIPT_PATH="$HOME/wheelzone-script-utils/scripts/wz_chatend.sh"
 INSIGHTS_FILE="$HOME/wzbuffer/tmp_insights.txt"
 
-# Проверяем, что нашли скрипт
-if [[ ! -f "$SCRIPT_PATH" ]]; then
-    echo "❌ Ошибка: основной скрипт не найден!" >&2
-    exit 1
-fi
-
+# Инициализация тестовой среды
 init_test() {
+    echo "🧹 Подготовка тестовой среды..."
     rm -rf "$TEST_DIR"
     mkdir -p "$TEST_DIR"
-    : > "$LOG_FILE"
     
-    # Создаем тестовые файлы с абсолютными путями
-    cat > "$TEST_DIR/main.md" <<EOF_MAIN
+    cat > "$TEST_DIR/main.md" <<'EOM'
 # Основной ChatEnd
 
-[[FRACTAL:$TEST_DIR/nested.md]]
+[[FRACTAL:$HOME/wzbuffer/chatend_test/nested.md]]
 
 TODO:
-- Проверить все режимы работы
-- Добавить тест Telegram
+- Проверить фрактальную обработку
+- Протестировать авторежим
 
 DONE:
-- Создан комплексный тест
-EOF_MAIN
+- Настроен тестовый сценарий
+EOM
 
-    cat > "$TEST_DIR/nested.md" <<EOF_NESTED
+    cat > "$TEST_DIR/nested.md" <<'EOM'
 # Вложенный ChatEnd
 
 INSIGHT:
-Нужно тестировать все компоненты системы
-EOF_NESTED
+Фрактальная структура работает корректно
+EOM
 
-    # Для --auto режима
-    cat > "$INSIGHTS_FILE" <<EOF_AUTO
-TODO: Автоматически сгенерированная задача
-DONE: Завершенный автотест
+    cat > "$INSIGHTS_FILE" <<'EOM'
+TODO: Тестовая задача
+DONE: Выполненный пункт
 INSIGHT: Важное наблюдение
-EOF_AUTO
+EOM
+
+    : > "$LOG_FILE"
 }
 
-test_fractal() {
-    echo -e "\n🔵 Тестируем --fractal" | tee -a "$LOG_FILE"
+check_dependencies() {
+    local missing=()
+    [[ ! -f "$SCRIPT_PATH" ]] && missing+=("Основной скрипт wz_chatend.sh")
+    ! command -v uuidgen >/dev/null && missing+=("uuidgen")
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        echo "❌ Отсутствуют зависимости:"
+        printf "  - %s\n" "${missing[@]}"
+        exit 1
+    fi
+}
+
+check_created_files() {
+    local pattern="$1"
+    local min_count="${2:-1}"
+    local files=()
+    mapfile -t files < <(find "$HOME/wz-wiki/WZChatEnds" -name "$pattern" -mmin -5 2>/dev/null)
+    if [[ ${#files[@]} -lt $min_count ]]; then
+        echo "❌ Ошибка: создано недостаточно файлов (${#files[@]} из $min_count)"
+        return 1
+    fi
+    echo "✅ Создано файлов: ${#files[@]}"
+    return 0
+}
+
+run_tests() {
+    local errors=0
+    echo -e "\n🔵 Тест 1/3: Фрактальная обработка"
     if ! bash "$SCRIPT_PATH" --fractal "$TEST_DIR/main.md" 2>&1 | tee -a "$LOG_FILE"; then
-        echo "❌ Ошибка в --fractal режиме" | tee -a "$LOG_FILE"
-        return 1
+        echo "❌ Ошибка в фрактальном режиме"
+        ((errors++))
+    elif grep -q "⚠️ Не найден файл" "$LOG_FILE"; then
+        echo "❌ Ошибка: не найден вложенный файл"
+        ((errors++))
+    else
+        echo "✅ Фрактальная обработка завершена"
+        check_created_files "fractal-*.md" 2 || ((errors++))
     fi
-    return 0
-}
 
-test_auto() {
-    echo -e "\n🟢 Тестируем --auto" | tee -a "$LOG_FILE"
+    echo -e "\n🟢 Тест 2/3: Авторежим"
     if ! bash "$SCRIPT_PATH" --auto 2>&1 | tee -a "$LOG_FILE"; then
-        echo "❌ Ошибка в --auto режиме" | tee -a "$LOG_FILE"
-        return 1
-    fi
-    return 0
-}
-
-test_telegram() {
-    echo -e "\n🟣 Тестируем --tg-test" | tee -a "$LOG_FILE"
-    echo "Телеграм тест запущен в $(date)" >> "$LOG_FILE"
-    if bash "$SCRIPT_PATH" --tg-test 2>&1 | tee -a "$LOG_FILE"; then
-        echo "Telegram test completed" >> "$LOG_FILE"
-        return 0
+        echo "❌ Ошибка в авторежиме"
+        ((errors++))
     else
-        echo "❌ Ошибка Telegram-теста" | tee -a "$LOG_FILE"
-        return 1
+        echo "✅ Авторежим завершен"
+        check_created_files "2025-*.md" 1 || ((errors++))
     fi
-}
 
-check_results() {
-    local error_count=0
-    
-    echo -e "\n📜 Результаты тестирования:" | tee -a "$LOG_FILE"
-    
-    # Проверяем созданные файлы
-    echo -e "\n📂 Созданные файлы:" | tee -a "$LOG_FILE"
-    local created_files=$(find "$HOME/wz-wiki/WZChatEnds" -name "*.md" -mmin -5 2>/dev/null | wc -l)
-    if (( created_files < 2 )); then
-        echo "⚠️ Создано слишком мало файлов ($created_files)" | tee -a "$LOG_FILE"
-        ((error_count++))
+    echo -e "\n🟣 Тест 3/3: Telegram-интеграция"
+    if ! bash "$SCRIPT_PATH" --tg-test 2>&1 | tee -a "$LOG_FILE"; then
+        echo "❌ Ошибка Telegram-теста"
+        ((errors++))
+    elif grep -q "ERROR" "$LOG_FILE"; then
+        echo "❌ Ошибка при отправке в Telegram"
+        ((errors++))
     else
-        find "$HOME/wz-wiki/WZChatEnds" -name "*.md" -mmin -5 -ls | tee -a "$LOG_FILE"
+        echo "✅ Telegram-тест пройден"
     fi
-    
-    # Проверяем логи на ошибки
-    local log_errors=$(grep -ci "error\|fail\|warning" "$LOG_FILE")
-    if (( log_errors > 0 )); then
-        echo -e "\n⚠️ Найдено $log_errors ошибок в логах" | tee -a "$LOG_FILE"
-        grep -i "error\|fail\|warning" "$LOG_FILE" | tee -a "$LOG_FILE"
-        ((error_count++))
-    fi
-    
-    return $error_count
+
+    return $errors
 }
 
 git_sync() {
-    echo -e "\n🔄 Синхронизация с Git..." | tee -a "$LOG_FILE"
-    cd ~/wheelzone-script-utils || {
-        echo "❌ Не удалось перейти в репозиторий" | tee -a "$LOG_FILE"
-        return 1
-    }
-
-    COMMIT_MSG="✅ ChatEnd тест: фиксация изменений перед синком"
-
-    if ! git diff --quiet || ! git diff --cached --quiet; then
-        echo "📝 Обнаружены локальные изменения — подготавливаем коммит..." | tee -a "$LOG_FILE"
-        git add -A
-        if git diff --cached --name-only | grep -q .; then
-            git commit -m "$COMMIT_MSG"
-        else
-            echo "⚠️ Нет файлов для коммита после git add -A" | tee -a "$LOG_FILE"
-        fi
+    echo -e "\n🔄 Синхронизация с Git..."
+    cd ~/wheelzone-script-utils || return 1
+    if [[ -n $(git status --porcelain) ]]; then
+        git add .
+        git commit -m "[Test] Результаты тестирования $(date +%Y-%m-%d)"
+        git pull --rebase
+        git push
     else
-        echo "✅ Нет изменений для коммита" | tee -a "$LOG_FILE"
+        echo "✅ Нет изменений для коммита"
     fi
-
-    if ! git pull --rebase 2>&1 | tee -a "$LOG_FILE"; then
-        echo "❌ Ошибка при git pull (возможно, конфликты)" | tee -a "$LOG_FILE"
-        return 1
-    fi
-
-    if ! git push 2>&1 | tee -a "$LOG_FILE"; then
-        echo "❌ Ошибка при git push" | tee -a "$LOG_FILE"
-        return 1
-    fi
-
-    echo "✅ Git синхронизирован успешно" | tee -a "$LOG_FILE"
-    return 0
 }
 
 main() {
+    echo "🔧 Комплексное тестирование wz_chatend.sh"
+    echo "📝 Логи тестирования: $LOG_FILE"
+    check_dependencies
     init_test
-    echo "🔧 Начинаем комплексное тестирование..." | tee -a "$LOG_FILE"
-    echo "Используемый скрипт: $SCRIPT_PATH" | tee -a "$LOG_FILE"
-
-    test_fractal
-    test_auto
-    test_telegram
-
-    if check_results; then
-        echo -e "\n✅ Все тесты пройдены успешно!" | tee -a "$LOG_FILE"
+    local start_time=$(date +%s)
+    run_tests
+    local test_result=$?
+    local end_time=$(date +%s)
+    echo -e "\n📊 Итоги тестирования:"
+    echo "  - Время выполнения: $((end_time - start_time)) сек"
+    echo "  - Обнаружено ошибок: $test_result"
+    if [[ $test_result -eq 0 ]]; then
+        echo -e "\n🎉 Все тесты пройдены успешно!"
     else
-        echo -e "\n❌ Обнаружены проблемы в тестах" | tee -a "$LOG_FILE"
+        echo -e "\n❌ Обнаружены проблемы в тестах"
     fi
-    
-    # Синхронизация с Git
-    if git_sync; then
-        echo "🔄 Git синхронизирован успешно" | tee -a "$LOG_FILE"
-    else
-        echo "❌ Ошибка синхронизации с Git" | tee -a "$LOG_FILE"
-    fi
+    git_sync
 }
 
 main
