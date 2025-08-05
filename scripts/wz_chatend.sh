@@ -49,6 +49,16 @@ generate_chatend() {
     grep '^INSIGHT:' "$INSIGHT_FILE" | cut -c9- || echo "_нет_"
   } > "$OUT_FILE"
   flog "✔️ ChatEnd сохранён: $(basename "$OUT_FILE")"
+# === Заглушка логирования события ChatEnd в Notion ===
+NOTION_LOGGER_SCRIPT="$HOME/wheelzone-script-utils/scripts/notion/notion_logger_stub.sh"
+if [[ -f "$NOTION_LOGGER_SCRIPT" ]]; then
+    source "$NOTION_LOGGER_SCRIPT"
+    SLUG="$(basename "$OUT_FILE" .md)"
+    OUTPUT_FILE="$OUT_FILE"
+    process_chatend
+else
+    echo "⚠️ Notion Logger заглушка не найдена: $NOTION_LOGGER_SCRIPT"
+fi
 }
 
 process_fractals() {
@@ -91,3 +101,14 @@ main() {
 }
 
 main "$@"
+
+# === Заглушка: Запись ChatEnd события в SQLite-базу на VPS ===
+{
+    CHATEND_UUID="${FINAL_UUID:-$(uuidgen)}"
+    CHATEND_FILE="${OUT_FILE:-unknown.md}"
+    CHATEND_TYPE="chatend"
+    CHATEND_TIMESTAMP="$(date -Iseconds)"
+
+    echo "📦 Заглушка: Запись в SQLite (пока без соединения)"
+    echo "INSERT INTO wz_chatends (uuid, file_name, type, timestamp) VALUES ('$CHATEND_UUID', '$CHATEND_FILE', '$CHATEND_TYPE', '$CHATEND_TIMESTAMP');"
+} >> ~/.wz_logs/sqlite_log_placeholder.sql
