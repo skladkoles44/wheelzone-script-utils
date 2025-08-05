@@ -1,130 +1,93 @@
-
-source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"
-: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
-mkdir -p "$WZ_LOG_DIR"
-
-: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
-mkdir -p "$WZ_LOG_DIR"
-
-: "${WZ_LOG_DIR:=$HOME/.wz_logs}"
-mkdir -p "$WZ_LOG_DIR"
-
 #!/data/data/com.termux/files/usr/bin/bash
-#!/data/data/com.termux/files/usr/bin/bash
-# WheelZone ChatEnd Generator v1.4.3 (Android 15 HyperOS Optimized)
+# wz_chatend.sh v2.3.2-fractal+notify — ChatEnd Generator + Fractal + Telegram
+
 set -eo pipefail
-shopt -s nullglob failglob nocasematch
+shopt -s nullglob nocasematch
+export LANG="C.UTF-8"
 
-# === Конфигурация ===
-readonly DEFAULT_OUTPUT_DIR="${HOME}/wz-wiki/WZChatEnds"
-readonly TIMESTAMP="$(date +%Y%m%d-%H%M%S-%3N)"
-readonly UUID="$(
-	{
-		cat /proc/sys/kernel/random/uuid 2>/dev/null ||
-			$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py) 2>/dev/null ||
-			python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py --slug 2>/dev/null ||
-			od -An -tx8 -N16 /dev/urandom | tr -d ' ' | fold -w32 | head -n1
-	} | tr '[:upper:]' '[:lower:]' | head -c36
-)"
-readonly SLUG="chatend_${TIMESTAMP}_${UUID:0:8}"
+readonly OUTPUT_DIR="${HOME}/wz-wiki/WZChatEnds"
+readonly INSIGHT_FILE="${HOME}/wzbuffer/tmp_insights.txt"
+readonly FRACTAL_LOG="${HOME}/.wz_logs/fractal_chatend.log"
+readonly UUID="$(uuidgen | tr -d '-')"
+readonly TIMESTAMP="$(date +%Y-%m-%dT%H-%M-%S)"
+# PATCHED_OUT_FILE_FIX
+unset OUT_FILE 2>/dev/null || true
+OUT_FILE="${OUTPUT_DIR}/${TIMESTAMP}-${UUID}.md"
+readonly TG_BOT_TOKEN="${TG_BOT_TOKEN:-}"
+readonly TG_CHAT_ID="${TG_CHAT_ID:-}"
+readonly FRACTAL_ID="${BASHPID}_$RANDOM"
+FRACTAL_DEPTH="${FRACTAL_DEPTH:-0}"
 
-# === Безопасный парсинг ===
-declare -A ARGS=(
-	[input]=""
-	[output_dir]="$DEFAULT_OUTPUT_DIR"
-	[auto]=false
-	[git]=false
-)
+mkdir -p "$OUTPUT_DIR" "$(dirname "$INSIGHT_FILE")" ~/.wz_logs/
 
-while (($#)); do
-	case "${1,,}" in
-	--from-markdown | --input)
-		[[ -z "${2:-}" ]] && {
-			echo >&2 "[ERRO] Пустой --from-markdown"
-			exit 1
-		}
-		ARGS[input]="$(realpath -e -- "$2" 2>/dev/null || {
-			echo >&2 "[ERRO] Неверный путь: $2"
-			exit 1
-		})"
-		shift 2
-		;;
-	--output-dir | --out)
-		[[ -z "${2:-}" ]] && {
-			echo >&2 "[ERRO] Пустой --output-dir"
-			exit 1
-		}
-		ARGS[output_dir]="$(realpath -m -- "$2")"
-		shift 2
-		;;
-	--auto)
-		ARGS[auto]=true
-		shift
-		;;
-	--git)
-		ARGS[git]=true
-		shift
-		;;
-	--)
-		shift
-		break
-		;;
-	*)
-		echo >&2 "[ERRO] Неизвестный аргумент: $1"
-		exit 1
-		;;
-	esac
-done
-
-# === Валидация ===
-[[ -z "${ARGS[input]}" ]] && {
-	echo >&2 "[ERRO] Требуется --from-markdown"
-	exit 1
-}
-[[ -r "${ARGS[input]}" ]] || {
-	echo >&2 "[ERRO] Нет доступа: ${ARGS[input]}"
-	exit 1
-}
-mkdir -p "${ARGS[output_dir]}" || {
-	echo >&2 "[ERRO] Ошибка создания ${ARGS[output_dir]}"
-	exit 1
+send_telegram() {
+  [[ -n "$TG_BOT_TOKEN" && -n "$TG_CHAT_ID" ]] || return 0
+  local message="$1"
+  curl -s -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
+       -d "chat_id=${TG_CHAT_ID}&text=${message}" &>/dev/null
 }
 
-# === Атомарная запись ===
-TEMP_OUT="${ARGS[output_dir]}/${SLUG}.md.tmp"
-FINAL_OUT="${ARGS[output_dir]}/${SLUG}.md"
+flog() {
+  local depth_pad=$(printf "%*s" "$FRACTAL_DEPTH" "")
+  local log_msg="[${FRACTAL_ID}] ${depth_pad}↳ $*"
+  echo "$log_msg" | tee -a "$FRACTAL_LOG"
+  send_telegram "$log_msg"
+}
 
-{
-	printf -- "---\nuuid: %s\nslug: %s\ntimestamp: %s\nsource: %s\nauto: %s\n---\n\n" \
-		"$UUID" "$SLUG" "$TIMESTAMP" "${ARGS[input]}" "${ARGS[auto]}"
-	dd if="${ARGS[input]}" bs=64K 2>/dev/null
-} >"$TEMP_OUT" &&
-	mv -f "$TEMP_OUT" "$FINAL_OUT"
+generate_chatend() {
+  flog "🌀 Генерация ChatEnd в: $OUT_FILE"
+  {
+    echo "# 📦 ChatEnd Report — ${TIMESTAMP}"
+    echo
+    echo "## ✅ DONE"
+    grep '^DONE:' "$INSIGHT_FILE" | cut -c6- || echo "_нет_"
+    echo
+    echo "## 🧩 TODO"
+    grep '^TODO:' "$INSIGHT_FILE" | cut -c6- || echo "_нет_"
+    echo
+    echo "## 💡 INSIGHTS"
+    grep '^INSIGHT:' "$INSIGHT_FILE" | cut -c9- || echo "_нет_"
+  } > "$OUT_FILE"
+  flog "✔️ ChatEnd сохранён: $(basename "$OUT_FILE")"
+}
 
-echo "[INFO] Сохранено: $FINAL_OUT" >&2
+process_fractals() {
+  local input="$1"
+  grep -oE '\[\[FRACTAL:.*\]\]' "$input" | while read -r match; do
+    local nested_file="${match:9:-2}"
+    if [[ -f "$nested_file" ]]; then
+      ((FRACTAL_DEPTH++))
+      flog "🔍 Обнаружен вложенный фрактал: $nested_file"
+      FRACTAL_DEPTH="$FRACTAL_DEPTH" "$0" --fractal "$nested_file"
+      ((FRACTAL_DEPTH--))
+    else
+      flog "⚠️ Не найден файл: $nested_file"
+    fi
+  done
+}
 
-# === Git для HyperOS ===
-if "${ARGS[git]}"; then
-	if ! command -v git >/dev/null; then
-		echo >&2 "[WARN] Git не найден"
-		exit 0
-	fi
+main() {
+  case "$1" in
+    --auto)
+      generate_chatend
+      ;;
+    --fractal)
+      shift
+      flog "🌿 Запуск фрактальной обработки файла: $1"
+      OUT_FILE="${OUTPUT_DIR}/fractal-${TIMESTAMP}-${UUID}.md"
+      cp "$1" "$OUT_FILE"
+      process_fractals "$1"
+      ;;
+    --tg-test)
+      send_telegram "✅ Тест уведомления из wz_chatend.sh: $(date)"
+      ;;
+    *)
+      echo "Использование:"
+      echo "  --auto             Генерация ChatEnd из $INSIGHT_FILE"
+      echo "  --fractal FILE     Обработка ChatEnd с вложениями [[FRACTAL:...]]"
+      echo "  --tg-test          Тест уведомления Telegram"
+      ;;
+  esac
+}
 
-	(
-		cd "${ARGS[output_dir]}/.." || exit 1
-		if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-			echo >&2 "[ERRO] Не git-репозиторий"
-			exit 1
-		fi
-
-		git -c core.sshCommand="ssh -o BatchMode=yes" \
-			-c commit.gpgsign=false \
-			add -- "$(basename -- "${ARGS[output_dir]}")" &&
-			git commit -m "chatend: $SLUG" &&
-			{ git config remote.origin.url &>/dev/null && git pull --rebase --autostash || :; } &&
-			git push
-	) || {
-		echo >&2 "[ERRO] Ошибка git"
-		exit 1
-	}
-fi
+main "$@"

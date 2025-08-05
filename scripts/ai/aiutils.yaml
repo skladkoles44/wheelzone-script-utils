@@ -1,0 +1,10 @@
+id: aiutils
+uuid: 8b7c7af05be4
+slug: wzbuffer_aiutils_20250803142358
+category: ai
+status: IN_PROGRESS
+location: ~/wheelzone-script-utils/scripts/ai/
+description: >
+  AI Utilities Layer: захват, логирование и синхронизация AI-событий в WZBuffer.
+  Используется для автоматического анализа, трассировки и отчётности.
+created: 2025-08-03T14:23:58Z
