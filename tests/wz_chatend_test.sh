@@ -1,22 +1,22 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# === Комплексный тест wz_chatend.sh v3.3 ===
+# === Комплексный тест wz_chatend.sh v3.4 ===
 
-# Конфигурация
 TEST_DIR="$HOME/wzbuffer/chatend_test"
 LOG_FILE="$TEST_DIR/test.log"
 SCRIPT_PATH="$HOME/wheelzone-script-utils/scripts/wz_chatend.sh"
 INSIGHTS_FILE="$HOME/wzbuffer/tmp_insights.txt"
 
-# Инициализация тестовой среды
 init_test() {
     echo "🧹 Подготовка тестовой среды..."
     rm -rf "$TEST_DIR"
     mkdir -p "$TEST_DIR"
     
-    cat > "$TEST_DIR/main.md" <<'EOM'
+    local nested_path="$TEST_DIR/nested.md"
+
+    cat > "$TEST_DIR/main.md" <<EOM
 # Основной ChatEnd
 
-[[FRACTAL:$HOME/wzbuffer/chatend_test/nested.md]]
+[[FRACTAL:$nested_path]]
 
 TODO:
 - Проверить фрактальную обработку
@@ -26,20 +26,22 @@ DONE:
 - Настроен тестовый сценарий
 EOM
 
-    cat > "$TEST_DIR/nested.md" <<'EOM'
+    cat > "$nested_path" <<EOM
 # Вложенный ChatEnd
 
 INSIGHT:
 Фрактальная структура работает корректно
 EOM
 
-    cat > "$INSIGHTS_FILE" <<'EOM'
+    cat > "$INSIGHTS_FILE" <<EOM
 TODO: Тестовая задача
 DONE: Выполненный пункт
 INSIGHT: Важное наблюдение
 EOM
 
     : > "$LOG_FILE"
+    echo "Тестовые файлы созданы:"
+    ls -l "$TEST_DIR"
 }
 
 check_dependencies() {
@@ -68,12 +70,15 @@ check_created_files() {
 
 run_tests() {
     local errors=0
+
     echo -e "\n🔵 Тест 1/3: Фрактальная обработка"
+    echo "Проверяем файл: $TEST_DIR/main.md"
     if ! bash "$SCRIPT_PATH" --fractal "$TEST_DIR/main.md" 2>&1 | tee -a "$LOG_FILE"; then
         echo "❌ Ошибка в фрактальном режиме"
         ((errors++))
     elif grep -q "⚠️ Не найден файл" "$LOG_FILE"; then
         echo "❌ Ошибка: не найден вложенный файл"
+        ls -l "$TEST_DIR"
         ((errors++))
     else
         echo "✅ Фрактальная обработка завершена"
@@ -109,7 +114,10 @@ git_sync() {
     if [[ -n $(git status --porcelain) ]]; then
         git add .
         git commit -m "[Test] Результаты тестирования $(date +%Y-%m-%d)"
-        git pull --rebase
+        if ! git pull --rebase; then
+            echo "⚠️ Конфликт при rebase. Попробуйте разрешить вручную."
+            return 1
+        fi
         git push
     else
         echo "✅ Нет изменений для коммита"
@@ -125,14 +133,18 @@ main() {
     run_tests
     local test_result=$?
     local end_time=$(date +%s)
+
     echo -e "\n📊 Итоги тестирования:"
     echo "  - Время выполнения: $((end_time - start_time)) сек"
     echo "  - Обнаружено ошибок: $test_result"
+
     if [[ $test_result -eq 0 ]]; then
         echo -e "\n🎉 Все тесты пройдены успешно!"
     else
         echo -e "\n❌ Обнаружены проблемы в тестах"
+        tail -n 10 "$LOG_FILE"
     fi
+
     git_sync
 }
 
