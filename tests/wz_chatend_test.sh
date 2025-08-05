@@ -123,20 +123,36 @@ check_results() {
 
 git_sync() {
     echo -e "\n🔄 Синхронизация с Git..." | tee -a "$LOG_FILE"
-    cd ~/wheelzone-script-utils || return 1
-    
-    # Сначала получаем изменения с сервера
+    cd ~/wheelzone-script-utils || {
+        echo "❌ Не удалось перейти в репозиторий" | tee -a "$LOG_FILE"
+        return 1
+    }
+
+    COMMIT_MSG="✅ ChatEnd тест: фиксация изменений перед синком"
+
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+        echo "📝 Обнаружены локальные изменения — подготавливаем коммит..." | tee -a "$LOG_FILE"
+        git add -A
+        if git diff --cached --name-only | grep -q .; then
+            git commit -m "$COMMIT_MSG"
+        else
+            echo "⚠️ Нет файлов для коммита после git add -A" | tee -a "$LOG_FILE"
+        fi
+    else
+        echo "✅ Нет изменений для коммита" | tee -a "$LOG_FILE"
+    fi
+
     if ! git pull --rebase 2>&1 | tee -a "$LOG_FILE"; then
-        echo "❌ Ошибка при git pull" | tee -a "$LOG_FILE"
+        echo "❌ Ошибка при git pull (возможно, конфликты)" | tee -a "$LOG_FILE"
         return 1
     fi
-    
-    # Затем отправляем свои изменения
+
     if ! git push 2>&1 | tee -a "$LOG_FILE"; then
         echo "❌ Ошибка при git push" | tee -a "$LOG_FILE"
         return 1
     fi
-    
+
+    echo "✅ Git синхронизирован успешно" | tee -a "$LOG_FILE"
     return 0
 }
 
