@@ -1,114 +1,99 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# wz_chatend.sh v2.3.2-fractal+notify — ChatEnd Generator + Fractal + Telegram
+# WheelZone ChatEnd Generator v1.4.3 (Android 15 HyperOS Optimized)
 
 set -eo pipefail
-shopt -s nullglob nocasematch
-export LANG="C.UTF-8"
+shopt -s nullglob failglob nocasematch
 
-readonly OUTPUT_DIR="${HOME}/wz-wiki/WZChatEnds"
-readonly INSIGHT_FILE="${HOME}/wzbuffer/tmp_insights.txt"
-readonly FRACTAL_LOG="${HOME}/.wz_logs/fractal_chatend.log"
-readonly UUID="$(uuidgen | tr -d '-')"
-readonly TIMESTAMP="$(date +%Y-%m-%dT%H-%M-%S)"
-# PATCHED_OUT_FILE_FIX
-unset OUT_FILE 2>/dev/null || true
-OUT_FILE="${OUTPUT_DIR}/${TIMESTAMP}-${UUID}.md"
-readonly TG_BOT_TOKEN="${TG_BOT_TOKEN:-}"
-readonly TG_CHAT_ID="${TG_CHAT_ID:-}"
-readonly FRACTAL_ID="${BASHPID}_$RANDOM"
-FRACTAL_DEPTH="${FRACTAL_DEPTH:-0}"
+# === Конфигурация ===
+readonly DEFAULT_OUTPUT_DIR="${HOME}/wz-wiki/WZChatEnds"
+readonly TIMESTAMP="$(date +%Y%m%d-%H%M%S-%3N)"
+readonly UUID="$(cat /proc/sys/kernel/random/uuid || uuidgen || python3 -c 'import uuid; print(uuid.uuid4())')"
+readonly SLUG="$(basename "$(pwd)" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-')"
+readonly FILENAME="${TIMESTAMP}-${UUID//-/}-${SLUG}.md"
+readonly OUTPUT_PATH="${DEFAULT_OUTPUT_DIR}/${FILENAME}"
+readonly BUFFER_DIR="$HOME/wzbuffer"
+readonly END_BLOCKS_FILE="${BUFFER_DIR}/end_blocks.txt"
+readonly INSIGHTS_FILE="${BUFFER_DIR}/tmp_insights.txt"
 
-mkdir -p "$OUTPUT_DIR" "$(dirname "$INSIGHT_FILE")" ~/.wz_logs/
+mkdir -p "$DEFAULT_OUTPUT_DIR" "$BUFFER_DIR"
 
-send_telegram() {
-  [[ -n "$TG_BOT_TOKEN" && -n "$TG_CHAT_ID" ]] || return 0
-  local message="$1"
-  curl -s -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
-       -d "chat_id=${TG_CHAT_ID}&text=${message}" &>/dev/null
-}
+# === Обработка вложенных FRACTAL файлов ===
+process_fractal_lines() {
+  local input_file="$1"
+  local normalized_path line match nested_input
 
-flog() {
-  local depth_pad=$(printf "%*s" "$FRACTAL_DEPTH" "")
-  local log_msg="[${FRACTAL_ID}] ${depth_pad}↳ $*"
-  echo "$log_msg" | tee -a "$FRACTAL_LOG"
-  send_telegram "$log_msg"
-}
+  if [[ ! -f "$input_file" ]]; then
+    echo "[ERROR] Файл не существует: $input_file" >&2
+    return 1
+  fi
 
-generate_chatend() {
-  flog "🌀 Генерация ChatEnd в: $OUT_FILE"
-  {
-    echo "# 📦 ChatEnd Report — ${TIMESTAMP}"
-    echo
-    echo "## ✅ DONE"
-    grep '^DONE:' "$INSIGHT_FILE" | cut -c6- || echo "_нет_"
-    echo
-    echo "## 🧩 TODO"
-    grep '^TODO:' "$INSIGHT_FILE" | cut -c6- || echo "_нет_"
-    echo
-    echo "## 💡 INSIGHTS"
-    grep '^INSIGHT:' "$INSIGHT_FILE" | cut -c9- || echo "_нет_"
-  } > "$OUT_FILE"
-  flog "✔️ ChatEnd сохранён: $(basename "$OUT_FILE")"
-# === Заглушка логирования события ChatEnd в Notion ===
-NOTION_LOGGER_SCRIPT="$HOME/wheelzone-script-utils/scripts/notion/notion_logger_stub.sh"
-if [[ -f "$NOTION_LOGGER_SCRIPT" ]]; then
-    source "$NOTION_LOGGER_SCRIPT"
-    SLUG="$(basename "$OUT_FILE" .md)"
-    OUTPUT_FILE="$OUT_FILE"
-    process_chatend
-else
-    echo "⚠️ Notion Logger заглушка не найдена: $NOTION_LOGGER_SCRIPT"
-fi
-}
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if [[ "$line" =~ FRACTAL:.* ]]; then
+      match="${BASH_REMATCH[0]}"
+      nested_input="${match#FRACTAL:}"
+      nested_input="${nested_input#:}"
+      nested_input="${nested_input/#\~/$HOME}"
+      nested_input="${nested_input//[\'\"]/}"
 
-process_fractals() {
-  local input="$1"
-  grep -oE '\[\[FRACTAL:.*\]\]' "$input" | while read -r match; do
-    local nested_file="${match:9:-2}"
-    if [[ -f "$nested_file" ]]; then
-      ((FRACTAL_DEPTH++))
-      flog "🔍 Обнаружен вложенный фрактал: $nested_file"
-      FRACTAL_DEPTH="$FRACTAL_DEPTH" "$0" --fractal "$nested_file"
-      ((FRACTAL_DEPTH--))
+      if command -v realpath >/dev/null 2>&1; then
+        normalized_path=$(realpath -m "$nested_input" 2>/dev/null) || {
+          echo "[ERROR] Не удалось нормализовать путь: $nested_input" >&2
+          continue
+        }
+      else
+        normalized_path="$nested_input"
+      fi
+
+      if [[ -f "$normalized_path" ]]; then
+        echo "[INFO] Обработка вложенного файла: $normalized_path" >&2
+        process_fractal_lines "$normalized_path"
+      else
+        echo "[ERROR] Вложенный файл не существует: $normalized_path" >&2
+        continue
+      fi
     else
-      flog "⚠️ Не найден файл: $nested_file"
+      echo "$line"
     fi
-  done
+  done < "$input_file"
 }
 
-main() {
-  case "$1" in
-    --auto)
-      generate_chatend
-      ;;
-    --fractal)
-      shift
-      flog "🌿 Запуск фрактальной обработки файла: $1"
-      OUT_FILE="${OUTPUT_DIR}/fractal-${TIMESTAMP}-${UUID}.md"
-      cp "$1" "$OUT_FILE"
-      process_fractals "$1"
-      ;;
-    --tg-test)
-      send_telegram "✅ Тест уведомления из wz_chatend.sh: $(date)"
-      ;;
-    *)
-      echo "Использование:"
-      echo "  --auto             Генерация ChatEnd из $INSIGHT_FILE"
-      echo "  --fractal FILE     Обработка ChatEnd с вложениями [[FRACTAL:...]]"
-      echo "  --tg-test          Тест уведомления Telegram"
-      ;;
-  esac
+# === Генерация блока end_blocks.yaml ===
+generate_end_blocks_yaml() {
+  local output_file="$1"
+  {
+    echo "# blocks extracted from chat — generated $(date -Iseconds)"
+    echo "uuid: ${UUID}"
+    echo "slug: ${SLUG}"
+    echo "timestamp: ${TIMESTAMP}"
+    echo "chatend_file: ${FILENAME}"
+    echo "blocks:"
+    grep -Poz '(?s)(?<=^|[\n\r])```(DONE|TODO|INSIGHT|RULE)\n.*?\n```' "$END_BLOCKS_FILE" |
+      awk 'BEGIN{RS="```"; ORS=""} /^(DONE|TODO|INSIGHT|RULE)\n/ {print "- |\n  " $0 "\n"}'
+  } > "${BUFFER_DIR}/end_blocks.yaml"
 }
 
-main "$@"
+# === Основная генерация ===
+generate_chatend_file() {
+  {
+    echo "# ChatEnd Report"
+    echo "**UUID:** ${UUID}"
+    echo "**Slug:** ${SLUG}"
+    echo "**Timestamp:** ${TIMESTAMP}"
+    echo
+    echo "## Extracted End Blocks"
+    cat "$END_BLOCKS_FILE"
+    echo
+    echo "## Insights"
+    cat "$INSIGHTS_FILE" 2>/dev/null || echo "_no insights_"
+  } > "$OUTPUT_PATH"
+  echo "✅ ChatEnd сохранён: $FILENAME"
+}
 
-# === Заглушка: Запись ChatEnd события в SQLite-базу на VPS ===
-{
-    CHATEND_UUID="${FINAL_UUID:-$(uuidgen)}"
-    CHATEND_FILE="${OUT_FILE:-unknown.md}"
-    CHATEND_TYPE="chatend"
-    CHATEND_TIMESTAMP="$(date -Iseconds)"
+# === Запуск ===
+if [[ "$1" == "--fractal" && -n "$2" ]]; then
+  process_fractal_lines "$2"
+  exit 0
+fi
 
-    echo "📦 Заглушка: Запись в SQLite (пока без соединения)"
-    echo "INSERT INTO wz_chatends (uuid, file_name, type, timestamp) VALUES ('$CHATEND_UUID', '$CHATEND_FILE', '$CHATEND_TYPE', '$CHATEND_TIMESTAMP');"
-} >> ~/.wz_logs/sqlite_log_placeholder.sql
+generate_end_blocks_yaml "$END_BLOCKS_FILE"
+generate_chatend_file
