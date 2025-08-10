@@ -11,17 +11,11 @@ steps:
       GIT_SSH_COMMAND:
         from_secret: WZ_GIT_SSH_COMMAND
     commands:
-      - apk add --no-cache bash git coreutils sed grep
+      - apk add --no-cache bash git coreutils sed grep openssh-client
       - bash scripts/ci/wz_chatend_regress_ci.sh
     when:
-      event:
-        - push
-        - pull_request
-      branch:
-        - main
-        - master
+      event: [ push, pull_request ]
+      branch: [ main, master ]
 
 trigger:
-  event:
-    - push
-    - pull_request
+  event: [ push, pull_request ]
