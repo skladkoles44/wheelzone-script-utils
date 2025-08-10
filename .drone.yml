@@ -1,40 +1,27 @@
 kind: pipeline
 type: docker
-name: check-scripts
+name: chatend-regress
 
 steps:
-  - name: check-bash
-    image: koalaman/shellcheck-alpine
+  - name: regress
+    image: alpine:3.20
+    environment:
+      WZ_WIKI_GIT_URL:
+        from_secret: WZ_WIKI_GIT_URL
+      GIT_SSH_COMMAND:
+        from_secret: WZ_GIT_SSH_COMMAND
     commands:
-      - shellcheck $(find scripts/ -name "*.sh")
-      - apk add --no-cache shfmt
-      - shfmt -d -i 2 -ci -s $(find scripts/ -name "*.sh")
-
-  - name: check-python
-    image: python:3.11
-    commands:
-      - pip install --quiet black flake8 isort
-      - find scripts/ -name "*.py" -exec python3 -m py_compile {} \;
-      - black --check scripts/
-      - flake8 scripts/
-      - isort scripts/ --check-only
-
-  - name: autofix
-    image: python:3.11
+      - apk add --no-cache bash git coreutils sed grep
+      - bash scripts/ci/wz_chatend_regress_ci.sh
     when:
+      event:
+        - push
+        - pull_request
       branch:
         - main
-    commands:
-      - apt update && apt install -y bash curl
-      - pip install --quiet black isort
-      - curl -sL https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64 -o /usr/local/bin/shfmt
-      - chmod +x /usr/local/bin/shfmt
-      - shfmt -w -i 2 -ci -s $(find scripts/ -name "*.sh")
-      - black scripts/
-      - isort scripts/
-      - chmod +x $(find scripts/ -name "*.sh" -o -name "*.py")
-      - git config --global user.email "ci@wheelzone.ai"
-      - git config --global user.name "WZ Auto Fixer"
-      - git add scripts/
-      - git commit -m "ci: autofix formatting (shfmt, black, isort)" || echo "Nothing to commit"
-      - git push
+        - master
+
+trigger:
+  event:
+    - push
+    - pull_request
