@@ -1,0 +1,97 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# WZ ChatEnd MD Proxy v0.3
+# - Автодетект оригинала wz_chatend.sh в wz-wiki
+# - Препроцессинг Include: (поддержка "Include: ~/...", "Include:~/...", "Include:$HOME/...")
+# - Расширение ~ и $HOME, маркеры BEGIN/END, graceful warn для пропусков
+# - Передаёт в ORIG через --md <preprocessed.md>
+set -Eeuo pipefail
+
+SAFE_LOG="$HOME/.wz_logs/wz_chatend_safe.log"
+FRAC_LOG="$HOME/.wz_logs/fractal_chatend.log"
+TMP_DIR="$HOME/.wz_tmp"
+mkdir -p "$(dirname "$SAFE_LOG")" "$TMP_DIR"
+
+ts(){ date -u +'%Y-%m-%d %H:%M:%S'; }
+slog(){ echo "[$(ts)] $*" >> "$SAFE_LOG"; }
+flog(){ echo "[$(ts)] $*" >> "$FRAC_LOG"; }
+
+# --- auto-detect ORIG ---
+: "${CHATEND_ORIG:=}"
+if [ -z "${CHATEND_ORIG:-}" ]; then
+  for C in "$HOME/wz-wiki/scripts/wz_chatend.sh" \
+           "$HOME/wz-wiki/wz-wiki/scripts/wz_chatend.sh"
+  do
+    [ -x "$C" ] && CHATEND_ORIG="$C" && break
+  done
+fi
+[ -n "${CHATEND_ORIG:-}" ] && [ -x "$CHATEND_ORIG" ] || {
+  echo "[ERR] ORIG not found: ${CHATEND_ORIG:-unset}" >&2
+  exit 2
+}
+
+trim(){ sed -e 's/^[[:space:]]\+//' -e 's/[[:space:]]\+$//' -e 's/\r$//'; }
+
+expand_home(){
+  # stdin->stdout; strip leading ':', quotes; expand ~, $HOME
+  local p; p="$(cat)"
+  p="${p#:}"
+  p="${p%\"}"; p="${p#\"}"
+  p="${p%\'}"; p="${p#\'}"
+  p="$(printf '%s' "$p" | trim)"
+  case "$p" in
+    \$HOME|\$HOME/*) p="${p/#\$HOME/$HOME}";;
+    ~|~/*)           p="${p/#~/$HOME}";;
+  esac
+  # normalize double slashes (keep proto)
+  printf '%s' "$p" | sed -E 's#(^|[^:])//+#***REMOVED***/#g'
+}
+
+preprocess_md(){
+  # $1=input md, stdout -> preprocessed file path
+  local in="$1"
+  [ -f "$in" ] || { echo "[ERR] input not found: $in" >&2; exit 2; }
+  local base out
+  base="$(basename "$in")"
+  out="$TMP_DIR/pp_${base%.*}_$(date +%s).md"
+
+  flog "🌿 Препроцессинг: $in (depth=1)"
+  {
+    while IFS= read -r line || [ -n "$line" ]; do
+      case "$line" in
+        Include:*)
+          raw="${line#Include:}"
+          raw="$(printf '%s' "$raw" | trim)"
+          sane="$(printf '%s' "$raw" | expand_home)"
+          if [ -f "$sane" ]; then
+            echo "<!-- BEGIN Include: $raw → $sane -->"
+            cat "$sane"
+            echo "<!-- END Include: $sane -->"
+            flog "✅ Include OK: $raw → $sane"
+          else
+            echo "<!-- WARN: Include missing: $raw (expanded: $sane) -->"
+            flog "⚠️ Не найден файл: $raw"
+          fi
+          ;;
+        *)
+          printf '%s\n' "$line"
+          ;;
+      esac
+    done < "$in"
+  } > "$out"
+
+  echo "$out"
+}
+
+usage(){ echo "Usage: $(basename "$0") <input.md> [extra args -> ORIG]"; }
+
+main(){
+  [ $# -ge 1 ] || { usage; exit 2; }
+  local input="$1"; shift || true
+  local out
+  out="$(preprocess_md "$input")"
+  slog "MD→ORIG: $input -> $out"
+  # Передаём в ORIG гарантированно через --md
+  exec bash --norc "$CHATEND_ORIG" --md "$out" "$@"
+}
+
+main "$@"

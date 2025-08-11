@@ -1,71 +1,69 @@
-#!/data/data/com.termux/files/usr/bin/python3
-import json
-import os
+#!/usr/bin/env python3
+# notion_log_entry.py v2.5 — Lightweight Notion logger for WheelZone
+
+import os, sys, json, requests, time
 from datetime import datetime
-from datetime import timezone
-import sys
-import hashlib
 
-# Конфигурация
-LOG_DIR = os.path.expanduser("~/.wz_logs")
-NOTION_LOG_FILE = os.path.join(LOG_DIR, "notion_log.ndjson")
-MOCK_RESPONSES = os.path.join(LOG_DIR, "notion_mock_responses.ndjson")
+# --- Config ---
+NOTION_API = "https://api.notion.com/v1/pages"
+DB_ID = os.getenv("NOTION_DATABASE_ID")
+TOKEN = os.getenv("NOTION_API_KEY")
+OFFLINE_LOG = os.getenv("WZ_OFFLINE_LOG", os.path.expanduser("~/.wz_offline_log.jsonl"))
 
-# Создаём директории для логов
-os.makedirs(LOG_DIR, exist_ok=True)
+def log_offline(payload):
+    with open(OFFLINE_LOG, "a") as f:
+        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    print(f"[offline] log saved → {OFFLINE_LOG}")
 
-def generate_request_id(payload):
-    """Генерирует уникальный ID для запроса"""
-    payload_str = json.dumps(payload, sort_keys=True)
-    return hashlib.md5(payload_str.encode()).hexdigest()
-
-def log_locally(payload, response=None):
-    """Логирует запрос и ответ в файл"""
-    log_entry = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "request_id": generate_request_id(payload),
-        "request": payload,
-        "response": response
+def make_payload(args):
+    now = datetime.utcnow().isoformat()
+    fields = {
+        "event": args[1] if len(args) > 1 else "No event",
+        "type": args[2] if len(args) > 2 else "script-event",
+        "source": args[3] if len(args) > 3 else "unknown",
+        "version": args[4] if len(args) > 4 else "1.0",
+        "status": args[5] if len(args) > 5 else "PROPOSED",
+        "category": args[6] if len(args) > 6 else "general",
+        "note": args[7] if len(args) > 7 else "",
     }
-    
-    try:
-        with open(NOTION_LOG_FILE, "a", encoding="utf-8") as f:
-            f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
-        
-        if response:
-            with open(MOCK_RESPONSES, "a", encoding="utf-8") as f:
-                f.write(json.dumps(response, ensure_ascii=False) + "\n")
-    except Exception as e:
-        print(f"[WARNING] Ошибка локального логирования: {e}")
-
-def notion_log_entry(payload):
-    """Основная функция логирования"""
-    # Генерируем mock-ответ
-    mock_response = {
-        "status": "mocked",
-        "request_id": generate_request_id(payload),
-        "timestamp": datetime.now(timezone.utc).isoformat()
+    return {
+        "timestamp": now,
+        "fields": fields
     }
-    
-    # Логируем запрос и ответ
-    log_locally(payload, mock_response)
-    
-    if not os.getenv("NOTION_TOKEN") or not os.getenv("NOTION_LOG_DB_ID"):
-        print("⚠️ NOTION_TOKEN или NOTION_LOG_DB_ID не установлены - используется локальное логирование")
-        return mock_response
-    
-    # В реальной версии здесь будет вызов API Notion
-    print("🔌 [MOCK] Запрос залогирован локально (тестовый режим)")
-    return mock_response
 
-if __name__ == "__main__":
-    try:
-        payload = json.load(sys.stdin)
-        result = notion_log_entry(payload)
-        print(json.dumps(result))
-    except json.JSONDecodeError:
-        print('[ERROR] Неверный JSON-ввод')
-        sys.exit(1)
-    except Exception as e:
-        print(f'[ERROR] Ошибка обработки: {e}')
-        sys.exit(1)
+def send_to_notion(payload):
+    if not TOKEN or not DB_ID:
+        log_offline(payload)
+        return
+    headers = {
+        "Authorization": f"Bearer {TOKEN}",
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "parent": {"database_id": DB_ID},
+        "properties": {
+            "Event": {"title": [{"text": {"content": payload["fields"]["event"]}}]},
+            "Type": {"select": {"name": payload["fields"]["type"]}},
+            "Source": {"rich_text": [{"text": {"content": payload["fields"]["source"]}}]},
+            "Version": {"rich_text": [{"text": {"content": payload["fields"]["version"]}}]},
+            "Status": {"select": {"name": payload["fields"]["status"]}},
+            "Category": {"multi_select": [{"name": tag.strip()} for tag in payload["fields"]["category"].split(",")]},
+            "Note": {"rich_text": [{"text": {"content": payload["fields"]["note"]}}]},
+            "Time": {"date": {"start": payload["timestamp"]}}
+        }
+    }
+    r = requests.post(NOTION_API, headers=headers, json=data)
+    if r.status_code == 200 or r.status_code == 201:
+        print(f"[notion] ✅ Logged: {payload['fields']['event']}")
+    else:
+        print(f"[notion] ❌ Error {r.status_code}, saving offline")
+        log_offline(payload)
+
+# --- Main ---
+if len(sys.argv) < 2 or "--help" in sys.argv:
+    print("Usage: python notion_log_entry.py <event> <type> <source> [version] [status] [category] [note]")
+    sys.exit(0)
+
+payload = make_payload(sys.argv)
+send_to_notion(payload)

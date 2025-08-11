@@ -1,0 +1,85 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# WZ ChatEnd Safe Wrapper v1.3.1 — sanitize путей + "no-exec" тестовый режим
+set -Eeuo pipefail
+
+UTIL_DIR="$HOME/wheelzone-script-utils/scripts/utils"
+CHATEND_ORIG="$HOME/wheelzone-script-utils/scripts/cli/wz_chatend.sh"
+LOG="$HOME/.wz_logs/wz_chatend_safe.log"
+mkdir -p "$(dirname "$LOG")"
+
+# Подключаем санитайзер (если есть)
+. "$UTIL_DIR/path_sanitize.sh" 2>/dev/null || true
+
+log(){ echo "[$(date -u +"%F %T")] $*" >> "$LOG"; }
+
+usage(){
+  cat <<USG
+Usage: $(basename "$0") [--verbose] [--no-sanitize] [--no-exec] [ARGS…] [input.md]
+Пример: $(basename "$0") --auto --push ~/wzbuffer/chatend_test/main.md
+USG
+}
+
+VERBOSE=0
+DO_SAN=1
+NO_EXEC=0
+ARGS=()
+for a in "$@"; do
+  case "$a" in
+    --help|-h) usage; exit 0;;
+    --verbose) VERBOSE=1;;
+    --no-sanitize) DO_SAN=0;;
+    --no-exec) NO_EXEC=1;;
+    *) ARGS+=("$a");;
+  esac
+done
+
+# Определим входной файл (последний аргумент, если это *.md)
+IN=""
+if [ "${#ARGS[@]}" -gt 0 ]; then
+  last="${ARGS[-1]}"
+  case "$last" in
+    *.md) IN="$last"; unset 'ARGS[${#ARGS[@]}-1]';;
+  esac
+fi
+
+# Если вход не указан — используем тестовый файл (не ошибка)
+[ -z "$IN" ] && IN="$HOME/wzbuffer/chatend_test/main.md"
+
+if [ ! -x "$CHATEND_ORIG" ]; then
+  echo "[ERR] Не найден оригинальный wz_chatend.sh: $CHATEND_ORIG" >&2
+  exit 1
+fi
+
+# Подготовка входа: если есть — создаём санитайз-копию
+TMP_IN=""
+if [ -n "$IN" ] && [ -f "$IN" ]; then
+  if [ "$DO_SAN" -eq 1 ] && command -v wz_sanitize_file >/dev/null 2>&1; then
+    mkdir -p "$HOME/.wz_tmp"
+    base="$(basename "$IN")"
+    TMP_IN="$HOME/.wz_tmp/sanitized_${base%.*}_$(date +%s).md"
+    wz_sanitize_file "$IN" "$TMP_IN" || { echo "[WARN] sanitize failed, fallback to original" >&2; TMP_IN="$IN"; }
+    [ "$VERBOSE" -eq 1 ] && echo "[SAN] → $TMP_IN"
+  else
+    TMP_IN="$IN"
+  fi
+fi
+
+log "RUN: chatend orig with args=[${ARGS[*]}] input=${TMP_IN:-none} san=$DO_SAN noexec=$NO_EXEC"
+if [ -n "$TMP_IN" ]; then
+  if [ "$NO_EXEC" -eq 1 ]; then
+    bash "$CHATEND_ORIG" "${ARGS[@]}" "$TMP_IN"
+  else
+    exec bash "$CHATEND_ORIG" "${ARGS[@]}" "$TMP_IN"
+  fi
+else
+  if [ "$NO_EXEC" -eq 1 ]; then
+    bash "$CHATEND_ORIG" "${ARGS[@]}"
+  else
+    exec bash "$CHATEND_ORIG" "${ARGS[@]}"
+  fi
+fi
+# === copy output to Android clipboard ===
+if command -v termux-clipboard-set >/dev/null 2>&1; then
+  termux-clipboard-set < "$TMP_IN" 2>/dev/null || true
+  echo "[OK] Вывод скопирован в буфер (Termux clipboard)"
+fi

@@ -1,0 +1,144 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# WheelZone ChatEnd Generator v1.5.0 — HyperOS/Android 15 Termux Edition
+
+set -eo pipefail
+shopt -s nullglob failglob nocasematch
+
+readonly DEFAULT_OUTPUT_DIR="${HOME}/wz-wiki/WZChatEnds"
+readonly TIMESTAMP="$(date +%Y%m%d-%H%M%S-%3N)"
+readonly UUID="$(cat /proc/sys/kernel/random/uuid || uuidgen || python3 -c 'import uuid; print(uuid.uuid4())')"
+readonly SLUG="$(basename "$(pwd)" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-')"
+readonly FILENAME="${TIMESTAMP}-${UUID//-/}-${SLUG}.md"
+readonly OUTPUT_PATH="${DEFAULT_OUTPUT_DIR}/${FILENAME}"
+readonly BUFFER_DIR="$HOME/wzbuffer"
+readonly END_BLOCKS_FILE="${BUFFER_DIR}/end_blocks.txt"
+readonly INSIGHTS_FILE="${BUFFER_DIR}/tmp_insights.txt"
+readonly FRACTAL_LOG="${BUFFER_DIR}/fractal_processing.log"
+
+mkdir -p "$DEFAULT_OUTPUT_DIR" "$BUFFER_DIR"
+: > "$FRACTAL_LOG"
+
+normalize_path() {
+    local path="$1"
+    path="${path#:}"
+    path="${path//[\'\"]/}"
+    [[ "$path" == ~* ]] && path="${path/#\~/$HOME}"
+    if command -v realpath >/dev/null; then
+        realpath -m "$path" 2>/dev/null || echo "$path"
+    else
+        echo "$path"
+    fi
+}
+
+log_fractal() {
+    echo "[$(date +%H:%M:%S)] $*" >> "$FRACTAL_LOG"
+}
+
+process_fractal_lines() {
+    local input_file="$1"
+    local depth="${2:-0}"
+    local max_depth=5
+
+    if (( depth > max_depth )); then
+        log_fractal "⚠️ Достигнута максимальная глубина рекурсии ($max_depth)"
+        return 0
+    fi
+
+    if [[ ! -f "$input_file" ]]; then
+        log_fractal "❌ Файл не существует: $input_file"
+        return 1
+    fi
+
+    local indent=$(printf '%*s' "$((depth * 2))" "")
+    local header_label
+
+    case "$depth" in
+        0) header_label="# Основной ChatEnd" ;;
+        1) header_label="# Вложенный ChatEnd" ;;
+        2) header_label="# Глубокий ChatEnd" ;;
+        *) header_label="# Уровень $depth" ;;
+    esac
+
+    echo -e "\n${indent}${header_label}"
+    echo "${indent}<!-- source: $(basename "$input_file") -->"
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        if [[ "$line" =~ \[\[FRACTAL:(.*)\]\] ]]; then
+            local raw_path="${BASH_REMATCH[1]}"
+            local normalized_path=$(normalize_path "$raw_path")
+
+            if [[ -f "$normalized_path" ]]; then
+                log_fractal "🔍 Обработка: $normalized_path (из $input_file)"
+                process_fractal_lines "$normalized_path" "$((depth + 1))"
+            else
+                log_fractal "⚠️ Файл не найден: $normalized_path (из $input_file)"
+                echo "${indent}⚠️ Вложенный файл не найден: $(basename "$normalized_path")"
+            fi
+        else
+            echo "${indent}${line}"
+        fi
+    done < "$input_file"
+}
+
+generate_yaml_blocks() {
+    local output_file="$1"
+    {
+        echo "# Generated: $(date -Iseconds)"
+        echo "uuid: ${UUID}"
+        echo "slug: ${SLUG}"
+        echo "timestamp: ${TIMESTAMP}"
+        echo "chatend_file: ${FILENAME}"
+        echo "blocks:"
+        grep -Pzo '(?s)(?<=^|[\n\r])```(DONE|TODO|INSIGHT|RULE)\n.*?\n```' "$END_BLOCKS_FILE" |
+            awk 'BEGIN{RS="```"; ORS=""} 
+                 /^(DONE|TODO|INSIGHT|RULE)\n/ {
+                     gsub(/\n/, "\n  ", $0);
+                     print "  - |\n    " $0 "\n"
+                 }'
+    } > "${output_file}"
+}
+
+generate_final_report() {
+    {
+        echo "# ChatEnd Report"
+        echo "**UUID:** ${UUID}"
+        echo "**Slug:** ${SLUG}"
+        echo "**Generated:** ${TIMESTAMP}"
+        echo
+        echo "## Summary"
+        echo "Total blocks processed: $(grep -c '^-' "${BUFFER_DIR}/end_blocks.yaml")"
+        echo
+        echo "## Detailed Blocks"
+        cat "$END_BLOCKS_FILE"
+        echo
+        if [[ -s "$INSIGHTS_FILE" ]]; then
+            echo "## Key Insights"
+            cat "$INSIGHTS_FILE"
+        fi
+        if [[ -s "$FRACTAL_LOG" ]]; then
+            echo "## Processing Log"
+            echo '```log'
+            cat "$FRACTAL_LOG"
+            echo '```'
+        fi
+    } > "$OUTPUT_PATH"
+    echo "✅ ChatEnd saved to: ${OUTPUT_PATH}"
+}
+
+main() {
+    local mode="$1"
+    local input_file="$2"
+
+    case "$mode" in
+        --fractal)
+            [[ -z "$input_file" ]] && { echo "Usage: $0 --fractal <input_file>" >&2; exit 1; }
+            process_fractal_lines "$input_file"
+            ;;
+        *)
+            generate_yaml_blocks "${BUFFER_DIR}/end_blocks.yaml"
+            generate_final_report
+            ;;
+    esac
+}
+
+main "$@"

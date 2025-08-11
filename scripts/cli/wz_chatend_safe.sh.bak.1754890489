@@ -1,0 +1,97 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# WZ ChatEnd Safe Wrapper v1.4 — sanitize + no-exec + FRACTAL LOG proxy
+set -Eeuo pipefail
+
+UTIL_DIR="$HOME/wheelzone-script-utils/scripts/utils"
+CHATEND_ORIG="${CHATEND_ORIG:-$HOME/wheelzone-script-utils/scripts/cli/wz_chatend.sh}"
+SAFE_LOG="$HOME/.wz_logs/wz_chatend_safe.log"
+FRAC_LOG="$HOME/.wz_logs/fractal_chatend.log"
+TMP_DIR="$HOME/.wz_tmp"
+mkdir -p "$(dirname "$SAFE_LOG")" "$TMP_DIR"
+
+# Санитайзер (если есть)
+. "$UTIL_DIR/path_sanitize.sh" 2>/dev/null || true
+
+log(){ echo "[$(date -u +"%F %T")] $*" >> "$SAFE_LOG"; }
+
+usage(){
+  cat <<USG
+Usage: $(basename "$0") [--verbose] [--no-sanitize] [--no-exec] [ARGS…] [input.md]
+Пример: $(basename "$0") --auto --push ~/wzbuffer/chatend_test/main.md
+USG
+}
+
+VERBOSE=0
+DO_SAN=1
+NO_EXEC=0
+ARGS=()
+for a in "$@"; do
+  case "$a" in
+    --help|-h) usage; exit 0;;
+    --verbose) VERBOSE=1;;
+    --no-sanitize) DO_SAN=0;;
+    --no-exec) NO_EXEC=1;;
+    *) ARGS+=("$a");;
+  esac
+done
+
+# Определяем входной файл (последний *.md)
+IN=""
+if [ "${#ARGS[@]}" -gt 0 ]; then
+  last="${ARGS[-1]}"
+  case "$last" in
+    *.md) IN="$last"; unset 'ARGS[${#ARGS[@]}-1]';;
+  esac
+fi
+[ -z "$IN" ] && IN="$HOME/wzbuffer/chatend_test/main.md"
+
+[ -x "$CHATEND_ORIG" ] || { echo "[ERR] Не найден: $CHATEND_ORIG" >&2; exit 1; }
+
+# Подготовка входа: санитайз-копия (если есть файл)
+TMP_IN=""
+if [ -n "$IN" ] && [ -f "$IN" ]; then
+  if [ "$DO_SAN" -eq 1 ] && command -v wz_sanitize_file >/dev/null 2>&1; then
+    base="$(basename "$IN")"
+    TMP_IN="$TMP_DIR/sanitized_${base%.*}_$(date +%s).md"
+    wz_sanitize_file "$IN" "$TMP_IN" || { echo "[WARN] sanitize failed, fallback to original" >&2; TMP_IN="$IN"; }
+    [ "$VERBOSE" -eq 1 ] && echo "[SAN] → $TMP_IN"
+  else
+    TMP_IN="$IN"
+  fi
+fi
+
+# Запуск с проксированием вывода в FRACTAL_LOG
+run_with_log(){
+  local ec tmp_ec="$TMP_DIR/ret.$$"
+  # Заголовок запуска (как раньше в фрактальном стиле)
+  echo "[$(date -u +'%Y-%m-%d %H:%M:%S')] RUN: chatend orig with args=[${ARGS[*]:-}] input=${1:-none} san=$DO_SAN noexec=$NO_EXEC" >> "$SAFE_LOG"
+
+  if [ -n "${1:-}" ]; then
+    # с входным файлом
+    ( bash "$CHATEND_ORIG" "${ARGS[@]}" "$1"; echo $? > "$tmp_ec" ) 2>&1 | tee -a "$FRAC_LOG" >/dev/null
+  else
+    # без входного файла
+    ( bash "$CHATEND_ORIG" "${ARGS[@]}"; echo $? > "$tmp_ec" ) 2>&1 | tee -a "$FRAC_LOG" >/dev/null
+  fi
+  ec="$(cat "$tmp_ec" 2>/dev/null || echo 0)"
+  rm -f "$tmp_ec"
+  return "$ec"
+}
+
+log "RUN: chatend orig with args=[${ARGS[*]:-}] input=${TMP_IN:-none} san=$DO_SAN noexec=$NO_EXEC"
+if [ "$NO_EXEC" -eq 1 ]; then
+  # Без exec: не ломаем текущую оболочку и логируем вывод
+  if [ -n "$TMP_IN" ]; then
+    run_with_log "$TMP_IN"
+  else
+    run_with_log
+  fi
+  exit $?
+else
+  # С exec: заменяет процесс; логируем через оболочку перед exec — нельзя, поэтому no-exec рекомендуется
+  if [ -n "$TMP_IN" ]; then
+    exec bash "$CHATEND_ORIG" "${ARGS[@]}" "$TMP_IN"
+  else
+    exec bash "$CHATEND_ORIG" "${ARGS[@]}"
+  fi
+fi
