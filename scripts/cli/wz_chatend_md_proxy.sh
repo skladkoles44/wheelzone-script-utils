@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# WZ ChatEnd MD Proxy v0.2 — Include-preprocess: expand ~ / $HOME, colon-strip, log
+# WZ ChatEnd MD Proxy v0.4 — Include-preprocess: expand ~ / $HOME (sed), colon-strip, TRACE raw/sane
 set -Eeuo pipefail
 
 SAFE_LOG="$HOME/.wz_logs/wz_chatend_safe.log"
@@ -14,33 +14,32 @@ flog(){ echo "[$(ts)] $*" >> "$FRAC_LOG"; }
 wz_trim(){ sed -e 's/^[[:space:]]\+//' -e 's/[[:space:]]\+$//' -e 's/\r$//'; }
 
 wz_expand_home(){
-  # 1 arg -> stdout; strip leading ':', quotes; expand ~ and $HOME; normalize //
+  # stdin/arg → stdout; strip leading ':', quotes; expand via sed; normalize //
   local p; p="$1"
   p="${p#:}"                 # strip leading ':'
-  p="${p%\"}"; p="${p#\"}"   # strip "
-  p="${p%\'}"; p="${p#\'}"   # strip '
+  p="${p%\"}"; p="${p#\"}"   # strip double quotes
+  p="${p%\'}"; p="${p#\'}"   # strip single quotes
   p="$(printf '%s' "$p" | wz_trim)"
-  case "$p" in
-    \$HOME|\$HOME/*) p="${p/#\$HOME/$HOME}";;
-    ~|~/*)           p="${p/#~/$HOME}";;
-  esac
+  # жёсткая подстановка (без хитростей case/замены) — сначала $HOME, затем ~
+  p="$(printf '%s' "$p" | sed -e "s#^\$HOME#$HOME#" -e "s#^~#$HOME#")"
+  # нормализация // (не трогаем протоколы)
   printf '%s' "$p" | sed -E 's#(^|[^:])//+#***REMOVED***/#g'
 }
 
 preprocess_md(){
-  # in=$1; out=$2
   local in="$1" out="$2"
   [ -f "$in" ] || { flog "⚠️ input missing: $in"; return 0; }
   flog "🌿 Препроцессинг: $in (depth=1)"
   : > "$out"
 
-  # shellcheck disable=SC2002
+  local raw sane line
   while IFS= read -r line || [ -n "$line" ]; do
     case "$line" in
       Include:*)
         raw="${line#Include:}"
         raw="$(printf '%s' "$raw" | wz_trim)"
         sane="$(wz_expand_home "$raw")"
+        flog "🔎 Include raw='$raw' sane='$sane'"
         if [ -f "$sane" ]; then
           flog "✅ Include OK: $raw → $sane"
           {
@@ -85,5 +84,5 @@ pp="$TMP_DIR/pp_${bn%.*}_$EPOCHSECONDS.md"
 preprocess_md "$in_md" "$pp"
 slog "MD→ORIG: $in_md -> $pp"
 
-# Передаём в оригинал в режиме --md
+# Делегируем в оригинал (он сам выведет "🔧 Markdown..." если без своей MD-генерации)
 exec bash --norc "$CHATEND_ORIG" --md "$pp"
