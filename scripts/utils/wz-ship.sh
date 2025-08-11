@@ -65,9 +65,17 @@ chmod +x ~/wheelzone-script-utils/scripts/services/wz_uuid_orchestrator \
 R
 
 # --- 6) финальная проверка на VPS ---
+
 ssh -p "$PORT" "$REMOTE" '
+
   set -euo pipefail
+
   WZ_CI_JSON_LOG=1 ~/wheelzone-script-utils/scripts/utils/check_uuid_index.py \
+
     --check-all ~/wz-wiki/docs/index_uuid.md \
+
     --policy    ~/wz-wiki/registry/uuid_orchestrator.yaml
+
 '
+
+echo "✅ SHIP OK: wiki synced, validator green"
