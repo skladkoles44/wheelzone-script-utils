@@ -4,31 +4,21 @@ set -Eeuo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-# Подключаем утилиты
-if [ -f ".wz/fractal_uuid_utils.sh" ]; then
-  # shellcheck disable=SC1091
-  source ".wz/fractal_uuid_utils.sh"
-else
-  echo "[WZ][WARN] .wz/fractal_uuid_utils.sh не найден — пропускаю проверку"
-  exit 0
-fi
+# shellcheck disable=SC1091
+source ".wz/fractal_uuid_utils.sh" || { echo "[WZ][WARN] utils missing"; exit 0; }
 
 SCOPE="${WZ_PREPUSH_SCOPE:-changed}"   # changed|all
-AUTOFIX="${WZ_PREPUSH_AUTOFIX:-1}"     # 1=включён автофикс
+AUTOFIX="${WZ_PREPUSH_AUTOFIX:-1}"     # 1 = автофикс
+ext_re="$(printf '(%s)$' "$(echo "$TARGET_EXT" | sed 's/ /|/g')")"
 
-list_changed_md(){
-  git diff --cached --name-only --diff-filter=ACMRT | grep -iE '\.md$' || true
+list_changed(){
+  git diff --cached --name-only --diff-filter=ACMRT | grep -Ei "\.${ext_re}" || true
 }
-
-list_all_md(){
-  git ls-files '*.md' '*.MD' || true
+list_all(){
+  git ls-files | grep -Ei "\.${ext_re}" || true
 }
-
 collect_targets(){
-  case "$SCOPE" in
-    all)   list_all_md ;;
-    *)     list_changed_md ;;
-  esac | awk 'NF'
+  case "$SCOPE" in all) list_all ;; *) list_changed ;; esac | awk 'NF'
 }
 
 missing=()
@@ -48,8 +38,7 @@ printf '%s\n' "${missing[@]}"
 if [ "$AUTOFIX" = "1" ]; then
   echo "[WZ] Автофикс фронтматтера…"
   ensure_files_have_uuid "${missing[@]}"
-  echo "[WZ] Сформирован коммит с фиксом. Повтори: git push"
+  echo "[WZ] Коммит с фиксом создан. Повтори: git push"
 fi
 
-# останавливаем текущий push
 exit 1
