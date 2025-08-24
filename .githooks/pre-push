@@ -1,0 +1,55 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -Eeuo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+# Подключаем утилиты
+if [ -f ".wz/fractal_uuid_utils.sh" ]; then
+  # shellcheck disable=SC1091
+  source ".wz/fractal_uuid_utils.sh"
+else
+  echo "[WZ][WARN] .wz/fractal_uuid_utils.sh не найден — пропускаю проверку"
+  exit 0
+fi
+
+SCOPE="${WZ_PREPUSH_SCOPE:-changed}"   # changed|all
+AUTOFIX="${WZ_PREPUSH_AUTOFIX:-1}"     # 1=включён автофикс
+
+list_changed_md(){
+  git diff --cached --name-only --diff-filter=ACMRT | grep -iE '\.md$' || true
+}
+
+list_all_md(){
+  git ls-files '*.md' '*.MD' || true
+}
+
+collect_targets(){
+  case "$SCOPE" in
+    all)   list_all_md ;;
+    *)     list_changed_md ;;
+  esac | awk 'NF'
+}
+
+missing=()
+while IFS= read -r f; do
+  [ -f "$f" ] || continue
+  path_ignored "$f" && continue
+  has_uuid_in_frontmatter "$f" || missing+=( "$f" )
+done < <(collect_targets)
+
+if [ "${#missing[@]}" -eq 0 ]; then
+  exit 0
+fi
+
+printf '[WZ][FAIL] Missing fractal_uuid in %d file(s):\n' "${#missing[@]}"
+printf '%s\n' "${missing[@]}"
+
+if [ "$AUTOFIX" = "1" ]; then
+  echo "[WZ] Автофикс фронтматтера…"
+  ensure_files_have_uuid "${missing[@]}"
+  echo "[WZ] Сформирован коммит с фиксом. Повтори: git push"
+fi
+
+# останавливаем текущий push
+exit 1
