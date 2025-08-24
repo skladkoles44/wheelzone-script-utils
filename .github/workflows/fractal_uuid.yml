@@ -1,0 +1,47 @@
+name: fractal_uuid
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      MAX_DEPTH: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install -y file
+      - name: Check
+        run: bash scripts/ci/check_fractal_uuid.sh
+
+  autofix:
+    if: ${{ failure() && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    env:
+      MAX_DEPTH: 12
+      BATCH: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install -y file
+      - name: Auto-fix
+        run: bash scripts/ci/autofix_fractal_uuid.sh .
+      - name: Commit & Push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(fractal_uuid): autofix missing headers"
+          branch: ${{ github.ref_name }}
+          commit_author: "wz-actions-bot <bot@wheelzone>"
