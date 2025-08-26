@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:11:13+03:00-fallback-1303
+# title: wzprod CLI
+# version: 1.2.0
+# component: cli
+# description: WheelZone Production Prompt helper (pretty/menu/apply)
+# updated_at: 2025-08-26T13:11:13+03:00
+
 # WheelZone :: wzprod — просмотрщик/помощник для Production Prompt
 # Версия: 1.2.0 | Termux/Android 15 | без root
 set -Eeuo pipefail; IFS=$'\n\t'
