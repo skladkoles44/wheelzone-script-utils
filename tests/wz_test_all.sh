@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:46+03:00-1286515721
+# title: wz_test_all.sh
+# component: .
+# updated_at: 2025-08-26T13:19:46+03:00
+
 set -eo pipefail
 logfile="$HOME/.wz_logs/test_results.log"
 echo "=== Тестирование всех скриптов: $(date) ===" > "$logfile"

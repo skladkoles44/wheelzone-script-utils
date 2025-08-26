@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:08+03:00-2574456172
+# title: fix_fractal_double_colon.sh
+# component: .
+# updated_at: 2025-08-26T13:19:08+03:00
+
 # 🚑 Финальный FIX: устраняет двойное двоеточие FRACTAL::/...
 
 TARGET="$HOME/wheelzone-script-utils/scripts/wz_chatend.sh"

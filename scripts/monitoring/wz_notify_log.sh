@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:30+03:00-1722099789
+# title: wz_notify_log.sh
+# component: .
+# updated_at: 2025-08-26T13:19:30+03:00
+
 # wz_notify_log.sh v1.0.0 — безопасный логер для событий WheelZone
 
 EVENT="$1"

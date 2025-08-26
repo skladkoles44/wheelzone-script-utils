@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:17+03:00-2577794612
+# title: vz_run_with_task.sh
+# component: .
+# updated_at: 2025-08-26T13:20:17+03:00
+
 
 # Запуск сервера
 echo "🔄 Запускаем сервер..."

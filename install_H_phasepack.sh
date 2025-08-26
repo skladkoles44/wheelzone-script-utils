@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:07+03:00-1351829593
+# title: install_H_phasepack.sh
+# component: .
+# updated_at: 2025-08-26T13:20:07+03:00
+
 
 # Переместить все скрипты фаз
 for script in linked_profiles_validator.py plate_retry_manager.py fingerprint_rotator.py dom_fragment_indexer.py personality_history_tracker.py; do

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash -l
+# uuid: 2025-08-26T13:19:42+03:00-3684727051
+# title: wz_check_recursion.sh
+# component: .
+# updated_at: 2025-08-26T13:19:42+03:00
+
 # WZ Recursion Scanner v2.1 — Atomic Pattern Finder
 set -euo pipefail
 shopt -s globstar nullglob

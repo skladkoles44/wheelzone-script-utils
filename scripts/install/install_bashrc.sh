@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:27+03:00-964645541
+# title: install_bashrc.sh
+# component: .
+# updated_at: 2025-08-26T13:19:27+03:00
+
 # install_bashrc.sh — Установка WZ .bashrc v6.1 (HyperOS / Termux)
 
 set -euo pipefail

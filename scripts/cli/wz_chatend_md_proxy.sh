@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:23+03:00-3342434645
+# title: wz_chatend_md_proxy.sh
+# component: .
+# updated_at: 2025-08-26T13:19:23+03:00
+
 # WZ ChatEnd MD Proxy v0.4 — Include-preprocess: expand ~ / $HOME (sed), colon-strip, TRACE raw/sane
 set -Eeuo pipefail
 

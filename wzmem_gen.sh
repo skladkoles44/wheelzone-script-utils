@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:19+03:00-1126309402
+# title: wzmem_gen.sh
+# component: .
+# updated_at: 2025-08-26T13:20:19+03:00
+
 # Генерация файла WZ_Memory_Structure.txt
 
 out_path="$HOME/storage/downloads/project_44/Termux/WZ_Memory_Structure.txt"

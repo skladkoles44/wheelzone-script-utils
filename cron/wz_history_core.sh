@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:07+03:00-3411172202
+# title: wz_history_core.sh
+# component: .
+# updated_at: 2025-08-26T13:19:07+03:00
+
 # WZ History Core v1.2.1-fractal — fractal UUID + MD5 manifest (Termux, jq fix)
 set -eo pipefail
 

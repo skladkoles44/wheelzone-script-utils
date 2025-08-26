@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:38+03:00-2603610093
+# title: patch_wz_chatend_include_extract.sh
+# component: .
+# updated_at: 2025-08-26T13:19:38+03:00
+
 set -Eeuo pipefail
 
 inject_extract_guard() {

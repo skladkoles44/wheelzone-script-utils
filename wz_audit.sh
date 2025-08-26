@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:17+03:00-3424901815
+# title: wz_audit.sh
+# component: .
+# updated_at: 2025-08-26T13:20:17+03:00
+
 echo "[AUDIT] Запуск аудита WheelZone..."
 cd ~/storage/downloads/project_44/MetaSystem/
 echo "[+] Проверка file_versions_index.json:"

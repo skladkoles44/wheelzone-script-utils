@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:34+03:00-4166732992
+# title: check_autoprefix.sh
+# component: .
+# updated_at: 2025-08-26T13:19:34+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 # WZ Check: rule-autoprefix-paths — гибрид v2.0 (WBP)
 

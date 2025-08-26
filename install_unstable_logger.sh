@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:09+03:00-587452158
+# title: install_unstable_logger.sh
+# component: .
+# updated_at: 2025-08-26T13:20:09+03:00
+
 
 # Переместить скрипт
 mv ~/storage/downloads/unstable_logger.py ~/storage/shared/Projects/wheelzone/bootstrap_tool/scripts/

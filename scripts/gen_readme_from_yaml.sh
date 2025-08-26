@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:27+03:00-2808468477
+# title: gen_readme_from_yaml.sh
+# component: .
+# updated_at: 2025-08-26T13:19:27+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 # Автогенератор README.md на основе wz_ai_rule.yml
 

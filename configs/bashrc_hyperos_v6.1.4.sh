@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:53+03:00-483667448
+# title: bashrc_hyperos_v6.1.4.sh
+# component: configs
+# updated_at: 2025-08-26T13:19:53+03:00
+
 # ~/.bashrc — WZ Termux Core v6.1.4 (HyperOS safe & stable)
 
 # ========== ПЕРЕМЕННЫЕ ==========

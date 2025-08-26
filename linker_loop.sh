@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:20:10+03:00-3264706915
+# title: linker_loop.sh
+# component: .
+# updated_at: 2025-08-26T13:20:10+03:00
+
 
 #!/data/data/com.termux/files/usr/bin/bash
 

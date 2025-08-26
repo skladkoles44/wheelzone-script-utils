@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:29+03:00-2163413923
+# title: wz_notify.sh
+# component: .
+# updated_at: 2025-08-26T13:19:29+03:00
+
 # WZ Notify v10.0.0 — Fractal Logging (Loki/FractalDB Edition)
 set -eo pipefail
 IFS=$'\n\t'

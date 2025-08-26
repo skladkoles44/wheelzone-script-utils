@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:28+03:00-2044782342
+# title: wz_log_event_loki.sh
+# component: .
+# updated_at: 2025-08-26T13:19:28+03:00
+
 # WZ Loki Logger v1.1 — Optimized Loki Client
 
 set -eo pipefail

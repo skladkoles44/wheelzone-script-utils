@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:25+03:00-1324598217
+# title: wz_cron_daemon.sh
+# component: .
+# updated_at: 2025-08-26T13:19:25+03:00
+
 # wz_cron_daemon.sh — Псевдо-cron для Termux (WZ-style)
 set -euo pipefail
 shopt -s nullglob

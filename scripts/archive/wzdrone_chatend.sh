@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:21+03:00-3809528891
+# title: wzdrone_chatend.sh
+# component: .
+# updated_at: 2025-08-26T13:19:21+03:00
+
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 

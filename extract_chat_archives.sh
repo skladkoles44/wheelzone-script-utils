@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:58+03:00-1691595586
+# title: extract_chat_archives.sh
+# component: .
+# updated_at: 2025-08-26T13:19:58+03:00
+
 
 # Создание директорий
 mkdir -p ~/storage/downloads/project_44/Termux/AccountMemory/zips

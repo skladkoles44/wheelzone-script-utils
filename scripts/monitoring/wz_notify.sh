@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:30+03:00-233597266
+# title: wz_notify.sh
+# component: .
+# updated_at: 2025-08-26T13:19:30+03:00
+
 # wz_notify.sh — отправка уведомлений о событиях WZ
 set -euo pipefail
 

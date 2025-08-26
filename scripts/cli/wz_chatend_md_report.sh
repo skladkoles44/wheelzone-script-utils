@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:24+03:00-2447811328
+# title: wz_chatend_md_report.sh
+# component: .
+# updated_at: 2025-08-26T13:19:24+03:00
+
 # WZ ChatEnd MD Report v1.0 — прогон через MD-прокси + отчёт (safe/fractal)
 set -Eeuo pipefail
 

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:44+03:00-2178638675
+# title: wz_checklist_engine.sh
+# component: .
+# updated_at: 2025-08-26T13:19:44+03:00
+
 # WZ Checklist Engine v3.1 — Fractal Edition (виджет+UI+логика+снапшоты)
 
 set -euo pipefail

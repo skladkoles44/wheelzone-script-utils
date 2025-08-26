@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:43+03:00-203737149
+# title: wz_server_diagnose.sh
+# component: .
+# updated_at: 2025-08-26T13:19:43+03:00
+
 set -eEuo pipefail
 trap '_error_handler $?' ERR
 

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:21+03:00-1554616440
+# title: wz_script_audit.sh
+# component: .
+# updated_at: 2025-08-26T13:19:21+03:00
+
 # WZ Fractal Script Auditor v4.0 — Termux + VPS + Noiton
 set -euo pipefail
 IFS=$'\n\t'

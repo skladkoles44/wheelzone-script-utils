@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:41+03:00-2460032081
+# title: wz-ship.sh
+# component: .
+# updated_at: 2025-08-26T13:19:41+03:00
+
 set -euo pipefail
 
 # --- конфиг ---

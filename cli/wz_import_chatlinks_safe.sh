@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:06+03:00-849047695
+# title: wz_import_chatlinks_safe.sh
+# component: .
+# updated_at: 2025-08-26T13:19:06+03:00
+
 set -e
 
 CSV_PATH="$HOME/wzbuffer/notion_csv_templates/chatlink_map.csv"

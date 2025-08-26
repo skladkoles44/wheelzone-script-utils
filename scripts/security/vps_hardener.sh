@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:33+03:00-3664615717
+# title: vps_hardener.sh
+# component: .
+# updated_at: 2025-08-26T13:19:33+03:00
+
 # vps_hardener.sh — Автоматическая настройка безопасности VPS
 
 set -euo pipefail

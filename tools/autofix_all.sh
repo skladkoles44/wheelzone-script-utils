@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:46+03:00-1444908013
+# title: autofix_all.sh
+# component: .
+# updated_at: 2025-08-26T13:19:46+03:00
+
 # tools/autofix_all.sh — Автоформатирование и исправление по WZ
 
 set -eo pipefail

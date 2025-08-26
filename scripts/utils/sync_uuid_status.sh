@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:40+03:00-2660548084
+# title: sync_uuid_status.sh
+# component: .
+# updated_at: 2025-08-26T13:19:40+03:00
+
 set -euo pipefail
 
 # === CONFIG ===

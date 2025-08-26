@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:11+03:00-2765374270
+# title: meta_generate.sh
+# component: .
+# updated_at: 2025-08-26T13:20:11+03:00
+
 # Сценарий генерации ядровых файлов управления WheelZone
 # Версия: 1.0
 # Автор: GPT

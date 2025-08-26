@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:45+03:00-3769075656
+# title: chatend_sanitize_regress.sh
+# component: .
+# updated_at: 2025-08-26T13:19:45+03:00
+
 # WZ ChatEnd Sanitize Regression (local) v1.0
 set -Eeuo pipefail
 

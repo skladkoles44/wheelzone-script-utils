@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:11+03:00-3535680727
+# title: meta_autogen.sh
+# component: .
+# updated_at: 2025-08-26T13:20:11+03:00
+
 # Полная генерация управляющих meta-файлов WheelZone
 # Версия: 2.0
 cd ~/storage/downloads/project_44/MetaSystem/

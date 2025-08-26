@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:35+03:00-847479778
+# title: finalize_core_block.sh
+# component: .
+# updated_at: 2025-08-26T13:19:35+03:00
+
 set -eo pipefail
 
 echo "⚙️ Запуск финализации ядра WZ и массовой регистрации правил..."

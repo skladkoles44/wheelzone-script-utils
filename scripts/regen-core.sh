@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:33+03:00-2181516023
+# title: regen-core.sh
+# component: .
+# updated_at: 2025-08-26T13:19:33+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 
 # regen-core.sh — Валидация и восстановление core.yaml

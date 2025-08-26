@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:25+03:00-1124023325
+# title: wz_sync_cron_list.sh
+# component: .
+# updated_at: 2025-08-26T13:19:25+03:00
+
 # wz_sync_cron_list.sh — копирует CRON-список в Git и пушит
 set -euo pipefail
 

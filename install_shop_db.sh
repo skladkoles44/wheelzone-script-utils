@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:09+03:00-1309217789
+# title: install_shop_db.sh
+# component: .
+# updated_at: 2025-08-26T13:20:09+03:00
+
 
 # === Настройки подключения (замени при необходимости) ===
 SSH_KEY="$HOME/.ssh/id_ed25519"

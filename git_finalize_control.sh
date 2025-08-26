@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:20:01+03:00-2692681712
+# title: git_finalize_control.sh
+# component: .
+# updated_at: 2025-08-26T13:20:01+03:00
+
 
 REPO_DIR="$HOME/wheelzone/auto-framework"
 LOG_DIR="$HOME/wheelzone/auto-framework/logs/git"

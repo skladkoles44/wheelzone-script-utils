@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:36+03:00-3717915047
+# title: index_rules.sh
+# component: .
+# updated_at: 2025-08-26T13:19:36+03:00
+
 # WZ Rule Indexer v1.0 — Создаёт rules_index.yaml из YAML-заголовков всех правил
 
 set -eo pipefail

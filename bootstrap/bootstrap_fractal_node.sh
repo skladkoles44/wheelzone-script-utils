@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:50+03:00-3803334415
+# title: bootstrap_fractal_node.sh
+# component: bootstrap
+# updated_at: 2025-08-26T13:19:51+03:00
+
 # WZ Fractal Node Installer v3.1.0 — WZ Noiton Ready
 set -eo pipefail
 IFS=$'\n\t'

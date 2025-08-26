@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:56+03:00-1718337792
+# title: digest_watch.sh
+# component: .
+# updated_at: 2025-08-26T13:19:56+03:00
+
 
 DIGEST="$HOME/storage/downloads/project_44/Termux/Digest/daily_digest_$(date +%Y-%m-%d).md"
 TOKEN="7593126254:AAG61-IsOp1H-MaZcGVc2jRBm8WrXMmkYFA"

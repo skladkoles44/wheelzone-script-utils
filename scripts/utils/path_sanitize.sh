@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:39+03:00-4179961135
+# title: path_sanitize.sh
+# component: .
+# updated_at: 2025-08-26T13:19:39+03:00
+
 # WZ Path Sanitize v1.0 — убираем ведущие ":" и разворачиваем "~" → $HOME
 set -Eeuo pipefail
 

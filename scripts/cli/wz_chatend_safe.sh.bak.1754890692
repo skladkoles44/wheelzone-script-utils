@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:24+03:00-2967750524
+# title: wz_chatend_safe.sh.bak.1754890692
+# component: .
+# updated_at: 2025-08-26T13:19:24+03:00
+
 # WZ ChatEnd Safe Wrapper v1.4 — sanitize + no-exec + FRACTAL LOG proxy
 set -Eeuo pipefail
 

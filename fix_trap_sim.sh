@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:59+03:00-2973442841
+# title: fix_trap_sim.sh
+# component: .
+# updated_at: 2025-08-26T13:19:59+03:00
+
 
 #!/data/data/com.termux/files/usr/bin/bash
 

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:56+03:00-2292011359
+# title: daily_snapshot.sh
+# component: .
+# updated_at: 2025-08-26T13:19:56+03:00
+
 export PATH=/data/data/com.termux/files/usr/bin:/data/data/com.termux/files/usr/bin/applets:$PATH
 
 cd ~/wheelzone/bootstrap_tool/

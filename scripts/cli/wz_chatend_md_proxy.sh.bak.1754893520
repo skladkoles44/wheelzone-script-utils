@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:23+03:00-3873433693
+# title: wz_chatend_md_proxy.sh.bak.1754893520
+# component: .
+# updated_at: 2025-08-26T13:19:23+03:00
+
 # WZ ChatEnd MD Proxy v0.3
 # - Автодетект оригинала wz_chatend.sh в wz-wiki
 # - Препроцессинг Include: (поддержка "Include: ~/...", "Include:~/...", "Include:$HOME/...")

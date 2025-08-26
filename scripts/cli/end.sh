@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:22+03:00-1897095000
+# title: end.sh
+# component: .
+# updated_at: 2025-08-26T13:19:22+03:00
+
 # end.sh — запуск ChatEnd-анализа и логирования
 set -euo pipefail
 source ~/wz-wiki/tools/chatend/helpers.sh

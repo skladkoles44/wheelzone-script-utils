@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:19+03:00-2629100862
+# title: wzfinal_full_clean_safe (1).sh
+# component: .
+# updated_at: 2025-08-26T13:20:19+03:00
+
 echo "[0/5] Инициализация среды..."
 bash ~/bin/wzinit.sh
 

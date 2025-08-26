@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:40+03:00-1348866326
+# title: set_notion_parent_ids.sh
+# component: .
+# updated_at: 2025-08-26T13:19:40+03:00
+
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 

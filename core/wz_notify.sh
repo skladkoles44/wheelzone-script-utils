@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:07+03:00-3498977224
+# title: wz_notify.sh
+# component: .
+# updated_at: 2025-08-26T13:19:07+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 
 set -eo pipefail

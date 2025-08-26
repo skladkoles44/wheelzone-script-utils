@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:16+03:00-2901671739
+# title: system_probe.sh
+# component: .
+# updated_at: 2025-08-26T13:20:16+03:00
+
 
 mkdir -p ~/storage/shared/Downloads/project_44/Termux/output/
 

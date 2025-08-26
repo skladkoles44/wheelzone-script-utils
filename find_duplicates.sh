@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:58+03:00-1515492121
+# title: find_duplicates.sh
+# component: .
+# updated_at: 2025-08-26T13:19:58+03:00
+
 # Поиск дубликатов файлов по хешу во всех папках Termux-хранилища
 
 BASE="$HOME"

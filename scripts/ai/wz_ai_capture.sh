@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:20+03:00-3061487915
+# title: wz_ai_capture.sh
+# component: .
+# updated_at: 2025-08-26T13:19:20+03:00
+
 # Ensure logs/ai is not ignored by Git
 grep -q "!logs/ai/" "$HOME/wz-wiki/.gitignore" || echo "!logs/ai/" >> "$HOME/wz-wiki/.gitignore"
 # wz_ai_capture.sh — Захват вывода команды в AI-буфер

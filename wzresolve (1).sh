@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:20+03:00-346718993
+# title: wzresolve (1).sh
+# component: .
+# updated_at: 2025-08-26T13:20:20+03:00
+
 QUESTIONS=~/storage/downloads/project_44/MetaSystem/Logs/wz_open_questions.jsonl
 RESOLVED=~/storage/downloads/project_44/MetaSystem/Logs/wz_resolved.jsonl
 

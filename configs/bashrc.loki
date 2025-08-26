@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:53+03:00-3472293553
+# title: bashrc.loki
+# component: configs
+# updated_at: 2025-08-26T13:19:53+03:00
+
 # ~/.bashrc — WZ Termux Core v6.1.4 (с подавлением kworker/1:1)
 
 # ========== ПЕРЕМЕННЫЕ ==========

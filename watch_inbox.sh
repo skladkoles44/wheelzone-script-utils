@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:17+03:00-2025310506
+# title: watch_inbox.sh
+# component: .
+# updated_at: 2025-08-26T13:20:17+03:00
+
 export PATH=/data/data/com.termux/files/usr/bin:$PATH
 
 INBOX=~/storage/downloads

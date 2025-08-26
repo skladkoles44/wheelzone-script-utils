@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:20:09+03:00-846525684
+# title: install_shop_db (2).sh
+# component: .
+# updated_at: 2025-08-26T13:20:09+03:00
+
 
 # === ИНИЦИАЛИЗАЦИЯ shop_db ===
 

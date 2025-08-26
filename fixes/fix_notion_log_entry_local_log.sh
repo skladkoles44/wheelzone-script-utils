@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:09+03:00-3843045824
+# title: fix_notion_log_entry_local_log.sh
+# component: .
+# updated_at: 2025-08-26T13:19:09+03:00
+
 # 🔧 Fix v2: Улучшенное локальное логирование для notion_log_entry.py
 
 TARGET="$HOME/wheelzone-script-utils/scripts/notion/notion_log_entry.py"

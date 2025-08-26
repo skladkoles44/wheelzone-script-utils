@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:13+03:00-2552410297
+# title: drone_generate_diagram.yaml
+# component: scripts
+# updated_at: 2025-08-26T13:20:13+03:00
+
 #!/data/data/com.termux/files/usr/bin/python3
 # 🛰️ WZDrone Mission: Generate Diagrams
 # Версия: 1.0.0 | Статус: active | Node: Utility

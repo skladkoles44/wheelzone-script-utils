@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:27+03:00-3657037809
+# title: install_loki_kernel.sh
+# component: .
+# updated_at: 2025-08-26T13:19:27+03:00
+
 set -e
 
 echo "[+] Updating system..."

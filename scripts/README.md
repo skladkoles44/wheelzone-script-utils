@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:12+03:00-2342359703
+# title: README.md
+# component: scripts
+# updated_at: 2025-08-26T13:20:12+03:00
+
 #!/data/data/com.termux/files/usr/bin/python3
 # wz_ai_rule.sh — WheelZone AI Rule Interface v3.1
 

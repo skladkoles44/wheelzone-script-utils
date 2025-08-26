@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:39+03:00-816751183
+# title: sanitize_csv_encoding.sh
+# component: .
+# updated_at: 2025-08-26T13:19:39+03:00
+
 # sanitize_csv_encoding.sh v2 — поддержка UTF-16 и BOM
 INPUT="$1"
 OUT="${INPUT%.csv}_clean.csv"

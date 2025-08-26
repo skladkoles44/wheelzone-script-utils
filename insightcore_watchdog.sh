@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:20:06+03:00-3907787373
+# title: insightcore_watchdog.sh
+# component: .
+# updated_at: 2025-08-26T13:20:07+03:00
+
 
 #!/data/data/com.termux/files/usr/bin/bash
 

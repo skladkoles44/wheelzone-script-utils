@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:32+03:00-363172717
+# title: patch_all_log_injection.sh
+# component: .
+# updated_at: 2025-08-26T13:19:32+03:00
+
 # v1.2.1 — обновлённые маркеры для wz_generate_diagram и register_notion_tools
 
 LOCK_FILE="${TMPDIR:-/tmp}/wheelzone_patch.lock"

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:45+03:00-2060765104
+# title: wz_sync_rules.sh
+# component: .
+# updated_at: 2025-08-26T13:19:45+03:00
+
 # WheelZone Rule Registry Sync v2.1.2 — Fractal CLI Edition
 
 set -eo pipefail

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:04+03:00-629002146
+# title: git_push_WZ_all.sh
+# component: .
+# updated_at: 2025-08-26T13:20:04+03:00
+
 
 HASH_LOG="$HOME/.wz_hash_log"
 TMP_HASH="$HOME/tmp/wz_current_hashes.tmp"

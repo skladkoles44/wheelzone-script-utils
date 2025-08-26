@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:20:15+03:00-2010046766
+# title: register_notion_tools.sh
+# component: scripts
+# updated_at: 2025-08-26T13:20:15+03:00
+
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 

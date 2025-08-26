@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash -l
+# uuid: 2025-08-26T13:20:14+03:00-1012379743
+# title: wz_config.sh
+# component: scripts
+# updated_at: 2025-08-26T13:20:14+03:00
+
 set -euo pipefail
 
 declare -rx FRACTAL_MAX_DEPTH=10

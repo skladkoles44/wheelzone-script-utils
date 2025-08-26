@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:30+03:00-2176089025
+# title: wz_grandfather.sh
+# component: .
+# updated_at: 2025-08-26T13:19:30+03:00
+
 # wz_grandfather.sh v1.0 — AI-наблюдатель и ворчун WZ-системы
 # Роль: контролирует молчание, активность и запуск ChatEnd
 

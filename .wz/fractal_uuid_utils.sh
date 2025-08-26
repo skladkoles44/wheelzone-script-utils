@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:03+03:00-2347485698
+# title: fractal_uuid_utils.sh
+# component: .
+# updated_at: 2025-08-26T13:19:03+03:00
+
 set -Eeuo pipefail
 
 # Целевые расширения (через пробел)

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:34+03:00-3196501117
+# title: check_rule.sh
+# component: .
+# updated_at: 2025-08-26T13:19:34+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 # WZ Rule Checker v4.0 — универсальный валидатор и автофикс (WBP Fusion)
 

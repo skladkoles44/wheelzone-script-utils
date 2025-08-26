@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:38+03:00-3784523884
+# title: patch_cli_wz_chatend_arg_guard.sh
+# component: .
+# updated_at: 2025-08-26T13:19:38+03:00
+
 set -Eeuo pipefail
 F="$HOME/wheelzone-script-utils/scripts/cli/wz_chatend.sh"
 [ -f "$F" ] || { echo "[skip] no file: $F"; exit 0; }

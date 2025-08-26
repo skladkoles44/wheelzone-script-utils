@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:20:16+03:00-1987239486
+# title: send_digest.sh
+# component: .
+# updated_at: 2025-08-26T13:20:16+03:00
+
 # --- ВСТАВИТЬ ПЕРЕД ФОРМИРОВАНИЕМ DIGEST-ФАЙЛА ---
 [ -f ~/wheelzone/secrets/tokens.env ] && source ~/wheelzone/secrets/tokens.env
 LMS_LOG="$HOME/wheelzone/wheelzone-core/personas/shef/roadmap/knowledge/lms_log.jsonl"

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:24+03:00-1392652002
+# title: wz_chatend_safe.sh.bak.1754859585
+# component: .
+# updated_at: 2025-08-26T13:19:24+03:00
+
 # WZ ChatEnd Safe Wrapper v1.3.1 — sanitize путей + "no-exec" тестовый режим
 set -Eeuo pipefail
 

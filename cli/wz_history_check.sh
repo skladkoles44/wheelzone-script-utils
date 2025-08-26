@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:05+03:00-2664297038
+# title: wz_history_check.sh
+# component: .
+# updated_at: 2025-08-26T13:19:05+03:00
+
 # WZ History Healthcheck v3-mini
 set -Eeuo pipefail
 CORE="$HOME/wheelzone-script-utils/cron/wz_history_core.sh"

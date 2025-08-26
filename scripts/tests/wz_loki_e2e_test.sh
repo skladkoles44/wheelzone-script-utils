@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:33+03:00-2333302009
+# title: wz_loki_e2e_test.sh
+# component: .
+# updated_at: 2025-08-26T13:19:33+03:00
+
 # WZ Loki E2E Test v1.1
 set -euo pipefail
 IFS=$'\n\t'

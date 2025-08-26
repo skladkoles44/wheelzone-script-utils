@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:30+03:00-2673603027
+# title: install_fastapi_local.sh
+# component: .
+# updated_at: 2025-08-26T13:19:30+03:00
+
 set -euo pipefail
 
 # 📦 Константы

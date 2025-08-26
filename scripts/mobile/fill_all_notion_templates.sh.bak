@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:29+03:00-1758813307
+# title: fill_all_notion_templates.sh.bak
+# component: .
+# updated_at: 2025-08-26T13:19:29+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 set -o errexit -o nounset -o pipefail
 

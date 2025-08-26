@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:30+03:00-1753028159
+# title: install_fastapi_termux_compat.sh
+# component: .
+# updated_at: 2025-08-26T13:19:30+03:00
+
 # WZ Install FastAPI (Termux-Compatible) v2.1
 
 set -eo pipefail

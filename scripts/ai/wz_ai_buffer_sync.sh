@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:20+03:00-356670401
+# title: wz_ai_buffer_sync.sh
+# component: .
+# updated_at: 2025-08-26T13:19:20+03:00
+
 # wz_ai_buffer_sync.sh — Синхронизация AI-логов + авто-регистрация
 set -euo pipefail
 

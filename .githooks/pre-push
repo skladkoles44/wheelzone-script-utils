@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:02+03:00-1447251539
+# title: pre-push
+# component: .
+# updated_at: 2025-08-26T13:19:02+03:00
+
 set -Eeuo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"

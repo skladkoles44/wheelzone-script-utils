@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:08+03:00-3192323387
+# title: wz_ai_autolog_demo.sh
+# component: .
+# updated_at: 2025-08-26T13:19:08+03:00
+
 # wz_ai_autolog_demo.sh — Примеры вызовов autolog
 set -e
 

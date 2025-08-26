@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:22+03:00-1752436345
+# title: check_fractal_uuid.sh
+# component: .
+# updated_at: 2025-08-26T13:19:22+03:00
+
 set -Eeuo pipefail
 # shellcheck disable=SC1091
 source ".wz/fractal_uuid_utils.sh" || { echo "[WZ][WARN] utils missing"; exit 0; }

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:30+03:00-1608482039
+# title: install_rclone_yadisk.sh
+# component: .
+# updated_at: 2025-08-26T13:19:30+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 # Установка rclone
 pkg install rclone -y

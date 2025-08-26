@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:17+03:00-569745057
+# title: wz_auto_push.sh
+# component: watchers
+# updated_at: 2025-08-26T13:20:17+03:00
+
 
 # 🔁 Авто-push Git-репозитория WheelZone каждые 10 минут
 cd ~/wheelzone || exit

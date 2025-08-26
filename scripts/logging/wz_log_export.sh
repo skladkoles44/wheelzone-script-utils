@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:28+03:00-561903792
+# title: wz_log_export.sh
+# component: .
+# updated_at: 2025-08-26T13:19:28+03:00
+
 # WZ Log Exporter v1.1 — YAML to CSV
 
 set -euo pipefail

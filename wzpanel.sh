@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:19+03:00-995650419
+# title: wzpanel.sh
+# component: .
+# updated_at: 2025-08-26T13:20:19+03:00
+
 
 while true; do
   clear

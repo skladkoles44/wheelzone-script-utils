@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:29+03:00-3899140023
+# title: fill_all_notion_templates.sh
+# component: .
+# updated_at: 2025-08-26T13:19:29+03:00
+
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 

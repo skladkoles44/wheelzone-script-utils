@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:22+03:00-596425713
+# title: autofix_fractal_uuid.sh
+# component: .
+# updated_at: 2025-08-26T13:19:22+03:00
+
 # autofix_fractal_uuid.sh — запускает батч-фиксер поверх репо (idempotent)
 set -Eeuo pipefail
 

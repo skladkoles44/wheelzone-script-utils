@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:23+03:00-793198999
+# title: wz_chatend.sh.bak.1754853667
+# component: .
+# updated_at: 2025-08-26T13:19:23+03:00
+
 set -Eeuo pipefail
 
 # --- WZ path sanitizer (idempotent) ---

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:12+03:00-1079446482
+# title: register_lesson.sh
+# component: .
+# updated_at: 2025-08-26T13:20:12+03:00
+
 
 LESSON="$*"
 DATE=$(date +"%Y-%m-%d")

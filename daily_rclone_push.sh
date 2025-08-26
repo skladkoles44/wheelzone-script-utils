@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:55+03:00-1642565253
+# title: daily_rclone_push.sh
+# component: .
+# updated_at: 2025-08-26T13:19:55+03:00
+
 
 # [WZ] Daily cloud backup via rclone to Yandex.Disk
 

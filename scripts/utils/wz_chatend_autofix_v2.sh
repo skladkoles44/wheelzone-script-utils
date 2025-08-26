@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:42+03:00-1267064822
+# title: wz_chatend_autofix_v2.sh
+# component: .
+# updated_at: 2025-08-26T13:19:42+03:00
+
 set -Eeuo pipefail
 
 WIKI1="$HOME/wz-wiki/scripts/wz_chatend.sh"

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:19+03:00-285434335
+# title: wzproof (1).sh
+# component: .
+# updated_at: 2025-08-26T13:20:20+03:00
+
 echo "[wzproof] Проверка на скрытые символы и целостность скриптов..."
 
 TARGET_DIR=~/bin

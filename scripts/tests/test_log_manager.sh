@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:33+03:00-4055883817
+# title: test_log_manager.sh
+# component: .
+# updated_at: 2025-08-26T13:19:33+03:00
+
 # 🔁 Автотест log_manager.sh (Termux-совместимый)
 
 TEST_DIR="$HOME/tmp/wz_log_test"

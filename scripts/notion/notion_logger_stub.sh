@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:31+03:00-843947096
+# title: notion_logger_stub.sh
+# component: .
+# updated_at: 2025-08-26T13:19:32+03:00
+
 # === Notion Logger Stub (v2.0) ===
 NOTION_LOG_DIR="$HOME/.wz_notion_logs"
 NOTION_LOG_INDEX="$NOTION_LOG_DIR/index.txt"

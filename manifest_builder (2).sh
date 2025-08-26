@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:11+03:00-2415858396
+# title: manifest_builder (2).sh
+# component: .
+# updated_at: 2025-08-26T13:20:11+03:00
+
 MANIFEST=~/storage/downloads/project_44/MetaSystem/control_manifest.md
 echo "# WheelZone Control Manifest" > "$MANIFEST"
 echo "" >> "$MANIFEST"

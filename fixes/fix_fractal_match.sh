@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:08+03:00-347795733
+# title: fix_fractal_match.sh
+# component: .
+# updated_at: 2025-08-26T13:19:09+03:00
+
 # 🛠 Полный фикс match/FRACTAL парсинга
 
 TARGET="$HOME/wheelzone-script-utils/scripts/wz_chatend.sh"

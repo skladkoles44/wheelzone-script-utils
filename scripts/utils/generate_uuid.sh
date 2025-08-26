@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:36+03:00-849553813
+# title: generate_uuid.sh
+# component: .
+# updated_at: 2025-08-26T13:19:36+03:00
+
 # generate_uuid.sh v4.3.0 — WZ Mobile-Optimized UUID Generator (Android 15/HyperOS)
 set -euo pipefail
 shopt -s nullglob

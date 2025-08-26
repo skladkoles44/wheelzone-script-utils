@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:16+03:00-2710964960
+# title: setup_termux.sh
+# component: .
+# updated_at: 2025-08-26T13:20:16+03:00
+
 # WheelZone: автоматическая настройка Termux-окружения (Android)
 
 echo "[*] Обновление пакетов Termux..."

@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:53+03:00-3642422702
+# title: check_idle.sh
+# component: .
+# updated_at: 2025-08-26T13:19:53+03:00
+
 LOG=~/wz_idle.log
 echo "[`date`] Проверка активности..." >> $LOG
 

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:07+03:00-2917747816
+# title: wz_history_loop.sh
+# component: .
+# updated_at: 2025-08-26T13:19:07+03:00
+
 set -Eeuo pipefail
 LOG="$HOME/.wz_logs/wz_history_loop.log"
 mkdir -p "$(dirname "$LOG")"

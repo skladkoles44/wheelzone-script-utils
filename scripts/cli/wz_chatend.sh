@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:22+03:00-3062121464
+# title: wz_chatend.sh
+# component: .
+# updated_at: 2025-08-26T13:19:22+03:00
+
 # WZ ChatEnd CLI Proxy v0.1 — делегирует вызов в оригинал wz-wiki/scripts/wz_chatend.sh
 set -Euo pipefail
 

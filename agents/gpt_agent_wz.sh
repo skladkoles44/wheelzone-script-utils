@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:03+03:00-3383841194
+# title: gpt_agent_wz.sh
+# component: .
+# updated_at: 2025-08-26T13:19:03+03:00
+
 # WZ Agent Bootstrapper (GPT-Agent v1.0)
 set -euo pipefail
 

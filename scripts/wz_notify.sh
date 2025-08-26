@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:44+03:00-1905313040
+# title: wz_notify.sh
+# component: .
+# updated_at: 2025-08-26T13:19:44+03:00
+
 export SESSION_ID="${SESSION_ID:-$(python3 ~/wheelzone-script-utils/scripts/utils/generate_uuid.py | cut -d'-' -f1)}"
 
 source "$HOME/wheelzone-script-utils/scripts/utils/generate_uuid.sh"

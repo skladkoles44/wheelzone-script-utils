@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:48+03:00-4268803773
+# title: authorize_rclone_android (1).sh
+# component: .
+# updated_at: 2025-08-26T13:19:48+03:00
+
 
 CONFIG_DIR="$HOME/.config/rclone"
 SECRET_JSON="$CONFIG_DIR/client_secret.json"

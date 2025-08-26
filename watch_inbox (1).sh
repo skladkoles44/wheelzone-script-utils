@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:17+03:00-1311199903
+# title: watch_inbox (1).sh
+# component: .
+# updated_at: 2025-08-26T13:20:17+03:00
+
 
 SOURCE_DIR="$HOME/storage/shared/Projects/wheelzone/bootstrap_tool"
 DEST_REMOTE="yadisk_creator:lllBackUplll-WheelZone"

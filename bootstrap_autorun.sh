@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:52+03:00-744554086
+# title: bootstrap_autorun.sh
+# component: .
+# updated_at: 2025-08-26T13:19:52+03:00
+
 # Auto-launch: plate–profile linker
 bash ~/storage/shared/Projects/wheelzone/bootstrap_tool/scripts/linker_loop.sh &
 

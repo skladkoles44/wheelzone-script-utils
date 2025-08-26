@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:26+03:00-1682516917
+# title: check_docker_cleanup.sh
+# component: .
+# updated_at: 2025-08-26T13:19:26+03:00
+
 # === WZ Docker Cleanup Check (Server Edition) ===
 
 set -euo pipefail

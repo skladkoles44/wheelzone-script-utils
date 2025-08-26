@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:52+03:00-1816628137
+# title: check_clean_string.sh
+# component: .
+# updated_at: 2025-08-26T13:19:52+03:00
+
 
 # Проверка строки на скрытые/непечатаемые символы
 check_string_clean() {

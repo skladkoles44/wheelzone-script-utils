@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:49+03:00-2482401645
+# title: auto_git_push.sh
+# component: .
+# updated_at: 2025-08-26T13:19:49+03:00
+
 
 cd ~/wheelzone/bootstrap_tool/ || exit 1
 git checkout main || git switch main

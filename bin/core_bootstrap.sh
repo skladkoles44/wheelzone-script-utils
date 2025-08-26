@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:03+03:00-3286073783
+# title: core_bootstrap.sh
+# component: .
+# updated_at: 2025-08-26T13:19:03+03:00
+
 # WheelZone CLI — Core Bootstrap Checker
 
 echo "🔍 Проверка ядра WheelZone..."

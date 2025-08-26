@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:43+03:00-2639721520
+# title: wz_md_preprocess_includes.sh
+# component: .
+# updated_at: 2025-08-26T13:19:43+03:00
+
 # wz_md_preprocess_includes.sh v1.0
 # Usage: wz_md_preprocess_includes.sh INPUT_MD OUTPUT_MD
 # Безопасный препроцессинг Markdown: разворачивает строки "Include: <path>",

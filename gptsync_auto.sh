@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:06+03:00-1993687041
+# title: gptsync_auto.sh
+# component: .
+# updated_at: 2025-08-26T13:20:06+03:00
+
 # Автосинхронизация WheelZone с проверкой SHA256
 
 SRC=~/storage/downloads/project_44/Termux

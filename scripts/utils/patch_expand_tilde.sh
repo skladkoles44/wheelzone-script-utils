@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:38+03:00-1861961163
+# title: patch_expand_tilde.sh
+# component: .
+# updated_at: 2025-08-26T13:19:38+03:00
+
 # patch_expand_tilde.sh v1.0 — добавляет wz_expand_home() и применяет к $nested_file
 set -Eeuo pipefail
 

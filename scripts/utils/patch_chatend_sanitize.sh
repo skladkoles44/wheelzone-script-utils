@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:37+03:00-599350229
+# title: patch_chatend_sanitize.sh
+# component: .
+# updated_at: 2025-08-26T13:19:37+03:00
+
 set -Eeuo pipefail
 FILE="$HOME/wheelzone-script-utils/scripts/cli/wz_chatend.sh"
 BAK="$FILE.bak.$(date +%s)"

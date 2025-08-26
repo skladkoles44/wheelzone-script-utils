@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:14+03:00-807399842
+# title: chatend_summaries_schema.json
+# component: scripts
+# updated_at: 2025-08-26T13:20:14+03:00
+
 #!/data/data/com.termux/files/usr/bin/python3
 {
   "parent": {

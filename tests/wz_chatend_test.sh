@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:46+03:00-1936635828
+# title: wz_chatend_test.sh
+# component: .
+# updated_at: 2025-08-26T13:19:46+03:00
+
 # === Комплексный тест wz_chatend.sh v3.4 ===
 
 TEST_DIR="$HOME/wzbuffer/chatend_test"

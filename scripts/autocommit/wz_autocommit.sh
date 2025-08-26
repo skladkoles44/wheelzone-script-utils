@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:21+03:00-1785455366
+# title: wz_autocommit.sh
+# component: .
+# updated_at: 2025-08-26T13:19:21+03:00
+
 # wz_autocommit.sh — Автокоммит с поддержкой CRON, WZDrone, WZ Noiton
 set -euo pipefail
 

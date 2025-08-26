@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:28+03:00-3789656362
+# title: wz_log_query.sh
+# component: .
+# updated_at: 2025-08-26T13:19:28+03:00
+
 # WZ Log Query v1.1 — фильтрация по полям
 
 set -euo pipefail

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:24+03:00-1156185228
+# title: wz_net_leave.sh
+# component: .
+# updated_at: 2025-08-26T13:19:24+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 
 # WZ — Отключение от приватной сети с автоуправлением сервером

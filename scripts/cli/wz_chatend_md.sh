@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:23+03:00-2679168039
+# title: wz_chatend_md.sh
+# component: .
+# updated_at: 2025-08-26T13:19:23+03:00
+
 # WZ ChatEnd MD Proxy v0.2 — preprocess Include, затем вызвать ORIG с --md
 set -Eeuo pipefail
 FRAC_LOG="$HOME/.wz_logs/fractal_chatend.log"

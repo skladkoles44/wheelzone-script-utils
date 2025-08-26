@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:31+03:00-1399120267
+# title: import_chat_links.sh
+# component: .
+# updated_at: 2025-08-26T13:19:31+03:00
+
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 

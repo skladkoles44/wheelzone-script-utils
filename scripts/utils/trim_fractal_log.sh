@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:41+03:00-498044226
+# title: trim_fractal_log.sh
+# component: .
+# updated_at: 2025-08-26T13:19:41+03:00
+
 set -Eeuo pipefail
 LOG="${1:-$HOME/.wz_logs/fractal_chatend.log}"
 MAX="${2:-5000}"

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:19+03:00-440725556
+# title: wzlogger (2).sh
+# component: .
+# updated_at: 2025-08-26T13:20:19+03:00
+
 HISTORY=~/storage/downloads/project_44/MetaSystem/Logs/wz_command_history.jsonl
 
 CMD="$1"

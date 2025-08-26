@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:35+03:00-3891097665
+# title: fix_fractal_uuid_md5.sh
+# component: .
+# updated_at: 2025-08-26T13:19:35+03:00
+
 set -euo pipefail
 
 # -------- CONFIG --------

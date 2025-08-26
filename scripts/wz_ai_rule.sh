@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:44+03:00-1597954787
+# title: wz_ai_rule.sh
+# component: .
+# updated_at: 2025-08-26T13:19:44+03:00
+
 # WheelZone AI Rule Interface v3.6 (Fractal Optimized)
 
 set -eo pipefail

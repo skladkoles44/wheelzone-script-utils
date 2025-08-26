@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:41+03:00-149695562
+# title: wz_autosync.sh
+# component: .
+# updated_at: 2025-08-26T13:19:41+03:00
+
 set -euo pipefail
 
 # === Настройки ===

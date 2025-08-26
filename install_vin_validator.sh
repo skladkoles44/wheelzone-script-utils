@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:20:09+03:00-1438589201
+# title: install_vin_validator.sh
+# component: .
+# updated_at: 2025-08-26T13:20:09+03:00
+
 
 #!/data/data/com.termux/files/usr/bin/bash
 

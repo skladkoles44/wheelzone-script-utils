@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:24+03:00-519933923
+# title: wz_chatend_safe.sh
+# component: .
+# updated_at: 2025-08-26T13:19:24+03:00
+
 # --- WZ auto-detect CHATEND_ORIG ---
 : "${CHATEND_ORIG:=}"
 if [ -z "${CHATEND_ORIG}" ]; then

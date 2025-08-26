@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:20+03:00-913187595
+# title: wzretry (1).sh
+# component: .
+# updated_at: 2025-08-26T13:20:20+03:00
+
 HISTORY=~/storage/downloads/project_44/MetaSystem/Logs/wz_command_history.jsonl
 LAST=$(tac $HISTORY | grep -m1 '"status": "error"' | jq -r '.content')
 if [ -z "$LAST" ]; then

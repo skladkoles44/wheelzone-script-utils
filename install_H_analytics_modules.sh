@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:07+03:00-2774801188
+# title: install_H_analytics_modules.sh
+# component: .
+# updated_at: 2025-08-26T13:20:07+03:00
+
 
 # Перемещение всех новых модулей
 mv ~/storage/downloads/vin_pattern_analyzer.py ~/storage/shared/Projects/wheelzone/bootstrap_tool/scripts/

@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:26+03:00-966415746
+# title: wz_fix_pip_mirror.sh
+# component: .
+# updated_at: 2025-08-26T13:19:26+03:00
+
 # wz_fix_pip_mirror.sh — Автоматическая подмена pip источника и пересборка infra-core
 
 set -euo pipefail

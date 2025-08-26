@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash -l
+# uuid: 2025-08-26T13:19:04+03:00-2117512898
+# title: bootstrap_fractal_v1.6.sh
+# component: .
+# updated_at: 2025-08-26T13:19:04+03:00
+
 # WZ Fractal Bootstrap v1.6 — Complete Fractal Implementation
 set -eo pipefail
 IFS=$'\n\t'

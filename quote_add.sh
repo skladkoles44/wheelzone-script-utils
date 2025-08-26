@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:12+03:00-3813026670
+# title: quote_add.sh
+# component: .
+# updated_at: 2025-08-26T13:20:12+03:00
+
 
 QUOTE_TEXT="$1"
 AUTHOR="${2:-/шеф}"

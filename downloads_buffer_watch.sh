@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:57+03:00-3009264085
+# title: downloads_buffer_watch.sh
+# component: .
+# updated_at: 2025-08-26T13:19:57+03:00
+
 #WZ_BUFFER_WATCH
 #WZ_PID_MANAGED
 

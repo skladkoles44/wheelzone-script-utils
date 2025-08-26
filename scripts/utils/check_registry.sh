@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:34+03:00-3247616707
+# title: check_registry.sh
+# component: .
+# updated_at: 2025-08-26T13:19:34+03:00
+
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:54+03:00-2591219673
+# title: crontab_audit (1).sh
+# component: .
+# updated_at: 2025-08-26T13:19:54+03:00
+
 # [WZ] Аудит crontab: дубли + пустые команды
 OUT="$HOME/storage/downloads/project_44/MetaSystem/Logs/cron_audit.log"
 NOTES="$HOME/storage/downloads/project_44/MetaSystem/kontrol_notes.md"

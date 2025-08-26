@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:35+03:00-1658493625
+# title: fix_missing_metadata.sh
+# component: .
+# updated_at: 2025-08-26T13:19:35+03:00
+
 # fix_missing_metadata.sh v1.3.0 — WZ Metadata Autopatcher (Fractal+Recursive)
 
 set -eo pipefail

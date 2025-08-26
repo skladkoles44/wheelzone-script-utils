@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:43+03:00-241416951
+# title: wz_history_fix_headers.sh
+# component: .
+# updated_at: 2025-08-26T13:19:43+03:00
+
 # WZ History Fix Headers v3.1-safe — без export -f/xargs, BOM/CRLF-safe, MD5 по телу
 set -Eeuo pipefail
 

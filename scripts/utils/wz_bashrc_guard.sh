@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash -l
+# uuid: 2025-08-26T13:19:41+03:00-1088079834
+# title: wz_bashrc_guard.sh
+# component: .
+# updated_at: 2025-08-26T13:19:41+03:00
+
 # WZ Bashrc Guard v2.2 — SHLVL Protector
 set -euo pipefail
 shopt -s failglob

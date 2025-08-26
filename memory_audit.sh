@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:11+03:00-1440455556
+# title: memory_audit.sh
+# component: .
+# updated_at: 2025-08-26T13:20:11+03:00
+
 
 echo "=== GPT MEMORY AUDIT ==="
 echo

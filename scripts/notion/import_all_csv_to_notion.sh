@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:31+03:00-573255274
+# title: import_all_csv_to_notion.sh
+# component: .
+# updated_at: 2025-08-26T13:19:31+03:00
+
 : "${WZ_LOG_DIR:=$HOME/.wz_logs}"
 mkdir -p "$WZ_LOG_DIR"
 

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:12+03:00-1649618394
+# title: rclone_injector.sh
+# component: .
+# updated_at: 2025-08-26T13:20:12+03:00
+
 export PATH=/data/data/com.termux/files/usr/bin:$PATH
 
 # Базовая директория, откуда GPT сбрасывает файлы

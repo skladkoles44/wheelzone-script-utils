@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:34+03:00-260455263
+# title: check_notion_env.sh.bak
+# component: .
+# updated_at: 2025-08-26T13:19:34+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 # Проверка доступности базы данных Notion по .env.wzbot
 

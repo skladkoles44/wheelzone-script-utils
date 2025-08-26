@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:05+03:00-2207642256
+# title: rule.sh
+# component: .
+# updated_at: 2025-08-26T13:19:05+03:00
+
 set -euo pipefail
 
 RULES_DIR="${HOME}/wz-knowledge/rules"

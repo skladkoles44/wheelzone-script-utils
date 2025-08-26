@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:21+03:00-4075619284
+# title: wz_register_ai_script.sh
+# component: .
+# updated_at: 2025-08-26T13:19:21+03:00
+
 # wz_register_ai_script.sh — Регистрация AI-скрипта в реестре WheelZone
 set -euo pipefail
 

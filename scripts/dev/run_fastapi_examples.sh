@@ -1,4 +1,9 @@
 #!/bin/bash
+# uuid: 2025-08-26T13:19:26+03:00-2893637082
+# title: run_fastapi_examples.sh
+# component: .
+# updated_at: 2025-08-26T13:19:26+03:00
+
 # 🚀 FastAPI Test Runner (Server: Sapphire Holmium)
 set -euo pipefail
 

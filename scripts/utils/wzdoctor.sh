@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:43+03:00-1445092172
+# title: wzdoctor.sh
+# component: .
+# updated_at: 2025-08-26T13:19:44+03:00
+
 #!/data/data/com.termux/files/usr/bin/bash
 # WheelZone Doctor — диагностический скрипт для среды WZ
 

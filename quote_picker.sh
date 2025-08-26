@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:12+03:00-4196651067
+# title: quote_picker.sh
+# component: .
+# updated_at: 2025-08-26T13:20:12+03:00
+
 # Определяем тему дня
 DOW=$(date +%u)
 case "$DOW" in

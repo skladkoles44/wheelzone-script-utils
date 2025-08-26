@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:43+03:00-717571804
+# title: wz_include_scan_log.sh
+# component: .
+# updated_at: 2025-08-26T13:19:43+03:00
+
 # WZ Include Scanner v1.0 — без патчинга оригинала, логируем аномалии ':/' ':~' ':$HOME'
 set -Eeuo pipefail
 FRAC_LOG="$HOME/.wz_logs/fractal_chatend.log"

@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:19:58+03:00-901953360
+# title: fix_attach_result_module.sh
+# component: .
+# updated_at: 2025-08-26T13:19:58+03:00
+
 
 #!/data/data/com.termux/files/usr/bin/bash
 

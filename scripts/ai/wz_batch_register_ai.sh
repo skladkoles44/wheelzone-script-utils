@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:20+03:00-1617386973
+# title: wz_batch_register_ai.sh
+# component: .
+# updated_at: 2025-08-26T13:19:21+03:00
+
 # wz_batch_register_ai.sh — Регистрация AI-логов в CSV-реестрах
 set -euo pipefail
 

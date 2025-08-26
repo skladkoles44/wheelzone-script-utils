@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:40+03:00-4197890992
+# title: test_wz_chatend_after_patch.sh
+# component: .
+# updated_at: 2025-08-26T13:19:40+03:00
+
 set -Eeuo pipefail
 
 # 0) Алиас chatend и тестовые файлы

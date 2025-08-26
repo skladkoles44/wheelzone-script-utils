@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:22+03:00-2030060192
+# title: wz_chatend_regress_ci.sh
+# component: .
+# updated_at: 2025-08-26T13:19:22+03:00
+
 # WZ ChatEnd Regress CI v1.1 (for Drone) — sanitize-regress, 3 кейса Include
 set -Eeuo pipefail
 

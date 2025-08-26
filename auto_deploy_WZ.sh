@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:49+03:00-2812494714
+# title: auto_deploy_WZ.sh
+# component: .
+# updated_at: 2025-08-26T13:19:49+03:00
+
 
 # Источники файлов
 SOURCES=(

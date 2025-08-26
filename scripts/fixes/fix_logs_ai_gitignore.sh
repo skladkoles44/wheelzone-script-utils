@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:26+03:00-1550907164
+# title: fix_logs_ai_gitignore.sh
+# component: .
+# updated_at: 2025-08-26T13:19:26+03:00
+
 # fix_logs_ai_gitignore.sh — Убирает .gitignore-проблему с logs/ai + логгирует
 
 set -euo pipefail

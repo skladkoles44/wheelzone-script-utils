@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:27+03:00-1068883908
+# title: log_manager.sh
+# component: .
+# updated_at: 2025-08-26T13:19:27+03:00
+
 # 🗂 log_manager.sh v3.2 — HyperOS Optimized
 
 # --help / --version

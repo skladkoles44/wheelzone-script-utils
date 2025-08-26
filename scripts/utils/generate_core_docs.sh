@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:35+03:00-391065461
+# title: generate_core_docs.sh
+# component: .
+# updated_at: 2025-08-26T13:19:35+03:00
+
 #TERMUX_HYPEROS_OPTIMIZED
 set -eo pipefail
 

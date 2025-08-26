@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:39+03:00-810309974
+# title: patch_wz_chatend_sanitizer_v2.sh
+# component: .
+# updated_at: 2025-08-26T13:19:39+03:00
+
 set -Eeuo pipefail
 
 patch_file() {

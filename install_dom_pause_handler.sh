@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:20:08+03:00-3043845978
+# title: install_dom_pause_handler.sh
+# component: .
+# updated_at: 2025-08-26T13:20:08+03:00
+
 
 #!/data/data/com.termux/files/usr/bin/bash
 

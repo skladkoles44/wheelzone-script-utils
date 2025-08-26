@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:53+03:00-3169430582
+# title: clean_rclone.sh
+# component: .
+# updated_at: 2025-08-26T13:19:53+03:00
+
 
 echo "[CLEAN-RCLONE] Остановка всех процессов rclone..."
 pkill -f rclone

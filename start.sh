@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:20:16+03:00-3796119550
+# title: start.sh
+# component: .
+# updated_at: 2025-08-26T13:20:16+03:00
+
 
 #!/bin/bash
 

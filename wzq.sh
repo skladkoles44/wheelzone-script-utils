@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:20:20+03:00-628417796
+# title: wzq.sh
+# component: .
+# updated_at: 2025-08-26T13:20:20+03:00
+
 QUESTIONS=~/storage/downloads/project_44/MetaSystem/Logs/wz_open_questions.jsonl
 
 if [ ! -f "$QUESTIONS" ]; then

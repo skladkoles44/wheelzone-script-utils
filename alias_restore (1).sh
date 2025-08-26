@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:47+03:00-2453232859
+# title: alias_restore (1).sh
+# component: .
+# updated_at: 2025-08-26T13:19:47+03:00
+
 # [WZ] Восстановление ключевых alias в ~/.bashrc, если они отсутствуют
 
 BASHRC="$HOME/.bashrc"

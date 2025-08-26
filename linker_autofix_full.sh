@@ -1,3 +1,8 @@
+# uuid: 2025-08-26T13:20:10+03:00-2990708643
+# title: linker_autofix_full.sh
+# component: .
+# updated_at: 2025-08-26T13:20:10+03:00
+
 
 #!/data/data/com.termux/files/usr/bin/bash
 

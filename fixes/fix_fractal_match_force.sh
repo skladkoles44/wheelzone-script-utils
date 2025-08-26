@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:09+03:00-3962318636
+# title: fix_fractal_match_force.sh
+# component: .
+# updated_at: 2025-08-26T13:19:09+03:00
+
 # 🚑 Форс-фикс для FRACTAL match-пути
 
 TARGET="$HOME/wheelzone-script-utils/scripts/wz_chatend.sh"

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# uuid: 2025-08-26T13:19:42+03:00-587732980
+# title: wz_generate_diagram.sh
+# component: .
+# updated_at: 2025-08-26T13:19:42+03:00
+
 # wz_generate_diagram.sh v1.2.1 — WheelZone Git Repository Tree Diagram Generator
 
 set -euo pipefail

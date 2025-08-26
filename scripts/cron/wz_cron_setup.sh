@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:25+03:00-2102035105
+# title: wz_cron_setup.sh
+# component: .
+# updated_at: 2025-08-26T13:19:25+03:00
+
 # wz_cron_setup.sh — Настройка задач CRON для WheelZone (Android/Termux)
 set -euo pipefail
 

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# uuid: 2025-08-26T13:19:28+03:00-893554999
+# title: wz_log_event.sh
+# component: .
+# updated_at: 2025-08-26T13:19:28+03:00
+
 set -euo pipefail
 IFS=$'\n\t'
 
