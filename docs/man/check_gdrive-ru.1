@@ -1,0 +1,56 @@
+.\" -*- coding: UTF-8 -*-
+.TH CHECK_GDRIVE-RU 1 "2025-08-24" "WheelZone" "User Commands"
+.SH ИМЯ
+check_gdrive \- аудит rclone remote (Google Drive и аналоги)
+
+.SH СИНТАКСИС
+.B check_gdrive.sh
+[\fB--remote NAME\fR] [\fB--json\fR|\fB--yaml\fR|\fB--text\fR] [\fB--warn-days N\fR] [\fB--min-free-gb N\fR]
+
+.SH ОПИСАНИЕ
+\fBcheck_gdrive.sh\fR выполняет аудит rclone-remote:
+проверяет наличие rclone, существование remote, выводит \fBrclone about\fR,
+показывает каталоги верхнего уровня и срок действия OAuth-токена.
+Поддерживаются форматы: text (по умолчанию), json, yaml.
+
+.SH ОПЦИИ
+--remote NAME      имя remote (по умолчанию gdrive)
+.br
+--json             вывод JSON
+.br
+--yaml             вывод YAML
+.br
+--text             читаемый вывод
+.br
+--warn-days N      порог предупреждения до истечения токена (в днях)
+.br
+--min-free-gb N    порог предупреждения по свободному месту (GiB)
+.br
+-h, --help         справка
+
+.SH КОДЫ ВОЗВРАТА
+0   всё нормально
+.br
+20  предупреждения (мало места или скоро истекает токен)
+.br
+10  rclone не найден
+.br
+11  remote не найден
+.br
+12  ошибка about
+.br
+13  ошибка lsd
+
+.SH ФАЙЛЫ
+~/wheelzone-script-utils/scripts/utils/check_gdrive.sh
+.br
+~/wheelzone-script-utils/docs/man/check_gdrive-ru.1
+
+.SH СМОТРИ ТАКЖЕ
+rclone(1)
+
+.SH АВТОР
+WheelZone Automation Stack
+
+.SH ВЕРСИЯ
+v1.1 (форматы: text/json/yaml; пороги; expiry без jq)

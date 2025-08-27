@@ -1,104 +1,55 @@
-.\" -*- mode: nroff; coding: utf-8 -*-
 .TH CHECK_GDRIVE 1 "2025-08-24" "WheelZone" "User Commands"
 .SH NAME
-check_gdrive \- аудит rclone remote (Google Drive и аналоги)
+check_gdrive \- audit rclone remote (Google Drive and similar)
 
 .SH SYNOPSIS
 .B check_gdrive.sh
 [\fB--remote NAME\fR] [\fB--json\fR|\fB--yaml\fR|\fB--text\fR] [\fB--warn-days N\fR] [\fB--min-free-gb N\fR]
-.br
-.B check_gdrive.sh
-[\fB-h\fR|\fB--help\fR]
-.br
-.B check_gdrive.sh
-[\fIREMOTE\fR]
 
 .SH DESCRIPTION
-\fBcheck_gdrive.sh\fR выполняет быстрый аудит rclone\-remote:
-проверяет наличие \fBrclone\fR, существование указанного \fIremote\fR,
-получает сводку диска (\fBabout\fR), выводит первые каталоги в корне,
-и оценивает срок жизни OAuth\-токена (\fBexpiry\fR).
-.br
-По умолчанию формат вывода \fBtext\fR. Для интеграций доступны \fB--json\fR и \fB--yaml\fR.
+The \fBcheck_gdrive.sh\fR script performs a quick audit of an rclone remote:
+it checks for rclone installation, verifies that the given remote exists,
+runs \fBrclone about\fR, lists top-level directories, and inspects the OAuth token expiry.
+Output formats: text (default), json, yaml.
 
 .SH OPTIONS
-.TP
-\fB--remote NAME\fR
-Имя rclone\-remote (по умолчанию \fBgdrive\fR). Эквивалентно позиционному аргументу.
-.TP
-\fB--json\fR
-Вывод машинно\-читаемого JSON (about + token + пороги + предупреждения).
-.TP
-\fB--yaml\fR
-Вывод YAML (минималистичный эмиттер без внешних зависимостей).
-.TP
-\fB--text\fR
-Человеческий формат (по умолчанию).
-.TP
-\fB--warn-days N\fR
-Порог предупреждения до истечения токена в днях (по умолчанию \fB7\fR).
-.TP
-\fB--min-free-gb N\fR
-Порог свободного места (GiB) для предупреждения (по умолчанию \fB5\fR).
-.TP
-\fB-h\fR, \fB--help\fR
-Короткая справка по использованию.
+--remote NAME      use given remote (default: gdrive)
+.br
+--json             JSON output
+.br
+--yaml             YAML output
+.br
+--text             human-readable output
+.br
+--warn-days N      warning threshold before token expiry (days)
+.br
+--min-free-gb N    warning threshold for free space (GiB)
+.br
+-h, --help         show help
 
 .SH EXIT STATUS
-.TP
-\fB0\fR
-Всё в норме.
-.TP
-\fB20\fR
-Есть предупреждения (мало места или токен скоро истечёт).
-.TP
-\fB10\fR
-rclone не найден.
-.TP
-\fB11\fR
-remote не найден.
-.TP
-\fB12\fR
-Ошибка доступа к remote (about).
-.TP
-\fB13\fR
-Ошибка чтения каталога.
-
-.SH EXAMPLES
-.TP
-Быстро посмотреть руками:
-.nf
-~/wheelzone-script-utils/scripts/utils/check_gdrive.sh
-.fi
-.TP
-JSON для бота/CI:
-.nf
-~/wheelzone-script-utils/scripts/utils/check_gdrive.sh --json > /tmp/gd_status.json
-jq .status /tmp/gd_status.json 2>/dev/null || cat /tmp/gd_status.json
-.fi
-.TP
-YAML для отчётов:
-.nf
-~/wheelzone-script-utils/scripts/utils/check_gdrive.sh --yaml > /tmp/gd_status.yaml
-.fi
-.TP
-Кастомные пороги:
-.nf
-~/wheelzone-script-utils/scripts/utils/check_gdrive.sh --json --warn-days 3 --min-free-gb 2
-.fi
+0   everything is fine
+.br
+20  warnings (low space or expiring token)
+.br
+10  rclone not found
+.br
+11  remote not found
+.br
+12  remote about failed
+.br
+13  lsd failed
 
 .SH FILES
-Типичное расположение:
-.nf
 ~/wheelzone-script-utils/scripts/utils/check_gdrive.sh
+.br
 ~/wheelzone-script-utils/docs/man/check_gdrive.1
-.fi
 
 .SH SEE ALSO
-.BR rclone (1)
+rclone(1)
 
 .SH AUTHOR
-WheelZone Automation Stack.
+WheelZone Automation Stack
 
 .SH VERSION
-v1.1 (форматы: text/json/yaml; пороги; expiry без jq)
+v1.1 (formats: text/json/yaml; thresholds; expiry parsing without jq)
