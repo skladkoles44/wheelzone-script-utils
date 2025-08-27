@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+# Автогенерация и установка man-страниц после изменений рабочего дерева
+REPO="$(git rev-parse --show-toplevel 2>/dev/null || dirname "$0")"
+
+GEN="$REPO/scripts/utils/wz_gen_manpages.sh"
+INS="$REPO/scripts/utils/wz_install_manpages.sh"
+
+# Генерация — если генератор есть
+[ -x "$GEN" ] && "$GEN" || true
+
+# Установка — если инсталлятор есть
+[ -x "$INS" ] && "$INS" || true
+
+exit 0

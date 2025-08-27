@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+REPO="${REPO:-$HOME/wheelzone-script-utils}"
+
+# Определяем ветку
+BR="$(git -C "$REPO" rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)"
+
+echo "[WZ] Pull: origin/$BR → $REPO"
+# Мягкий rebase-пулл с автосохранением
+if ! git -C "$REPO" pull --rebase --autostash origin "$BR"; then
+  echo "[WZ] Fallback: обычный pull"
+  git -C "$REPO" pull origin "$BR" || true
+fi
+
+# После pull хуки сработают сами, но продублируем «вручную» для идемпотентности
+GEN="$REPO/scripts/utils/wz_gen_manpages.sh"
+INS="$REPO/scripts/utils/wz_install_manpages.sh"
+[ -x "$GEN" ] && "$GEN" || true
+[ -x "$INS" ] && "$INS" || true
+
+echo "[WZ] Done: docs refreshed"
