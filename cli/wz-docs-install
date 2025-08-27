@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+exec "$HOME/wheelzone-script-utils/scripts/utils/wz_install_manpages.sh" "$@"
