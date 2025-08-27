@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+VPS_HOST="${VPS_HOST:-root@79.174.85.106}" VPS_PORT="${VPS_PORT:-2222}" VPS_DEST="${VPS_DEST:-/var/www/wz-manpages}" \
+  "$HOME/wheelzone-script-utils/scripts/ci/wz_publish_manpages_vps.sh"

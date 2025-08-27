@@ -1,21 +1,61 @@
 kind: pipeline
 type: docker
-name: chatend-regress
+name: docs-manpages
 
 steps:
-  - name: regress
+  - name: prepare
     image: alpine:3.20
     environment:
-      WZ_WIKI_GIT_URL:
-        from_secret: WZ_WIKI_GIT_URL
-      GIT_SSH_COMMAND:
-        from_secret: WZ_GIT_SSH_COMMAND
+      TZ: UTC
     commands:
-      - apk add --no-cache bash git coreutils sed grep openssh-client
-      - bash scripts/ci/wz_chatend_regress_ci.sh
+      - apk add --no-cache git bash python3 coreutils tar gzip openssh-client
+      - git config --global user.name  "${GIT_AUTHOR_NAME:-WZ Drone}"
+      - git config --global user.email "${GIT_AUTHOR_EMAIL:-ci@wheelzone}"
+      # Подхват SSH-ключа для пуша обратно в репо
+      - mkdir -p /root/.ssh && chmod 700 /root/.ssh
+      - echo "$GIT_SSH_KEY" | tr -d '\r' > /root/.ssh/id_ed25519 && chmod 600 /root/.ssh/id_ed25519
+      - echo -e "Host github.com\n  StrictHostKeyChecking accept-new\n" > /root/.ssh/config
+
+  - name: build-manpages
+    image: alpine:3.20
+    environment:
+      TZ: UTC
+    commands:
+      - apk add --no-cache bash python3 tar gzip coreutils git
+      - bash scripts/ci/wz_build_manpages.sh
+      - git add -A || true
+      - git commit -m "ci(docs): manpages artifact [CI]" || true
+
+  - name: push-artifacts
+    image: alpine:3.20
     when:
-      event: [ push, pull_request ]
-      branch: [ main, master ]
+      status: [ success ]
+    environment:
+      TZ: UTC
+    commands:
+      - apk add --no-cache git openssh-client
+      - git push origin HEAD:${DRONE_BRANCH}
+    secrets: [ GIT_SSH_KEY, GIT_AUTHOR_NAME, GIT_AUTHOR_EMAIL ]
+
+  # (опционально) Публикация на VPS, если доступен
+  - name: publish-vps
+    image: alpine:3.20
+    when:
+      status: [ success ]
+    environment:
+      VPS_HOST:
+      VPS_PORT:
+      VPS_DEST:
+      TZ: UTC
+    commands:
+      - apk add --no-cache openssh-client rsync
+      - bash scripts/ci/wz_publish_manpages_vps.sh
+    secrets: [ GIT_SSH_KEY, VPS_HOST, VPS_PORT, VPS_DEST ]
 
 trigger:
-  event: [ push, pull_request ]
+  event:
+    - push
+  branch:
+    - main
+    - master
+    - dev
