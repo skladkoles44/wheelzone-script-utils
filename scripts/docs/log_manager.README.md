@@ -19,7 +19,7 @@
 
 | Переменная      | Назначение                        | Пример                                   |
 |----------------|----------------------------------|-------------------------------------------|
-| `LOG_SOURCE`    | Папка с исходными логами         | `~/logs/notion`                          |
+| `LOG_SOURCE`    | Папка с исходными логами         | `~/logs/Loki`                          |
 | `LOG_DEST`      | Папка для архивов                | `~/.wz_logs/archive`                     |
 | `SYNC_LOG`      | Файл для лога скрипта            | `~/.wz_logs/sync.log`                    |
 | `LOCK_FILE`     | Файл блокировки                  | `~/.wz_logs/.lock`                       |
@@ -36,7 +36,7 @@
 ## 📜 Пример использования
 
 ```bash
-export LOG_SOURCE="$HOME/logs/notion"
+export LOG_SOURCE="$HOME/logs/Loki"
 export LOG_DEST="$HOME/.wz_logs/archive"
 export SYNC_LOG="$HOME/.wz_logs/sync.log"
 export LOCK_FILE="$HOME/.wz_logs/.lock"

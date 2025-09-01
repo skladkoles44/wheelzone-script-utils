@@ -15,7 +15,7 @@ BACKSTACK_FILE="$CONFIG_DIR/backstack.json"
 TMP_FILE="$CONFIG_DIR/temp.json"
 LOG_FILE="$CONFIG_DIR/checklist.log"
 IDENTITY_FILE="$CONFIG_DIR/identity.json"
-NOTIFIER="$HOME/wheelzone-script-utils/scripts/notion/wz_notify.sh"
+NOTIFIER="$HOME/wheelzone-script-utils/scripts/Loki/wz_notify.sh"
 SNAPSHOT_DIR="$HOME/wz-snapshots"
 
 init_engine() {

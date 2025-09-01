@@ -1,16 +1,13 @@
-.TH CHECK_GDRIVE 1 "2025-08-24" "WheelZone" "User Commands"
+.\" fractal_uuid: 4b334a0d-54db-4a59-bb52-530b6ea7feee
+.TH CHECK_GDRIVE 1 "2025-08-27" "WheelZone" "User Commands"
 .SH NAME
-check_gdrive \- audit rclone remote (Google Drive and similar)
+check_gdrive \- Quick audit of an rclone remote: checks availability, shows about info, lists top-level dirs, and inspects OAuth token expiry.
 
 .SH SYNOPSIS
-.B check_gdrive.sh
-[\fB--remote NAME\fR] [\fB--json\fR|\fB--yaml\fR|\fB--text\fR] [\fB--warn-days N\fR] [\fB--min-free-gb N\fR]
+.B check_gdrive.sh [--remote NAME] [--json|--yaml|--text] [--warn-days N] [--min-free-gb N]
 
 .SH DESCRIPTION
-The \fBcheck_gdrive.sh\fR script performs a quick audit of an rclone remote:
-it checks for rclone installation, verifies that the given remote exists,
-runs \fBrclone about\fR, lists top-level directories, and inspects the OAuth token expiry.
-Output formats: text (default), json, yaml.
+Quick audit of an rclone remote: checks availability, shows about info, lists top-level dirs, and inspects OAuth token expiry.
 
 .SH OPTIONS
 --remote NAME      use given remote (default: gdrive)
@@ -26,6 +23,7 @@ Output formats: text (default), json, yaml.
 --min-free-gb N    warning threshold for free space (GiB)
 .br
 -h, --help         show help
+.br
 
 .SH EXIT STATUS
 0   everything is fine
@@ -39,11 +37,11 @@ Output formats: text (default), json, yaml.
 12  remote about failed
 .br
 13  lsd failed
+.br
 
 .SH FILES
-~/wheelzone-script-utils/scripts/utils/check_gdrive.sh
-.br
-~/wheelzone-script-utils/docs/man/check_gdrive.1
+/data/data/com.termux/files/home/wheelzone-script-utils/scripts/utils/check_gdrive.sh
+/data/data/com.termux/files/home/wheelzone-script-utils/docs/man/check_gdrive.1
 
 .SH SEE ALSO
 rclone(1)
@@ -52,4 +50,4 @@ rclone(1)
 WheelZone Automation Stack
 
 .SH VERSION
-v1.1 (formats: text/json/yaml; thresholds; expiry parsing without jq)
+v1.1

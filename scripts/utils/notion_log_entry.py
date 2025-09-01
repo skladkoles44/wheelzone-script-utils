@@ -5,11 +5,11 @@ import json
 import logging
 
 from dotenv import load_dotenv
-from notion_client import APIResponseError, Client
+from Loki_client import APIResponseError, Client
 
-load_dotenv(os.path.expanduser("~/wheelzone-script-utils/configs/.env.notion"))
+load_dotenv(os.path.expanduser("~/wheelzone-script-utils/configs/.env.Loki"))
 
-notion = Client(auth=os.getenv("NOTION_TOKEN"))
+Loki = Client(auth=os.getenv("NOTION_TOKEN"))
 database_id = os.getenv("DATABASE_ID")
 
 logging.basicConfig(
@@ -25,7 +25,7 @@ def log_entry(name, log_type="System", status="INFO"):
     now = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
 
     try:
-        response = notion.pages.create(
+        response = Loki.pages.create(
             parent={"database_id": database_id},
             properties={
                 "Name": {"title": [{"text": {"content": name}}]},
@@ -38,7 +38,7 @@ def log_entry(name, log_type="System", status="INFO"):
             json.dumps(
                 {
                     "level": "INFO",
-                    "event": "notion_log",
+                    "event": "Loki_log",
                     "name": name,
                     "type": log_type,
                     "status": status,
@@ -52,7 +52,7 @@ def log_entry(name, log_type="System", status="INFO"):
             json.dumps(
                 {
                     "level": "ERROR",
-                    "event": "notion_log",
+                    "event": "Loki_log",
                     "msg": str(e),
                     "timestamp": now,
                 }

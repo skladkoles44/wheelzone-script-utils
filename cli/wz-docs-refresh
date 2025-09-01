@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+"$HOME/wheelzone-script-utils/scripts/utils/wz_gen_manpages.sh"
+"$HOME/wheelzone-script-utils/scripts/utils/wz_install_manpages.sh"
+echo "[WZ] man pages regenerated & installed."

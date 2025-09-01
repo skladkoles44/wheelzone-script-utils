@@ -1,5 +1,5 @@
 # uuid: 2025-08-26T13:19:37+03:00-3339307029
-# title: notion_templates.sh
+# title: Loki_templates.sh
 # component: .
 # updated_at: 2025-08-26T13:19:37+03:00
 
@@ -11,8 +11,8 @@ mkdir -p "$WZ_LOG_DIR"
 
 ### [КОНФИГУРАЦИЯ] ###
 readonly VERSION="2.2.0-termux"
-readonly WORK_DIR="${HOME}/storage/shared/Notion_Templates"
-readonly LOCK_FILE="${TMPDIR}/notion_templates.lock"
+readonly WORK_DIR="${HOME}/storage/shared/Loki_Templates"
+readonly LOCK_FILE="${TMPDIR}/Loki_templates.lock"
 readonly MAX_RETRIES=3
 
 ### [СХЕМЫ ТАБЛИЦ] ###
@@ -46,7 +46,7 @@ check_termux_env() {
 }
 
 validate_path() {
-	[[ "$WORK_DIR" == */Notion_Templates ]] || {
+	[[ "$WORK_DIR" == */Loki_Templates ]] || {
 		echo "Недопустимый путь к хранилищу" >&2
 		return 1
 	}
@@ -105,8 +105,8 @@ cmd_init() {
 	else
 		echo "Все шаблоны уже существуют"
 	fi
-	if [ -f "${HOME}/bin/notion_log.sh" ]; then
-		"${HOME}/bin/notion_log.sh" "init-templates" "success" "Создано ${created} шаблонов"
+	if [ -f "${HOME}/bin/Loki_log.sh" ]; then
+		"${HOME}/bin/Loki_log.sh" "init-templates" "success" "Создано ${created} шаблонов"
 	fi
 }
 
@@ -123,8 +123,8 @@ cmd_clean() {
 		rm -f "${WORK_DIR}/${file}" && ((count++))
 	done < <(list_templates)
 	echo "Удалено ${count} шаблонов"
-	if [ -f "${HOME}/bin/notion_log.sh" ]; then
-		"${HOME}/bin/notion_log.sh" "clean-templates" "success" "Удалено ${count} шаблонов"
+	if [ -f "${HOME}/bin/Loki_log.sh" ]; then
+		"${HOME}/bin/Loki_log.sh" "clean-templates" "success" "Удалено ${count} шаблонов"
 	fi
 }
 
@@ -134,7 +134,7 @@ main() {
 	init) cmd_init ;;
 	list) cmd_list ;;
 	clean) cmd_clean ;;
-	version) echo "Notion Templates Termux v${VERSION}" ;;
+	version) echo "Loki Templates Termux v${VERSION}" ;;
 	help | *)
 		echo "Использование: ${0##*/} [команда]"
 		echo "Команды:"

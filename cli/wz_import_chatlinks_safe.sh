@@ -6,16 +6,16 @@
 
 set -e
 
-CSV_PATH="$HOME/wzbuffer/notion_csv_templates/chatlink_map.csv"
+CSV_PATH="$HOME/wzbuffer/Loki_csv_templates/chatlink_map.csv"
 LOG_PATH="$HOME/.wzlogs/import_chatlinks.log"
-SCRIPT_PATH="$HOME/wheelzone-script-utils/scripts/notion/wz_import_chatlinks.sh"
+SCRIPT_PATH="$HOME/wheelzone-script-utils/scripts/Loki/wz_import_chatlinks.sh"
 
 echo "[INFO] Запуск надёжного импорта ChatLinks: $(date)" >> "$LOG_PATH"
 
 # Проверка наличия файла
 if [[ ! -s "$CSV_PATH" ]]; then
   echo "[ERROR] CSV-файл отсутствует: $CSV_PATH" >> "$LOG_PATH"
-  python3 ~/wheelzone-script-utils/scripts/notion/notion_log_entry.py \
+  python3 ~/wheelzone-script-utils/scripts/Loki/Loki_log_entry.py \
     --type "script-event" \
     --name "Импорт ChatLinks" \
     --event "import" \
@@ -28,7 +28,7 @@ fi
 bash "$SCRIPT_PATH" >> "$LOG_PATH" 2>&1
 
 # Успешный лог
-python3 ~/wheelzone-script-utils/scripts/notion/notion_log_entry.py \
+python3 ~/wheelzone-script-utils/scripts/Loki/Loki_log_entry.py \
   --type "script-event" \
   --name "Импорт ChatLinks" \
   --event "import" \

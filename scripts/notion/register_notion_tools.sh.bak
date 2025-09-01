@@ -52,27 +52,27 @@ main() {
 	sanitize_path "$REGISTRY_DIR" || return 1
 
 	declare -A files=(
-		["$REGISTRY_DIR/generate_notion_log_json.yaml"]='- uuid: generate-notion-log-json-v1
-  name: generate_notion_log_json
+		["$REGISTRY_DIR/generate_Loki_log_json.yaml"]='- uuid: generate-Loki-log-json-v1
+  name: generate_Loki_log_json
   type: script
   version: 1.0.0
   status: PUSHED
-  path: wheelzone-script-utils/scripts/notion/generate_notion_log_json.sh
+  path: wheelzone-script-utils/scripts/Loki/generate_Loki_log_json.sh
   requires:
     - wz-wiki/WZChatEnds/end_blocks.yaml
   generates:
     - wz-wiki/WZChatEnds/data.json
-  tags: [notion, chatend, converter, json]
+  tags: [Loki, chatend, converter, json]
   updated: 2025-07-07'
-		["$REGISTRY_DIR/notion_log_entry.yaml"]='- uuid: notion-log-entry-v1
-  name: notion_log_entry
+		["$REGISTRY_DIR/Loki_log_entry.yaml"]='- uuid: Loki-log-entry-v1
+  name: Loki_log_entry
   type: script
   version: 1.0.0
   status: PUSHED
-  path: wheelzone-script-utils/scripts/notion/notion_log_entry.py
+  path: wheelzone-script-utils/scripts/Loki/Loki_log_entry.py
   uses:
     - .env.wzbot
-  tags: [notion, logger, event, api]
+  tags: [Loki, logger, event, api]
   updated: 2025-07-07'
 	)
 
@@ -84,7 +84,7 @@ main() {
 	(
 		cd "$REGISTRY_DIR/.." &&
 			git add registry/*.yaml &&
-			git commit -m "registry: добавлены generate_notion_log_json и notion_log_entry" &&
+			git commit -m "registry: добавлены generate_Loki_log_json и Loki_log_entry" &&
 			git push
 	) || {
 		log_error "Git operations failed"
@@ -92,13 +92,13 @@ main() {
 	}
 
 	declare -A log_events=(
-		["generate_notion_log_json"]="registry/generate_notion_log_json.yaml"
-		["notion_log_entry"]="registry/notion_log_entry.yaml"
+		["generate_Loki_log_json"]="registry/generate_Loki_log_json.yaml"
+		["Loki_log_entry"]="registry/Loki_log_entry.yaml"
 	)
 
 	for name in "${!log_events[@]}"; do
 		{
-			python3 ~/wheelzone-script-utils/scripts/notion/notion_log_entry.py \
+			python3 ~/wheelzone-script-utils/scripts/Loki/Loki_log_entry.py \
 				--type script-event \
 				--name "$name" \
 				--event "registered + pushed" \
@@ -120,10 +120,10 @@ NOTION_LOG_DB_ID=2282a47c8803803e813ce6c7ec605a78'
 }
 with_lock main
 
-echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_notion_tools\"}" >>"$LOG_FILE"
+echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_Loki_tools\"}" >>"$LOG_FILE"
 
-echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_notion_tools\"}" >>"$LOG_FILE"
+echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_Loki_tools\"}" >>"$LOG_FILE"
 
-echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_notion_tools\"}" >>"$LOG_FILE"
+echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_Loki_tools\"}" >>"$LOG_FILE"
 
-echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_notion_tools\"}" >>"$LOG_FILE"
+echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_Loki_tools\"}" >>"$LOG_FILE"

@@ -75,9 +75,9 @@ IFS=$'\n\t'
     ~/wheelzone-script-utils/scripts/wz_chatend.sh
     ~/wheelzone-script-utils/scripts/ci/wzdrone_chatend.sh
     ~/wheelzone-script-utils/scripts/utils/wz_ai_rule.sh
-    ~/wheelzone-script-utils/scripts/notion/wz_notify.sh
-    ~/wheelzone-script-utils/scripts/notion/sync_chatend_to_notion.sh
-    ~/wheelzone-script-utils/scripts/notion/register_notion_tools.sh
+    ~/wheelzone-script-utils/scripts/Loki/wz_notify.sh
+    ~/wheelzone-script-utils/scripts/Loki/sync_chatend_to_Loki.sh
+    ~/wheelzone-script-utils/scripts/Loki/register_Loki_tools.sh
   )
 
   log "Начинаем параллельное обновление..."

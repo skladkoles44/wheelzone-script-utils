@@ -14,7 +14,7 @@ msg="${1:-[Auto] Коммит от $now}"
 log_csv="$git_dir/data/script_event_log.csv"
 todo_csv="$git_dir/data/todo_from_chats.csv"
 logfile="$HOME/.wz_logs/autocommit_$(date +%Y%m%d).log"
-wzlog_py="$HOME/wheelzone-script-utils/scripts/notion/fractal_logger.py"
+wzlog_py="$HOME/wheelzone-script-utils/scripts/Loki/fractal_logger.py"
 
 # === Проверка изменений ===
 cd "$git_dir"

@@ -20,10 +20,10 @@ mkdir -p "$WZ_LOG_DIR"
 
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CSV_FILE="$HOME/wzbuffer/notion_csv_templates/chatlink_map.csv"
+CSV_FILE="$HOME/wzbuffer/Loki_csv_templates/chatlink_map.csv"
 PY_SCRIPT="$SCRIPT_DIR/import_chat_links.py"
 LOG_FILE="$HOME/.wzlogs/import_chatlinks.log"
-ENV_FILE="$HOME/.env.notion"
+ENV_FILE="$HOME/.env.Loki"
 
 PYTHON_CMD="python3"
 if [[ -z ${WZ_PYTHON_CMD_CACHE+x} ]]; then
@@ -58,7 +58,7 @@ log_and_exit() {
     local status=$1
     local message=$2
     log "$message"
-    $PYTHON_CMD "$SCRIPT_DIR/notion_log_entry.py" \
+    $PYTHON_CMD "$SCRIPT_DIR/Loki_log_entry.py" \
         --type "script-event" \
         --script "import_chat_links.py" \
         --status "$status" \

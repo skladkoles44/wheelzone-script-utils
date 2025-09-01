@@ -12,7 +12,7 @@ IFS=$'\n\t'
 ### 🔧 Конфигурация
 declare -r CACHE_DIR="$HOME/.cache/wz_notify"
 declare -r KEY_FILE="$HOME/.config/wz_notify.key"
-declare -r NOTIFY_SCRIPT="$HOME/wheelzone-script-utils/scripts/notion/wz_notify.sh"
+declare -r NOTIFY_SCRIPT="$HOME/wheelzone-script-utils/scripts/Loki/wz_notify.sh"
 declare -r LOG_FILE="$HOME/.local/var/log/wz_notify_cache.log"
 declare -r LOCK_FILE="$CACHE_DIR/wz_cache.lock"
 declare -ri MAX_RETRIES=3

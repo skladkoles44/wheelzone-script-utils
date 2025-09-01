@@ -3,7 +3,7 @@ timestamp: "2025-08-01T14:52:00Z"
 
 identity:
   user_device: "Termux (Android 15 / POCO / HyperOS)"
-  environment: "Termux + Git + VPS + Notion"
+  environment: "Termux + Git + VPS + Loki"
   gpt_role: "Мозг инфраструктуры WheelZone"
 
 rules:
@@ -17,11 +17,11 @@ core_status:
   rule_system: active
   wz_notify: installed
   drone_ci: partial
-  notion_log: enabled
+  Loki_log: enabled
 
 active_tasks:
-  - slug: auto-notion-import
-    description: "Импортировать задачи из Markdown в базу Notion"
+  - slug: auto-Loki-import
+    description: "Импортировать задачи из Markdown в базу Loki"
     source: wzdrone
     status: in_progress
 

@@ -4,9 +4,9 @@ mkdir -p "$WZ_LOG_DIR"
 #!/bin/bash
 set -e
 
-CSV_DIR=~/wzbuffer/notion_csv_templates
-HELPER=~/wheelzone-script-utils/scripts/notion/helpers/import_csv_to_notion.py
-ENV_FILE=~/.env.notion
+CSV_DIR=~/wzbuffer/Loki_csv_templates
+HELPER=~/wheelzone-script-utils/scripts/Loki/helpers/import_csv_to_Loki.py
+ENV_FILE=~/.env.Loki
 
 if [ ! -f "$HELPER" ]; then
   echo "❌ Не найден Python-скрипт: $HELPER"
@@ -14,11 +14,11 @@ if [ ! -f "$HELPER" ]; then
 fi
 
 if [ ! -f "$ENV_FILE" ]; then
-  echo "❌ Не найден .env.notion"
+  echo "❌ Не найден .env.Loki"
   exit 2
 fi
 
-echo "📤 Импорт CSV в Notion..."
+echo "📤 Импорт CSV в Loki..."
 
 for csv in "$CSV_DIR"/*.csv; do
   echo "→ $csv"

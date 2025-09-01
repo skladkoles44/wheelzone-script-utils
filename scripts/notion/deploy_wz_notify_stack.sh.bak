@@ -16,7 +16,7 @@ mkdir -p "$WZ_LOG_DIR"
 # Atomic config (readonly)
 declare -r LOG_DIR="$HOME/wzbuffer/logs"
 declare -r LOCK_FILE="$LOG_DIR/.deploy.lock"
-declare -r SCRIPT_PATH="$HOME/wheelzone-script-utils/scripts/notion/wz_notify.sh"
+declare -r SCRIPT_PATH="$HOME/wheelzone-script-utils/scripts/Loki/wz_notify.sh"
 
 # Инициализация с блокировкой
 mkdir -p "$LOG_DIR" || exit 1

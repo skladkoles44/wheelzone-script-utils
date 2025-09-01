@@ -8,7 +8,7 @@ import sys
 from datetime import datetime, timezone
 
 from dotenv import load_dotenv
-from notion_client import Client
+from Loki_client import Client
 
 # === Логгер ===
 logging.basicConfig(
@@ -18,7 +18,7 @@ logging.basicConfig(
 )
 
 # === CLI ===
-parser = argparse.ArgumentParser(description="📌 Добавление задачи в Notion")
+parser = argparse.ArgumentParser(description="📌 Добавление задачи в Loki")
 parser.add_argument("name", help="Имя задачи")
 parser.add_argument(
     "--status", default="TODO", choices=["TODO", "In Progress", "Done"], help="Статус"
@@ -31,7 +31,7 @@ parser.add_argument(
 )
 parser.add_argument("--tags", nargs="*", default=[], help="Список тегов")
 parser.add_argument("--source", default="manual", help="Источник задачи")
-parser.add_argument("--dry-run", action="store_true", help="Не отправлять в Notion")
+parser.add_argument("--dry-run", action="store_true", help="Не отправлять в Loki")
 parser.add_argument(
     "--verbose", action="store_true", help="Показать отправляемые данные"
 )
@@ -39,14 +39,14 @@ args = parser.parse_args()
 
 # === Загрузка конфигурации ===
 try:
-    load_dotenv(os.path.expanduser("~/wheelzone-script-utils/configs/.env.notion"))
+    load_dotenv(os.path.expanduser("~/wheelzone-script-utils/configs/.env.Loki"))
     NOTION_TOKEN = os.environ["NOTION_TOKEN"]
     DATABASE_ID = os.environ["TASKS_DATABASE_ID"]
 except Exception as e:
     logging.critical("❌ Ошибка загрузки .env или переменных окружения: %s", str(e))
     sys.exit(1)
 
-notion = Client(auth=NOTION_TOKEN)
+Loki = Client(auth=NOTION_TOKEN)
 
 
 # === Функция добавления задачи ===
@@ -78,7 +78,7 @@ def add_task():
         return
 
     try:
-        res = notion.pages.create(**payload)
+        res = Loki.pages.create(**payload)
         logging.info(
             "✅ Задача добавлена: %s [%s/%s] → %s",
             args.name,
@@ -87,7 +87,7 @@ def add_task():
             res.get("id"),
         )
     except Exception as e:
-        logging.exception("❌ Ошибка при отправке в Notion")
+        logging.exception("❌ Ошибка при отправке в Loki")
 
 
 # === Запуск ===

@@ -22,7 +22,7 @@ class PlatinumNotifier:
         self.env_file = self._validate_env_path()
         self.env = self._load_env_vars()
         self.session_id = self._generate_entropy_id()
-        self.notion_token = self.env.get("NOTION_TOKEN")
+        self.Loki_token = self.env.get("NOTION_TOKEN")
         self.database_id = self.env.get("NOTION_LOG_DB_ID")
         self.headers = self._generate_headers()
 
@@ -57,8 +57,8 @@ class PlatinumNotifier:
 
     def _generate_headers(self):
         return {
-            "Authorization": f"Bearer {self.notion_token}",
-            "Notion-Version": "2022-06-28",
+            "Authorization": f"Bearer {self.Loki_token}",
+            "Loki-Version": "2022-06-28",
             "Content-Type": "application/json",
         }
 
@@ -80,20 +80,20 @@ class PlatinumNotifier:
             ]
         }
 
-    def _send_to_notion(self, payload):
-        url = "https://api.notion.com/v1/pages"
+    def _send_to_Loki(self, payload):
+        url = "https://api.Loki.com/v1/pages"
         response = requests.post(url, headers=self.headers, data=json.dumps(payload), timeout=15)
         self._handle_response(response)
 
     def _handle_response(self, response):
         if response.status_code != 200:
-            logger.error(f"[!] Notion API error {response.status_code}: {response.text}")
-            raise RuntimeError("Notion request failed")
-        logger.info("✅ Notion log created successfully")
+            logger.error(f"[!] Loki API error {response.status_code}: {response.text}")
+            raise RuntimeError("Loki request failed")
+        logger.info("✅ Loki log created successfully")
 
     def notify(self, title, status, tag, desc=""):
         payload = self._build_payload(title, status, tag, desc)
-        self._send_to_notion(payload)
+        self._send_to_Loki(payload)
 
     def run_selftest(self):
         logger.info("=== Self-Test ===")

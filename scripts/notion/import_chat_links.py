@@ -7,10 +7,10 @@ from pathlib import Path
 import fcntl
 
 # Конфигурация
-load_dotenv(os.path.expanduser("~/.env.notion"))
+load_dotenv(os.path.expanduser("~/.env.Loki"))
 NOTION_TOKEN = os.getenv("NOTION_TOKEN")
 DATABASE_ID = os.getenv("CHATLINKS_DATABASE_ID")
-CSV_PATH = Path("~/wzbuffer/notion_csv_templates/chatlink_map.csv").expanduser()
+CSV_PATH = Path("~/wzbuffer/Loki_csv_templates/chatlink_map.csv").expanduser()
 LOG_PATH = Path("~/wzbuffer/logs/import_chat_links.log").expanduser()
 LOCK_FILE = LOG_PATH.with_suffix('.lock')
 SANITIZE_REGEX = re.compile(r'[\x00-\x1F\x7F-\x9F]')
@@ -63,12 +63,12 @@ async def async_process_batch(batch):
     async with aiohttp.ClientSession(headers={
         "Authorization": f"Bearer {NOTION_TOKEN}",
         "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28"
+        "Loki-Version": "2022-06-28"
     }) as client:
         tasks = []
         for row in batch:
             payload = create_page(row)
-            task = client.post("https://api.notion.com/v1/pages", json=payload)
+            task = client.post("https://api.Loki.com/v1/pages", json=payload)
             tasks.append(task)
         responses = await asyncio.gather(*tasks, return_exceptions=True)
         for resp in responses:

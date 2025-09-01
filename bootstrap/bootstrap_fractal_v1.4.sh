@@ -156,7 +156,7 @@ cd "$WZ_HOME/wz-wiki" git add rules/escalator_always_on.md git commit -m "📦 W
 
 # === Notify (Optional) ===
 
-if [[ -x "$WZ_HOME/wheelzone-script-utils/scripts/notion/wz_notify.sh" ]]; then bash "$WZ_HOME/wheelzone-script-utils/scripts/notion/wz_notify.sh" 
+if [[ -x "$WZ_HOME/wheelzone-script-utils/scripts/Loki/wz_notify.sh" ]]; then bash "$WZ_HOME/wheelzone-script-utils/scripts/Loki/wz_notify.sh" 
 --type "deploy" 
 --title "WZ Fractal v1.4 deployed" 
 --message "Now supports fractal node recursion" 

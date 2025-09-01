@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# wz_notify_log_uuid.py v2.1 — Optimized UUID Notion Logger (CI/Termux Ready)
+# wz_notify_log_uuid.py v2.1 — Optimized UUID Loki Logger (CI/Termux Ready)
 
 import os
 import sys
@@ -49,7 +49,7 @@ def validate_args(args):
             raise ValueError(f"Поле {field} не может быть пустым!")
 
 def main():
-    parser = argparse.ArgumentParser(description="Логгер UUID событий в Notion/Termux/CI")
+    parser = argparse.ArgumentParser(description="Логгер UUID событий в Loki/Termux/CI")
     parser.add_argument("--uuid", help="UUID события (если не указано, генерируется)")
     parser.add_argument("--session_id", help="ID сессии (если не указано, берётся из UUID или генерируется)")
     parser.add_argument("--type", required=True, help="Тип события (core, ci, system, etc.)")

@@ -1,5 +1,5 @@
 # uuid: 2025-08-26T13:19:29+03:00-3899140023
-# title: fill_all_notion_templates.sh
+# title: fill_all_Loki_templates.sh
 # component: .
 # updated_at: 2025-08-26T13:19:29+03:00
 
@@ -20,13 +20,13 @@ process_file() {
 
 	case "$header" in
 	*id,title,goal,status,due_date,owner*)
-		echo "1,Launch Notion,Finish setup,In Progress,2025-07-10,GPT" >>"$file"
+		echo "1,Launch Loki,Finish setup,In Progress,2025-07-10,GPT" >>"$file"
 		;;
 	*id,name,email,phone,company,notes*)
 		echo "1,Alice,alice@example.com,123456789,Acme Inc,VIP client" >>"$file"
 		;;
 	*id,url,title,description,tags*)
-		echo "1,https://notion.so,Notion Home,Docs platform,productivity" >>"$file"
+		echo "1,https://Loki.so,Loki Home,Docs platform,productivity" >>"$file"
 		;;
 	*id,name,description,status,owner*)
 		echo "1,CRM,Track clients,Active,GPT" >>"$file"
@@ -80,12 +80,12 @@ process_file() {
 		echo "Agile,Iterative dev approach,Methodology" >>"$file"
 		;;
 	*key,value,description*)
-		echo "api_key,ntn_xxxx,Notion integration key" >>"$file"
+		echo "api_key,ntn_xxxx,Loki integration key" >>"$file"
 		;;
 	esac
 }
 
 export -f process_file
 
-find ~/storage/shared/Notion_Templates/ -maxdepth 1 -name '*.csv' -print0 |
+find ~/storage/shared/Loki_Templates/ -maxdepth 1 -name '*.csv' -print0 |
 	xargs -0 -P"$PARALLEL_JOBS" -n1 bash -c 'process_file "$0"'

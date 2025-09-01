@@ -1,5 +1,5 @@
 # uuid: 2025-08-26T13:19:31+03:00-573255274
-# title: import_all_csv_to_notion.sh
+# title: import_all_csv_to_Loki.sh
 # component: .
 # updated_at: 2025-08-26T13:19:31+03:00
 
@@ -12,7 +12,7 @@ mkdir -p "$WZ_LOG_DIR"
 #!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
 
-CSV_DIR="/storage/emulated/0/Notion_Templates"
+CSV_DIR="/storage/emulated/0/Loki_Templates"
 
 # Сопоставление: имя CSV → тип события
 declare -A CSV_MAP=(
@@ -23,7 +23,7 @@ declare -A CSV_MAP=(
 	["script_event_log.csv"]="script-event"
 )
 
-echo "[INFO] Starting import from CSV → Notion"
+echo "[INFO] Starting import from CSV → Loki"
 
 for csv_file in "${!CSV_MAP[@]}"; do
 	file_path="$CSV_DIR/$csv_file"
@@ -34,7 +34,7 @@ for csv_file in "${!CSV_MAP[@]}"; do
 
 		tail -n +2 "$file_path" | while IFS=',' read -r col1 col2 col3 col4 col5 col6; do
 			# Можно адаптировать в зависимости от формата CSV
-			python3 ~/wheelzone-script-utils/scripts/notion/notion_log_entry.py \
+			python3 ~/wheelzone-script-utils/scripts/Loki/Loki_log_entry.py \
 				--title "$col1" \
 				--desc "$col2" \
 				--type "$event_type" \
@@ -47,4 +47,4 @@ for csv_file in "${!CSV_MAP[@]}"; do
 	fi
 done
 
-echo "[DONE] CSV import to Notion complete."
+echo "[DONE] CSV import to Loki complete."

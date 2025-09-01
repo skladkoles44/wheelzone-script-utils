@@ -5,7 +5,7 @@ mkdir -p "$WZ_LOG_DIR"
 
 FILE=~/wheelzone-script-utils/scripts/wz_sync_rules.sh
 MARKER='Правило создано:'
-LOG_LINE='    notion_log_entry.py --type rule --title "$title" --uuid "$uuid" --file "$file" --created "$created" --source wz_sync_rules.sh'
+LOG_LINE='    Loki_log_entry.py --type rule --title "$title" --uuid "$uuid" --file "$file" --created "$created" --source wz_sync_rules.sh'
 
 if grep -q "$MARKER" "$FILE"; then
     echo "✅ Найдено место вставки: $MARKER"

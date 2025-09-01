@@ -1,7 +1,7 @@
-configs/.env.notion
-.env.notion
-.env.notion.example
-.env.notion
-configs/.env.notion
+configs/.env.Loki
+.env.Loki
+.env.Loki.example
+.env.Loki
+configs/.env.Loki
 termux_logs/permalog.ndjson
 termux_logs/permalog.ndjson

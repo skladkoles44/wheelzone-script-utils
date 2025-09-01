@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# notion_log_entry.py v2.5 — Lightweight Notion logger for WheelZone
+# Loki_log_entry.py v2.5 — Lightweight Loki logger for WheelZone
 
 import os, sys, json, requests, time
 from datetime import datetime
 
 # --- Config ---
-NOTION_API = "https://api.notion.com/v1/pages"
+NOTION_API = "https://api.Loki.com/v1/pages"
 DB_ID = os.getenv("NOTION_DATABASE_ID")
 TOKEN = os.getenv("NOTION_API_KEY")
 OFFLINE_LOG = os.getenv("WZ_OFFLINE_LOG", os.path.expanduser("~/.wz_offline_log.jsonl"))
@@ -31,13 +31,13 @@ def make_payload(args):
         "fields": fields
     }
 
-def send_to_notion(payload):
+def send_to_Loki(payload):
     if not TOKEN or not DB_ID:
         log_offline(payload)
         return
     headers = {
         "Authorization": f"Bearer {TOKEN}",
-        "Notion-Version": "2022-06-28",
+        "Loki-Version": "2022-06-28",
         "Content-Type": "application/json"
     }
     data = {
@@ -55,15 +55,15 @@ def send_to_notion(payload):
     }
     r = requests.post(NOTION_API, headers=headers, json=data)
     if r.status_code == 200 or r.status_code == 201:
-        print(f"[notion] ✅ Logged: {payload['fields']['event']}")
+        print(f"[Loki] ✅ Logged: {payload['fields']['event']}")
     else:
-        print(f"[notion] ❌ Error {r.status_code}, saving offline")
+        print(f"[Loki] ❌ Error {r.status_code}, saving offline")
         log_offline(payload)
 
 # --- Main ---
 if len(sys.argv) < 2 or "--help" in sys.argv:
-    print("Usage: python notion_log_entry.py <event> <type> <source> [version] [status] [category] [note]")
+    print("Usage: python Loki_log_entry.py <event> <type> <source> [version] [status] [category] [note]")
     sys.exit(0)
 
 payload = make_payload(sys.argv)
-send_to_notion(payload)
+send_to_Loki(payload)

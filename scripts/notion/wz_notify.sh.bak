@@ -8,7 +8,7 @@ mkdir -p "$WZ_LOG_DIR"
 mkdir -p "$WZ_LOG_DIR"
 
 #!/data/data/com.termux/files/usr/bin/bash
-# WZ Notify v2.2.2 — Termux+Notion notification wrapper (fully optimized)
+# WZ Notify v2.2.2 — Termux+Loki notification wrapper (fully optimized)
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -83,24 +83,24 @@ if [ "$DRYRUN" = true ]; then
 fi
 
 # === Network check ===
-if ! ping -c1 api.notion.com >/dev/null 2>&1; then
+if ! ping -c1 api.Loki.com >/dev/null 2>&1; then
   echo "[⚠️] Network unavailable" >&2
   exit 3
 fi
 
-# === Notion API call ===
-RESPONSE=$(curl -sS -X POST "https://api.notion.com/v1/pages" \
+# === Loki API call ===
+RESPONSE=$(curl -sS -X POST "https://api.Loki.com/v1/pages" \
   -H "Authorization: Bearer $NOTION_API_TOKEN" \
-  -H "Notion-Version: $NOTION_VERSION" \
+  -H "Loki-Version: $NOTION_VERSION" \
   -H "Content-Type: application/json" \
   -d "$JSON_PAYLOAD")
 
 # === Error handling ===
 if echo "$RESPONSE" | jq -e '.object == "error"' >/dev/null; then
-  echo -n "[❌] Notion API error: " && jq -r '.message' <<<"$RESPONSE"
+  echo -n "[❌] Loki API error: " && jq -r '.message' <<<"$RESPONSE"
   exit 1
 else
-  echo "[✅] Notification sent to Notion."
+  echo "[✅] Notification sent to Loki."
 fi
 
 # === Logging ===

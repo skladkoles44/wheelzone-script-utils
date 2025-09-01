@@ -1,5 +1,5 @@
 # uuid: 2025-08-26T13:20:15+03:00-2636444382
-# title: sync_chatend_to_notion.sh
+# title: sync_chatend_to_Loki.sh
 # component: scripts
 # updated_at: 2025-08-26T13:20:15+03:00
 
@@ -17,7 +17,7 @@ mkdir -p "$WZ_LOG_DIR"
 
 #!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
-# PROD-оптимизированный скрипт синхронизации ChatEnd с Notion
+# PROD-оптимизированный скрипт синхронизации ChatEnd с Loki
 # Версия: 2.0.1
 
 set -eo pipefail
@@ -26,9 +26,9 @@ set -eo pipefail
 declare -rA CONFIG=(
 	[YAML_PATH]="$HOME/wz-wiki/WZChatEnds/end_blocks.yaml"
 	[JSON_PATH]="$HOME/wz-wiki/WZChatEnds/data.json"
-	[GENERATOR]="$HOME/wheelzone-script-utils/scripts/notion/generate_notion_log_json.sh"
-	[LOGGER]="$HOME/wheelzone-script-utils/scripts/notion/notion_log_entry.py"
-	[LOCK_FILE]="$HOME/.cache/wz_locks/sync_chatend_to_notion.lock"
+	[GENERATOR]="$HOME/wheelzone-script-utils/scripts/Loki/generate_Loki_log_json.sh"
+	[LOGGER]="$HOME/wheelzone-script-utils/scripts/Loki/Loki_log_entry.py"
+	[LOCK_FILE]="$HOME/.cache/wz_locks/sync_chatend_to_Loki.lock"
 )
 
 # Структурированное логирование
@@ -73,9 +73,9 @@ main() {
 		return 4
 	fi
 
-	log "INFO" "Отправка в Notion"
+	log "INFO" "Отправка в Loki"
 	if ! python3 "${CONFIG[LOGGER]}" "${CONFIG[JSON_PATH]}"; then
-		log "ERROR" "Ошибка отправки в Notion"
+		log "ERROR" "Ошибка отправки в Loki"
 		return 5
 	fi
 
@@ -84,11 +84,11 @@ main() {
 
 main "$@"
 EOF &&
-	chmod 750 ~/wheelzone-script-utils/scripts/notion/sync_chatend_to_notion.sh
+	chmod 750 ~/wheelzone-script-utils/scripts/Loki/sync_chatend_to_Loki.sh
 
 # === Генерация лог-файла отчёта ===
 echo "🧠 Генерация лог-файла отчёта..."
-bash "$HOME/wheelzone-script-utils/scripts/notion/generate_notion_log_json.sh" --from-markdown || {
+bash "$HOME/wheelzone-script-utils/scripts/Loki/generate_Loki_log_json.sh" --from-markdown || {
   echo "❌ Ошибка при генерации отчёта. Проверь формат markdown-файла."
   exit 1
 }

@@ -1,3 +1,6 @@
+---
+fractal_uuid: 9bb4eb5c-bb61-4caa-b6d3-e8a09b4d8599
+---
 # Автообновление man-страниц через Git hooks
 
 ## Что делает

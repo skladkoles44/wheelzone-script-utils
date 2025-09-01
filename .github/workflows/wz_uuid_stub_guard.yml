@@ -1,0 +1,34 @@
+name: WZ UUID Stub Guard (MD5)
+
+on:
+  push:
+    branches: [ "main", "master", "**" ]
+  pull_request:
+    branches: [ "main", "master", "**" ]
+
+jobs:
+  md5-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify MD5 of stub matches lock
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          STUB="cron/wz_history_core.sh"
+          LOCK=".wz_lock/wz_history_core.stub.md5"
+          if [ ! -f "$STUB" ] || [ ! -f "$LOCK" ]; then
+            echo "[WZ] ❌ Missing stub or lock: $STUB / $LOCK" >&2
+            exit 1
+          fi
+          want="$(tr -d '\r\n' < "$LOCK")"
+          have="$(md5sum "$STUB" | awk '{print $1}')"
+          echo "[WZ] want(MD5)=$want"
+          echo "[WZ] have(MD5)=$have"
+          if [ "$have" != "$want" ]; then
+            echo "[WZ] ❌ MD5 mismatch: stub modified (canon must stay on VPS)" >&2
+            exit 1
+          fi
+          echo "[WZ] ✅ MD5 OK: sealed delegator"

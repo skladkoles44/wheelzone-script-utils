@@ -8,7 +8,7 @@ import time
 from typing import Dict, List, Optional, Set, Tuple
 
 from dotenv import load_dotenv
-from notion_client import Client
+from Loki_client import Client
 
 REQUIRED_PROPERTIES = {
     "Name": {"title": {}},
@@ -24,25 +24,25 @@ PROPERTY_TEMPLATE = {
     "Description": lambda t: {"rich_text": [{"text": {"content": t[1]}}]},
     "Recommendations": lambda t: {"rich_text": [{"text": {"content": t[2]}}]},
     "Status": lambda _: {"select": {"name": "Open"}},
-    "Source": lambda _: {"rich_text": [{"text": {"content": "TODO_notionsync.md"}}]},
+    "Source": lambda _: {"rich_text": [{"text": {"content": "TODO_Lokisync.md"}}]},
 }
 
 
-class NotionTaskImporter:
+class LokiTaskImporter:
     def __init__(self):
         self.processed_hashes: Set[str] = set()
         self.success: int = 0
         self.total: int = 0
-        self.logger: logging.Logger = logging.getLogger("NotionImporter")
-        self._notion: Optional[Client] = None
+        self.logger: logging.Logger = logging.getLogger("LokiImporter")
+        self._Loki: Optional[Client] = None
         self._db_id: Optional[str] = None
 
     @property
-    def notion(self) -> Client:
-        if self._notion is None:
+    def Loki(self) -> Client:
+        if self._Loki is None:
             token, _ = self._load_config()
-            self._notion = Client(auth=token)
-        return self._notion
+            self._Loki = Client(auth=token)
+        return self._Loki
 
     @property
     def database_id(self) -> str:
@@ -52,7 +52,7 @@ class NotionTaskImporter:
         return self._db_id
 
     def _load_config(self) -> Tuple[str, str]:
-        env_path = os.path.expanduser("~/.env.notion")
+        env_path = os.path.expanduser("~/.env.Loki")
         if not os.path.exists(env_path):
             raise FileNotFoundError(f"Config file not found: {env_path}")
         load_dotenv(dotenv_path=env_path, override=True)
@@ -93,7 +93,7 @@ class NotionTaskImporter:
 
     def check_and_create_schema(self) -> None:
         try:
-            current = self.notion.databases.retrieve(self.database_id).get(
+            current = self.Loki.databases.retrieve(self.database_id).get(
                 "properties", {}
             )
             missing = [k for k in REQUIRED_PROPERTIES if k not in current]
@@ -101,7 +101,7 @@ class NotionTaskImporter:
                 update_payload = {
                     "properties": {k: REQUIRED_PROPERTIES[k] for k in missing}
                 }
-                self.notion.databases.update(self.database_id, **update_payload)
+                self.Loki.databases.update(self.database_id, **update_payload)
                 self.logger.info(f"Created missing fields: {missing}")
         except Exception as e:
             self.logger.error(f"Schema update failed: {e}")
@@ -136,7 +136,7 @@ class NotionTaskImporter:
                     continue
 
                 try:
-                    self.notion.pages.create(
+                    self.Loki.pages.create(
                         parent={"database_id": self.database_id},
                         properties=self._build_properties(task),
                     )
@@ -161,8 +161,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="Test mode (no changes)")
     parser.add_argument(
-        "--file", default="~/wz-wiki/docs/TODO_notionsync.md", help="Markdown file path"
+        "--file", default="~/wz-wiki/docs/TODO_Lokisync.md", help="Markdown file path"
     )
     args = parser.parse_args()
 
-    NotionTaskImporter().run(args.file, args.dry_run)
+    LokiTaskImporter().run(args.file, args.dry_run)

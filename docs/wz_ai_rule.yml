@@ -1,3 +1,6 @@
+---
+fractal_uuid: 628b6fd2-5ced-4c69-a951-5e27655d8c61
+---
 script: wz_ai_rule.sh
 version: 3.1
 description: >

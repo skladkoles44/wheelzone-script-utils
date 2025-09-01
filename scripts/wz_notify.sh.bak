@@ -3,14 +3,14 @@ export SESSION_ID="${SESSION_ID:-$(python3 ~/wheelzone-script-utils/scripts/util
 mkdir -p "$WZ_LOG_DIR"
 
 #!/data/data/com.termux/files/usr/bin/bash
-# WZ Notify v2.5.0 — Fractal Notification Bridge (CI+Termux+Notion+Offline, optimized)
+# WZ Notify v2.5.0 — Fractal Notification Bridge (CI+Termux+Loki+Offline, optimized)
 
 set -euo pipefail
 IFS=$'\n\t'
 SCRIPT_NAME="wz_notify.sh"
 ENV_FILE="$HOME/.env.wzbot"
 readonly WZ_HOME="$HOME/wheelzone-script-utils"
-readonly OFFLINE_DIR="$WZ_HOME/logs/offline_notion"
+readonly OFFLINE_DIR="$WZ_HOME/logs/offline_Loki"
 LOG_FILE="$WZ_HOME/logs/permalog.log"
 NOTION_VERSION="2022-06-28"
 readonly IS_TERMUX=$([ -n "$(command -v termux-notification)" ] && echo true || echo false)
@@ -55,7 +55,7 @@ notify_termux() {
   log "Termux notification skipped"
 }
 
-notify_notion() {
+notify_Loki() {
   local title="$1"
   local message="$2"
 
@@ -107,18 +107,18 @@ notify_notion() {
     }')
 
   if [ -z "$NOTION_API_TOKEN" ] || [ -z "$NOTION_LOG_DB_ID" ]; then
-    log "⚠️ Notion credentials missing, saving offline"
+    log "⚠️ Loki credentials missing, saving offline"
     echo "$payload" > "$OFFLINE_DIR/${SESSION_ID}.json"
     return
   fi
 
-  curl -sS -X POST https://api.notion.com/v1/pages \
+  curl -sS -X POST https://api.Loki.com/v1/pages \
     -H "Authorization: Bearer $NOTION_API_TOKEN" \
     -H "Content-Type: application/json" \
-    -H "Notion-Version: $NOTION_VERSION" \
+    -H "Loki-Version: $NOTION_VERSION" \
     -d "$payload" > /dev/null \
     || {
-      log "⚠️ Notion offline, saving JSON to offline buffer"
+      log "⚠️ Loki offline, saving JSON to offline buffer"
       echo "$payload" > "$OFFLINE_DIR/${SESSION_ID}.json"
     }
 }
@@ -170,7 +170,7 @@ main() {
   $DRYRUN && { log "DRYRUN: simulation complete"; exit 0; }
 
   notify_termux "$title" "$message"
-  notify_notion "$title" "$message"
+  notify_Loki "$title" "$message"
 }
 
 main "$@"

@@ -110,4 +110,4 @@ case "$1" in
         setsid "$0" --armor </dev/null >/dev/null 2>&1 &
         ;;
 esac
-~/wheelzone-script-utils/scripts/notion/wz_notify.sh --type core --title "HyperOS ядро запущено"
+~/wheelzone-script-utils/scripts/Loki/wz_notify.sh --type core --title "HyperOS ядро запущено"

@@ -1,3 +1,6 @@
+---
+fractal_uuid: c6564ec9-c621-46b8-83cb-dff665cc3ac3
+---
 # 📘 Скрипт `wz_chatend.sh`
 
 > Версия: **2.4**  
@@ -66,7 +69,7 @@ wz_chatend_helpers.sh — может использоваться для всп�
 
 wzdrone_chatend.sh (CI) — запускает wz_chatend.sh автоматически при push
 
-notion_log_entry.py — логирует отчёт в базу Notion ChatEnd Summaries (если подключено)
+Loki_log_entry.py — логирует отчёт в базу Loki ChatEnd Summaries (если подключено)
 
 
 📂 Git-связи:
@@ -114,7 +117,7 @@ bash ~/wheelzone-script-utils/scripts/wz_chatend.sh
 
 ✅ Статус
 
-Готов к CI и интеграции с Notion
+Готов к CI и интеграции с Loki
 
 Версия: v2.4
 

@@ -1,18 +1,18 @@
 === VPS Sync Simulation ===
 Дата: 2025-08-05T14:05:47+03:00
 Файлы:
-notion_log_20250805_132440.ndjson
-notion_mock_responses_20250805_132440.ndjson
-notion_log_20250805_134451.ndjson
-notion_mock_responses_20250805_134451.ndjson
-notion_log_20250805_134452.ndjson
-notion_mock_responses_20250805_134452.ndjson
-notion_log_20250805_134453.ndjson
-notion_mock_responses_20250805_134453.ndjson
-notion_log_20250805_140545.ndjson
-notion_mock_responses_20250805_140545.ndjson
-notion_log_20250805_140546.ndjson
-notion_mock_responses_20250805_140546.ndjson
-notion_log_20250805_140547.ndjson
-notion_mock_responses_20250805_140547.ndjson
+Loki_log_20250805_132440.ndjson
+Loki_mock_responses_20250805_132440.ndjson
+Loki_log_20250805_134451.ndjson
+Loki_mock_responses_20250805_134451.ndjson
+Loki_log_20250805_134452.ndjson
+Loki_mock_responses_20250805_134452.ndjson
+Loki_log_20250805_134453.ndjson
+Loki_mock_responses_20250805_134453.ndjson
+Loki_log_20250805_140545.ndjson
+Loki_mock_responses_20250805_140545.ndjson
+Loki_log_20250805_140546.ndjson
+Loki_mock_responses_20250805_140546.ndjson
+Loki_log_20250805_140547.ndjson
+Loki_mock_responses_20250805_140547.ndjson
 [Заглушка: будет заменена на scp/rsync/API]

@@ -11,8 +11,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def create_database(csv_path: str, notion_token: str, parent_page_id: str, title: str, dry_run: bool = False) -> str:
-    """Создание базы данных в Notion"""
+def create_database(csv_path: str, Loki_token: str, parent_page_id: str, title: str, dry_run: bool = False) -> str:
+    """Создание базы данных в Loki"""
     with open(csv_path, newline='', encoding='utf-8') as f:
         reader = csv.reader(f)
         headers = [h.strip() for h in next(reader)]
@@ -33,11 +33,11 @@ def create_database(csv_path: str, notion_token: str, parent_page_id: str, title
     }
 
     resp = requests.post(
-        "https://api.notion.com/v1/databases",
+        "https://api.Loki.com/v1/databases",
         headers={
-            "Authorization": f"Bearer {notion_token}",
+            "Authorization": f"Bearer {Loki_token}",
             "Content-Type": "application/json",
-            "Notion-Version": "2022-06-28"
+            "Loki-Version": "2022-06-28"
         },
         json=payload,
         timeout=30
@@ -45,8 +45,8 @@ def create_database(csv_path: str, notion_token: str, parent_page_id: str, title
     resp.raise_for_status()
     return resp.json()["id"]
 
-def insert_rows(database_id: str, csv_path: str, notion_token: str, dry_run: bool = False) -> int:
-    """Добавление строк в базу данных Notion"""
+def insert_rows(database_id: str, csv_path: str, Loki_token: str, dry_run: bool = False) -> int:
+    """Добавление строк в базу данных Loki"""
     processed = 0
 
     with open(csv_path, newline='', encoding='utf-8') as f:
@@ -77,11 +77,11 @@ def insert_rows(database_id: str, csv_path: str, notion_token: str, dry_run: boo
                 continue
             try:
                 r = requests.post(
-                    "https://api.notion.com/v1/pages",
+                    "https://api.Loki.com/v1/pages",
                     headers={
-                        "Authorization": f"Bearer {notion_token}",
+                        "Authorization": f"Bearer {Loki_token}",
                         "Content-Type": "application/json",
-                        "Notion-Version": "2022-06-28"
+                        "Loki-Version": "2022-06-28"
                     },
                     json=payload,
                     timeout=30
@@ -94,11 +94,11 @@ def insert_rows(database_id: str, csv_path: str, notion_token: str, dry_run: boo
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: import_csv_to_notion.py path/to/file.csv [--env ~/.env.notion] [--dry-run]")
+        print("Usage: import_csv_to_Loki.py path/to/file.csv [--env ~/.env.Loki] [--dry-run]")
         sys.exit(1)
 
     csv_file = sys.argv[1]
-    env_path = "~/.env.notion"
+    env_path = "~/.env.Loki"
     dry_run = "--dry-run" in sys.argv
 
     if "--env" in sys.argv:

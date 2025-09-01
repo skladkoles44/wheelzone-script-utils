@@ -221,14 +221,14 @@ class QuantumFractalLogger:
     def _send_quantum_request(self, payload: Dict[str, Any]) -> None:
         headers = {
             "Authorization": f"Bearer {self.env['NOTION_API_TOKEN']}",
-            "Notion-Version": "2022-06-28",
+            "Loki-Version": "2022-06-28",
             "Content-Type": "application/json",
             "X-Quantum-ID": self.session_id,
         }
         for attempt in range(MAX_RETRIES):
             try:
                 response = self.session.post(
-                    "https://api.notion.com/v1/pages",
+                    "https://api.Loki.com/v1/pages",
                     json=payload,
                     headers=headers,
                     timeout=REQUEST_TIMEOUT,
@@ -264,7 +264,7 @@ class QuantumFractalLogger:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Quantum Fractal Logger for Notion",
+        description="Quantum Fractal Logger for Loki",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     event_types = [t for types in LOG_STRUCTURE.values() for t in types]

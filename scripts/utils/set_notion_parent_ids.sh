@@ -1,5 +1,5 @@
 # uuid: 2025-08-26T13:19:40+03:00-1348866326
-# title: set_notion_parent_ids.sh
+# title: set_Loki_parent_ids.sh
 # component: .
 # updated_at: 2025-08-26T13:19:40+03:00
 
@@ -10,7 +10,7 @@ mkdir -p "$WZ_LOG_DIR"
 #!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 
-ENV_FILE="$HOME/wheelzone-script-utils/configs/.env.notion"
+ENV_FILE="$HOME/wheelzone-script-utils/configs/.env.Loki"
 
 declare -A IDS=(
 	[PARENT_PAGE_ID_TASKS]="2282a47c88038052ae75dff60c3dd8bc"

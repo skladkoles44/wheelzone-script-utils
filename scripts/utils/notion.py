@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/python3
 #!/data/data/com.termux/files/usr/bin/python3
-# 📛 File: notion.py
-# 🧠 Purpose: Send log events (like diagram generation) to a Notion database
+# 📛 File: Loki.py
+# 🧠 Purpose: Send log events (like diagram generation) to a Loki database
 # 🔐 Requires: NOTION_TOKEN and DATABASE_ID
 # 📦 Версия: 2.3.0-prod (WZ hardened, full)
 
@@ -42,7 +42,7 @@ def get_headers():
     return {
         "Authorization": f"Bearer {NOTION_TOKEN}",
         "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28",
+        "Loki-Version": "2022-06-28",
     }
 
 
@@ -51,7 +51,7 @@ def log(level: str, msg: str, **extra):
         {
             "level": level,
             "ts": UTC_TIMESTAMP(),
-            "event": "notion_log",
+            "event": "Loki_log",
             "msg": msg,
             **extra,
         }
@@ -99,7 +99,7 @@ def log_diagram_snapshot(data: dict):
     }
 
     res = requests.post(
-        "https://api.notion.com/v1/pages",
+        "https://api.Loki.com/v1/pages",
         headers=get_headers(),
         json=payload,
         timeout=10,

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+REPO="$(git rev-parse --show-toplevel)"
+ENF="$REPO/scripts/utils/wz_uuid_enforcer.sh"
+[ -x "$ENF" ] || exit 0
+"$ENF" "$REPO" fix >/dev/null 2>&1 || true
+# переформируем индекс, но не завалим коммит
+git add -A || true
+exit 0

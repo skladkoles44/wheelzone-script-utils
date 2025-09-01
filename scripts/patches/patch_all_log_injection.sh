@@ -4,7 +4,7 @@
 # component: .
 # updated_at: 2025-08-26T13:19:32+03:00
 
-# v1.2.1 — обновлённые маркеры для wz_generate_diagram и register_notion_tools
+# v1.2.1 — обновлённые маркеры для wz_generate_diagram и register_Loki_tools
 
 LOCK_FILE="${TMPDIR:-/tmp}/wheelzone_patch.lock"
 LOG_PATH="$HOME/wheelzone-script-utils/logs/patch_all_log_injection.log"
@@ -36,11 +36,11 @@ insert_log_after_marker "$HOME/wheelzone-script-utils/scripts/utils/wz_generate_
     'event":"done","script":"wz_generate_diagram' \
     'echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"final_log\",\"script\":\"wz_generate_diagram\"}" >>"$LOG_FILE"'
 
-# Вставка в register_notion_tools.sh — дописываем в конец
-REGISTER_SCRIPT="$HOME/wheelzone-script-utils/scripts/notion/register_notion_tools.sh"
-if ! grep -q 'event":"done","script":"register_notion_tools' "$REGISTER_SCRIPT"; then
+# Вставка в register_Loki_tools.sh — дописываем в конец
+REGISTER_SCRIPT="$HOME/wheelzone-script-utils/scripts/Loki/register_Loki_tools.sh"
+if ! grep -q 'event":"done","script":"register_Loki_tools' "$REGISTER_SCRIPT"; then
     echo '' >>"$REGISTER_SCRIPT"
-    echo 'echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_notion_tools\"}" >>"$LOG_FILE"' >>"$REGISTER_SCRIPT"
+    echo 'echo "{\"level\":\"INFO\",\"ts\":\"$(date +%Y-%m-%dT%H:%M:%S)\",\"event\":\"done\",\"script\":\"register_Loki_tools\"}" >>"$LOG_FILE"' >>"$REGISTER_SCRIPT"
     log_msg "✅ [$REGISTER_SCRIPT] Вставлен финальный лог"
 else
     log_msg "Пропущено: лог уже есть в $REGISTER_SCRIPT"

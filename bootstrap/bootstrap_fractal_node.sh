@@ -70,7 +70,7 @@ meta:
 
 modules:
   core: ["git_sync", "healthcheck"]
-  optional: ["loki_push", "cache_cleaner", "notion_push"]
+  optional: ["loki_push", "cache_cleaner", "Loki_push"]
 
 network:
   log_server: "https://logs.wheelzone.ru/loki"

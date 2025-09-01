@@ -112,8 +112,8 @@ main() {
     files+=(
         "$HOME/wheelzone-script-utils/scripts/regen-core.sh"
         "$HOME/wheelzone-script-utils/scripts/utils/wz_generate_diagram.sh"
-        "$HOME/wheelzone-script-utils/scripts/notion/import_tasks_from_md.py"
-        "$HOME/wheelzone-script-utils/scripts/notion/register_notion_tools.sh"
+        "$HOME/wheelzone-script-utils/scripts/Loki/import_tasks_from_md.py"
+        "$HOME/wheelzone-script-utils/scripts/Loki/register_Loki_tools.sh"
     )
 
     markers+=(
@@ -126,8 +126,8 @@ main() {
     messages+=(
         '✔ Завершено: обновление core.yaml'
         '✔ Завершено: генерация диаграммы'
-        '✔ Завершено: импорт задач в Notion'
-        '✔ Завершено: регистрация Notion-инструментов'
+        '✔ Завершено: импорт задач в Loki'
+        '✔ Завершено: регистрация Loki-инструментов'
     )
 
     for i in "${!files[@]}"; do

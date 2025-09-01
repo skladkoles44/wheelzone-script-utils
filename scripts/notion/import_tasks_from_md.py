@@ -11,8 +11,8 @@ from threading import Lock
 from typing import Dict, List
 
 from dotenv import load_dotenv
-from notion_client import Client
-from notion_client.errors import APIResponseError
+from Loki_client import Client
+from Loki_client.errors import APIResponseError
 from tqdm import tqdm
 
 
@@ -27,7 +27,7 @@ class Config:
     MARKDOWN_PATTERN = (
         r"(\d+)\.\s(.*?)\n\s*🔸(.*?)\n\s*🔹(.*?)(?:\n\s*([🧪📦🔧🚀\s]+))?(?:\n|$)"
     )
-    SOURCE_TEXT = "TODO_notionsync.md"
+    SOURCE_TEXT = "TODO_Lokisync.md"
     DELIMITER = "|"
 
 
@@ -56,7 +56,7 @@ def validate_length(text: str, field: str) -> str:
     return text.strip()
 
 
-class NotionTaskImporter:
+class LokiTaskImporter:
     def __init__(self):
         self.processed_hashes = set()
         self._hash_lock = Lock()
@@ -65,12 +65,12 @@ class NotionTaskImporter:
         self.logger = logging.getLogger(__name__)
 
     @cached_property
-    def notion(self) -> Client:
+    def Loki(self) -> Client:
         token, _ = self._load_config()
         return Client(auth=token)
 
     def _load_config(self) -> tuple:
-        env_path = os.path.expanduser("~/.env.notion")
+        env_path = os.path.expanduser("~/.env.Loki")
         if not os.path.exists(env_path):
             raise FileNotFoundError(f"❌ Config not found: {env_path}")
         load_dotenv(dotenv_path=env_path, override=True)
@@ -141,7 +141,7 @@ class NotionTaskImporter:
                 continue
             for attempt in range(Config.MAX_RETRIES):
                 try:
-                    self.notion.pages.create(
+                    self.Loki.pages.create(
                         parent={"database_id": db_id},
                         properties=self._build_properties(task),
                     )
@@ -161,20 +161,20 @@ class NotionTaskImporter:
                         time.sleep((attempt + 1) * 2)
 
         self.logger.info(f"🎯 Imported {self.success}/{self.total} tasks successfully.")
-log "✔ Завершено: импорт задач в Notion"
+log "✔ Завершено: импорт задач в Loki"
 
 
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dry-run", action="store_true", help="Не отправлять в Notion")
+    parser.add_argument("--dry-run", action="store_true", help="Не отправлять в Loki")
     parser.add_argument(
         "--file",
-        default="~/wz-wiki/docs/TODO_notionsync.md",
+        default="~/wz-wiki/docs/TODO_Lokisync.md",
         help="Путь до markdown-файла",
     )
     args = parser.parse_args()
 
-    importer = NotionTaskImporter()
+    importer = LokiTaskImporter()
     importer.run(os.path.expanduser(args.file), args.dry_run)

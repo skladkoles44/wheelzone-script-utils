@@ -1,5 +1,5 @@
 agent: Registrar
-description: Сохраняет артефакты, делает git commit, ChatEnd, Notion лог
+description: Сохраняет артефакты, делает git commit, ChatEnd, Loki лог
 model: bash/git/api
 entrypoint: register_artifact()
-tags: [git, notion, chatend, archive]
+tags: [git, Loki, chatend, archive]

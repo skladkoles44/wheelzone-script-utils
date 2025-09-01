@@ -1,5 +1,5 @@
 # uuid: 2025-08-26T13:19:34+03:00-4113440291
-# title: check_notion_env.sh
+# title: check_Loki_env.sh
 # component: .
 # updated_at: 2025-08-26T13:19:34+03:00
 
@@ -8,7 +8,7 @@ mkdir -p "$WZ_LOG_DIR"
 
 #!/data/data/com.termux/files/usr/bin/bash
 #!/data/data/com.termux/files/usr/bin/bash
-# Проверка доступности базы данных Notion по .env.wzbot
+# Проверка доступности базы данных Loki по .env.wzbot
 
 ENV_FILE="$HOME/.env.wzbot"
 NOTION_VERSION="2022-06-28"
@@ -33,11 +33,11 @@ export $(grep -E '^(NOTION_API_TOKEN|NOTION_LOG_DB_ID)=' "$ENV_FILE" | xargs)
 # Удалим дефисы для совместимости
 DB_ID_CLEAN="${NOTION_LOG_DB_ID//-/}"
 
-log "Проверка доступа к базе Notion ($DB_ID_CLEAN)..."
+log "Проверка доступа к базе Loki ($DB_ID_CLEAN)..."
 
-RESPONSE=$(curl -s -X GET "https://api.notion.com/v1/databases/$DB_ID_CLEAN" \
+RESPONSE=$(curl -s -X GET "https://api.Loki.com/v1/databases/$DB_ID_CLEAN" \
 	-H "Authorization: Bearer $NOTION_API_TOKEN" \
-	-H "Notion-Version: $NOTION_VERSION")
+	-H "Loki-Version: $NOTION_VERSION")
 
 if echo "$RESPONSE" | grep -q '"object": "database"'; then
 	log "✅ Доступ к базе подтверждён"

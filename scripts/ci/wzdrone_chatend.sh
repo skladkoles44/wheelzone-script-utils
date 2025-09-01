@@ -16,8 +16,8 @@ echo "[CI] SESSION_ID: $SESSION_ID"
 OUT_FILE="$(bash ~/wheelzone-script-utils/scripts/wz_chatend.sh --from-markdown ~/wzbuffer/end_blocks.txt)"
 echo "[INFO] Сохранено: $OUT_FILE"
 
-# === Логирование в Notion ===
-python3 ~/wheelzone-script-utils/scripts/notion/wz_notify_log_uuid.py \
+# === Логирование в Loki ===
+python3 ~/wheelzone-script-utils/scripts/Loki/wz_notify_log_uuid.py \
   --uuid "$CI_UUID" \
   --type "chatend" \
   --node "$CI_NODE" \

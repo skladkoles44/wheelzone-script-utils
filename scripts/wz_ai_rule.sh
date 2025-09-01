@@ -79,7 +79,7 @@ EOR
 
 
 log_event() {
-    python3 "$HOME/wheelzone-script-utils/scripts/notion/wz_notify_log_uuid.py" \
+    python3 "$HOME/wheelzone-script-utils/scripts/Loki/wz_notify_log_uuid.py" \
         --type "ai_rule" \
         --node "termux" \
         --source "wz_ai_rule.sh" \

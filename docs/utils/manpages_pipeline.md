@@ -1,3 +1,6 @@
+---
+fractal_uuid: 2089daf8-05a5-4927-b571-712853eae57d
+---
 # Manpages pipeline (CI + VPS)
 
 ## Локально

@@ -11,7 +11,7 @@ shopt -s nullglob
 
 ### === CONFIG ===
 readonly VERSION="7.4.0"
-readonly NOTION_SCRIPT="$HOME/wheelzone-script-utils/scripts/notion/notion_log_entry.py"
+readonly NOTION_SCRIPT="$HOME/wheelzone-script-utils/scripts/Loki/Loki_log_entry.py"
 readonly TELEGRAM_SCRIPT="$HOME/wheelzone-script-utils/wz_notify_push.sh"
 readonly TERMUX_TMP="/data/data/com.termux/files/usr/tmp"
 readonly LOG_DIR="$HOME/wzbuffer/logs"
@@ -85,9 +85,9 @@ EVENT="$(generate_event_id)"
 SOURCE="wz_notify.sh"
 
 ### === CHANNELS ===
-notify_notion() {
+notify_Loki() {
 	[[ -f "$NOTION_SCRIPT" ]] || {
-		echo "[ERROR] Notion script not found"
+		echo "[ERROR] Loki script not found"
 		return 1
 	}
 	[[ -x "$PYTHON_EXEC" ]] || {
@@ -97,7 +97,7 @@ notify_notion() {
 
 	"$PYTHON_EXEC" "$NOTION_SCRIPT" \
 		--type "$TYPE" --name "$TITLE" --event "$EVENT" --source "$SOURCE" --message "$MESSAGE" \
-		>>"$TERMUX_TMP/logs/notion.log" 2>>"$TERMUX_TMP/logs/notion-errors.log"
+		>>"$TERMUX_TMP/logs/Loki.log" 2>>"$TERMUX_TMP/logs/Loki-errors.log"
 }
 
 notify_termux() {
@@ -139,7 +139,7 @@ main() {
 	trap 'termux-wake-unlock; flock -u 200' EXIT
 
 	case "$CHANNEL" in
-	notion) notify_notion || echo "[WARN] Notion failed" >&2 ;;
+	Loki) notify_Loki || echo "[WARN] Loki failed" >&2 ;;
 	telegram) notify_telegram ;;
 	termux | "") notify_termux ;;
 	*)

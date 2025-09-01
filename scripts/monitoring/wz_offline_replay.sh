@@ -8,7 +8,7 @@
 
 OFFLINE_LOG="${HOME}/.wz_offline_log.jsonl"
 TMP_FILE="$(mktemp)"
-LOGGER_PY="$HOME/wheelzone-script-utils/scripts/notion/notion_log_entry.py"
+LOGGER_PY="$HOME/wheelzone-script-utils/scripts/Loki/Loki_log_entry.py"
 
 [[ ! -f "$OFFLINE_LOG" ]] && echo "✅ Нет накопленных логов для отправки" && exit 0
 [[ ! -f "$LOGGER_PY" ]] && echo "❌ Не найден логгер: $LOGGER_PY" && exit 1

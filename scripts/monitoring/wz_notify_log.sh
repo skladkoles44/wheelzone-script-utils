@@ -11,7 +11,7 @@ shift
 
 ARGS=("$@")
 FALLBACK_LOG="${HOME}/.wz_offline_log.jsonl"
-LOGGER_PY="$HOME/wheelzone-script-utils/scripts/notion/notion_log_entry.py"
+LOGGER_PY="$HOME/wheelzone-script-utils/scripts/Loki/Loki_log_entry.py"
 
 if [[ ! -f "$LOGGER_PY" ]]; then
   echo "❌ Не найден логгер: $LOGGER_PY"

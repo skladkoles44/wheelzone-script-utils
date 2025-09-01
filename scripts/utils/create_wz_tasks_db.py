@@ -18,7 +18,7 @@ def log_json(level, **kwargs):
 
 
 def load_env():
-    env_path = os.path.expanduser("~/wheelzone-script-utils/configs/.env.notion")
+    env_path = os.path.expanduser("~/wheelzone-script-utils/configs/.env.Loki")
     if not os.path.isfile(env_path):
         raise FileNotFoundError(f"Not found: {env_path}")
     load_dotenv(env_path)
@@ -64,12 +64,12 @@ def build_payload(page_id: str) -> dict:
     }
 
 
-def create_notion_db(token: str, page_id: str):
-    url = "https://api.notion.com/v1/databases"
+def create_Loki_db(token: str, page_id: str):
+    url = "https://api.Loki.com/v1/databases"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28",
+        "Loki-Version": "2022-06-28",
     }
     data = build_payload(page_id)
 
@@ -101,7 +101,7 @@ def main():
         page_id = os.environ.get(env_var)
         if not page_id:
             raise EnvironmentError(f"❌ Переменная окружения {env_var} не найдена")
-        create_notion_db(token, page_id)
+        create_Loki_db(token, page_id)
     except Exception as e:
         log_json("ERROR", status="error", type=type(e).__name__, error=str(e))
         sys.exit(1)

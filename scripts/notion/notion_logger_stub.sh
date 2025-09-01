@@ -1,18 +1,18 @@
 # uuid: 2025-08-26T13:19:31+03:00-843947096
-# title: notion_logger_stub.sh
+# title: Loki_logger_stub.sh
 # component: .
 # updated_at: 2025-08-26T13:19:32+03:00
 
-# === Notion Logger Stub (v2.0) ===
-NOTION_LOG_DIR="$HOME/.wz_notion_logs"
+# === Loki Logger Stub (v2.0) ===
+NOTION_LOG_DIR="$HOME/.wz_Loki_logs"
 NOTION_LOG_INDEX="$NOTION_LOG_DIR/index.txt"
 
-init_notion_logger() {
+init_Loki_logger() {
     mkdir -p "$NOTION_LOG_DIR"
     [[ ! -f "$NOTION_LOG_INDEX" ]] && touch "$NOTION_LOG_INDEX"
 }
 
-log_notion_request() {
+log_Loki_request() {
     local event_type="${1:-chatend}"
     local payload="$2"
     local status="${3:-stubbed}"
@@ -45,7 +45,7 @@ JSON
   "stub_response": {
     "id": "$request_id",
     "status": "logged",
-    "database": "notion_stub",
+    "database": "Loki_stub",
     "timestamp": "$timestamp"
   }
 }
@@ -53,8 +53,8 @@ JSON
 }
 
 process_chatend() {
-    init_notion_logger
+    init_Loki_logger
     local payload=$(jq -n --arg file "$OUTPUT_FILE" --arg slug "$SLUG" '{action: "create", file: $file, slug: $slug}')
-    echo "📦 Отправка в Notion (заглушка)..."
-    log_notion_request "chatend_create" "$payload" "stubbed" >/dev/null
+    echo "📦 Отправка в Loki (заглушка)..."
+    log_Loki_request "chatend_create" "$payload" "stubbed" >/dev/null
 }

@@ -4,7 +4,7 @@
 # component: .
 # updated_at: 2025-08-26T13:19:32+03:00
 
-# WZ Notify v2.2.3 — Фрактальный Termux-Notion wrapper
+# WZ Notify v2.2.3 — Фрактальный Termux-Loki wrapper
 # ░█▀▀░█▀█░█▀█░█▀▀░▀█▀░█▀▀░█░█
 # ░█▀▀░█░█░█░█░█▀▀░░█░░█░█░█▀█
 # ░▀░░░▀▀▀░▀░▀░▀░░░▀▀▀░▀▀▀░▀░▀

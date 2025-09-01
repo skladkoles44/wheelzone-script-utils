@@ -10,7 +10,7 @@ set -euo pipefail
 echo "[WZ-Agent] Инициализация агентного режима..."
 
 # Подгружаем окружение и логгер
-source ~/wheelzone-script-utils/scripts/notion/wz_notify.sh --source agent-init
+source ~/wheelzone-script-utils/scripts/Loki/wz_notify.sh --source agent-init
 
 # Логируем запуск
 ~/wheelzone-script-utils/scripts/logging/wz_log_event.sh \
