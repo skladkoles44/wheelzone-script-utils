@@ -1,61 +1,57 @@
 kind: pipeline
 type: docker
-name: docs-manpages
-
-steps:
-  - name: prepare
-    image: alpine:3.20
-    environment:
-      TZ: UTC
-    commands:
-      - apk add --no-cache git bash python3 coreutils tar gzip openssh-client
-      - git config --global user.name  "${GIT_AUTHOR_NAME:-WZ Drone}"
-      - git config --global user.email "${GIT_AUTHOR_EMAIL:-ci@wheelzone}"
-      # Подхват SSH-ключа для пуша обратно в репо
-      - mkdir -p /root/.ssh && chmod 700 /root/.ssh
-      - echo "$GIT_SSH_KEY" | tr -d '\r' > /root/.ssh/id_ed25519 && chmod 600 /root/.ssh/id_ed25519
-      - echo -e "Host github.com\n  StrictHostKeyChecking accept-new\n" > /root/.ssh/config
-
-  - name: build-manpages
-    image: alpine:3.20
-    environment:
-      TZ: UTC
-    commands:
-      - apk add --no-cache bash python3 tar gzip coreutils git
-      - bash scripts/ci/wz_build_manpages.sh
-      - git add -A || true
-      - git commit -m "ci(docs): manpages artifact [CI]" || true
-
-  - name: push-artifacts
-    image: alpine:3.20
-    when:
-      status: [ success ]
-    environment:
-      TZ: UTC
-    commands:
-      - apk add --no-cache git openssh-client
-      - git push origin HEAD:${DRONE_BRANCH}
-    secrets: [ GIT_SSH_KEY, GIT_AUTHOR_NAME, GIT_AUTHOR_EMAIL ]
-
-  # (опционально) Публикация на VPS, если доступен
-  - name: publish-vps
-    image: alpine:3.20
-    when:
-      status: [ success ]
-    environment:
-      VPS_HOST:
-      VPS_PORT:
-      VPS_DEST:
-      TZ: UTC
-    commands:
-      - apk add --no-cache openssh-client rsync
-      - bash scripts/ci/wz_publish_manpages_vps.sh
-    secrets: [ GIT_SSH_KEY, VPS_HOST, VPS_PORT, VPS_DEST ]
+name: wheelzone-utils-ci
 
 trigger:
-  event:
-    - push
-  branch:
-    - main
-    - master
-    - dev
+  event: [ push, pull_request ]
+
+concurrency:
+  limit: 1
+
+# Глобальные переменные (могут быть переопределены секретами)
+environment:
+  WZ_GIT_HOST: 79.174.85.106
+  WZ_GIT_PORT: "2222"
+  WZ_WIKI_PATH: /root/git/wz-wiki.git
+  WZ_WIKI_DIR: /drone/src/wz-wiki
+
+steps:
+  - name: clone-wz-wiki-from-vps
+    image: alpine:3.20
+    environment:
+      WZ_VPS_SSH_KEY:
+        from_secret: WZ_VPS_SSH_KEY
+      # (опционально) переопределить хост/порт/путь секретами
+      WZ_GIT_HOST:
+        from_secret: WZ_GIT_HOST
+      WZ_GIT_PORT:
+        from_secret: WZ_GIT_PORT
+      WZ_WIKI_PATH:
+        from_secret: WZ_WIKI_PATH
+    commands:
+      - set -Eeuo pipefail
+      - apk add --no-cache git openssh ca-certificates coreutils grep
+      - : "— Подготовка SSH"
+      - mkdir -p /root/.ssh
+      - printf '%s\n' "$WZ_VPS_SSH_KEY" > /root/.ssh/id_rsa
+      - chmod 600 /root/.ssh/id_rsa
+      - ssh-keyscan -p "${WZ_GIT_PORT}" -t rsa "${WZ_GIT_HOST}" >> /root/.ssh/known_hosts 2>/dev/null || true
+      - : "— Клонирование wz-wiki"
+      - export WZ_WIKI_URL="ssh://root@${WZ_GIT_HOST}:${WZ_GIT_PORT}${WZ_WIKI_PATH}"
+      - git clone --depth 1 "$WZ_WIKI_URL" "$WZ_WIKI_DIR"
+      - test -f "$WZ_WIKI_DIR/docs/security/omega_ultra_audit_protocol.md" || { echo "[WZ] Нет протокола"; exit 2; }
+
+  - name: audit-protocol-check
+    image: alpine:3.20
+    environment:
+      WIKI_DIR: /drone/src/wz-wiki
+    commands:
+      - set -Eeuo pipefail
+      - apk add --no-cache bash git grep coreutils
+      - bash ./tests/audit_protocol_check.sh
+
+  - name: shellcheck
+    image: koalaman/shellcheck-alpine:stable
+    commands:
+      - shellcheck ./tests/audit_protocol_check.sh
+
