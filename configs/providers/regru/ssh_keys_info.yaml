@@ -1,0 +1,14 @@
+# ⚙️ REGRU SSH keys config (account: info)
+# Сохраняем для воспроизводимости и управления доступами.
+
+account: info
+provider: reg.ru
+keys:
+  - name: Termux
+    type: ed25519
+    usage: main-termux
+    public: ssh-ed25519 AAAAC3NzaC1lZD...e9TBmi wheelzone-dev
+    status: active
+notes: |
+  Этот ключ используется для доступа с Android (Termux).
+  При смене — обновить как в панели, так и в репозитории.
