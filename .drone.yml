@@ -8,32 +8,50 @@ trigger:
 concurrency:
   limit: 1
 
+# Глобальные переменные (могут быть переопределены секретами)
+environment:
+  WZ_GIT_HOST: 79.174.85.106
+  WZ_GIT_PORT: "2222"
+  WZ_WIKI_PATH: /root/git/wz-wiki.git
+  WZ_WIKI_DIR: /drone/src/wz-wiki
+
 steps:
   - name: clone-wz-wiki-from-vps
     image: alpine:3.20
     environment:
       WZ_VPS_SSH_KEY:
         from_secret: WZ_VPS_SSH_KEY
-      WZ_WIKI_URL: "ssh://root@79.174.85.106:2222/root/git/wz-wiki.git"
-      WZ_WIKI_DIR: "/drone/src/wz-wiki"
+      # (опционально) переопределить хост/порт/путь секретами
+      WZ_GIT_HOST:
+        from_secret: WZ_GIT_HOST
+      WZ_GIT_PORT:
+        from_secret: WZ_GIT_PORT
+      WZ_WIKI_PATH:
+        from_secret: WZ_WIKI_PATH
     commands:
-      - apk add --no-cache git openssh ca-certificates
+      - set -Eeuo pipefail
+      - apk add --no-cache git openssh ca-certificates coreutils grep
+      - : "— Подготовка SSH"
       - mkdir -p /root/.ssh
-      - echo "$WZ_VPS_SSH_KEY" > /root/.ssh/id_rsa && chmod 600 /root/.ssh/id_rsa
-      # known_hosts для нестандартного порта
-      - ssh-keyscan -p 2222 -t rsa 79.174.85.106 >> /root/.ssh/known_hosts 2>/dev/null || true
+      - printf '%s\n' "$WZ_VPS_SSH_KEY" > /root/.ssh/id_rsa
+      - chmod 600 /root/.ssh/id_rsa
+      - ssh-keyscan -p "${WZ_GIT_PORT}" -t rsa "${WZ_GIT_HOST}" >> /root/.ssh/known_hosts 2>/dev/null || true
+      - : "— Клонирование wz-wiki"
+      - export WZ_WIKI_URL="ssh://root@${WZ_GIT_HOST}:${WZ_GIT_PORT}${WZ_WIKI_PATH}"
       - git clone --depth 1 "$WZ_WIKI_URL" "$WZ_WIKI_DIR"
-      - test -f "$WZ_WIKI_DIR/docs/security/omega_ultra_audit_protocol.md" || (echo "[WZ] Нет протокола в wz-wiki" && exit 2)
+      - test -f "$WZ_WIKI_DIR/docs/security/omega_ultra_audit_protocol.md" || { echo "[WZ] Нет протокола"; exit 2; }
 
   - name: audit-protocol-check
     image: alpine:3.20
     environment:
-      WIKI_DIR: "/drone/src/wz-wiki"
+      WIKI_DIR: /drone/src/wz-wiki
     commands:
+      - set -Eeuo pipefail
       - apk add --no-cache bash git grep coreutils
       - bash ./tests/audit_protocol_check.sh
 
-  - name: shellcheck (optional)
+  - name: shellcheck
     image: koalaman/shellcheck-alpine:stable
     commands:
-      - shellcheck ./tests/audit_protocol_check.sh || (echo "[WZ] ShellCheck fail" && exit 3)
+      - shellcheck ./tests/audit_protocol_check.sh
+
