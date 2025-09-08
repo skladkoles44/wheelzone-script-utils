@@ -95,19 +95,11 @@ def _sqlite_advisory(db_path: str):
             cur = con.cursor()
             tables = {r[0].lower() for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
-            
             def has_uuid_idx(t):
-                # безопасная валидация идентификатора таблицы
-                if not re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', str(t or "")):
-                    return False
-                # экранируем " по правилам SQLite и используем идентификаторные кавычки
-                t_quoted = '"' + str(t).replace('"','""') + '"'
-                sql = f'PRAGMA index_list({t_quoted})'
                 try:
-                    return any('uuid' in (r[1] or '').lower() for r in cur.execute(sql))
+                    return any(('uuid' in r[1].lower() for r in cur.execute('PRAGMA index_list(%s)', (t,))))
                 except Exception:
                     return False
-
             bad = [t for t in ('uuid_pool', 'uuid_access_log', 'uuid_receipts', 'uuid_replacements') if t in tables and (not has_uuid_idx(t))]
             if bad:
                 warn('SQLite: отсутствуют индексы по uuid', tables=','.join(bad))

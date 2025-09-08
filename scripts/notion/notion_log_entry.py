@@ -53,7 +53,7 @@ def send_to_Loki(payload):
             "Time": {"date": {"start": payload["timestamp"]}}
         }
     }
-    r = requests.post(NOTION_API, headers=headers, json=data)
+    r = requests.post(NOTION_API, headers=headers, json=data, timeout=(2,10))
     if r.status_code == 200 or r.status_code == 201:
         print(f"[Loki] ✅ Logged: {payload['fields']['event']}")
     else:

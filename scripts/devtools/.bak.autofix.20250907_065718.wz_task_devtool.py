@@ -38,7 +38,7 @@ def setup_tunnel():
     if check.returncode != 0:
         cmd = f'ssh -fN -L {port}:localhost:5432 -i {key} {user}@{host}'
         logger.info('🚀 SSH-туннель: %s', cmd)
-        subprocess.run(shlex.split(cmd),  check=True)
+        subprocess.run(shlex.split(cmd))
     else:
         logger.info('🔁 SSH-туннель уже активен')
 

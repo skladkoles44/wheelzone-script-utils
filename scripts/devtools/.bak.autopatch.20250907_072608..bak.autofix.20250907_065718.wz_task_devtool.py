@@ -6,7 +6,6 @@ import argparse
 import logging
 import os
 import subprocess
-import shlex
 import sys
 from datetime import datetime
 from uuid import uuid4
@@ -34,11 +33,11 @@ def setup_tunnel():
     if not host or not user:
         logger.error('❌ VPS_HOST и VPS_USER не заданы в .env.wzpg')
         return
-    check = subprocess.run(["pgrep","-f", f"ssh -fN -L {port}"])
+    check = subprocess.run(f"pgrep -f 'ssh -fN -L {port}'", shell=True)
     if check.returncode != 0:
         cmd = f'ssh -fN -L {port}:localhost:5432 -i {key} {user}@{host}'
         logger.info('🚀 SSH-туннель: %s', cmd)
-        subprocess.run(shlex.split(cmd),  check=True)
+        subprocess.run(cmd, shell=True, check=True)
     else:
         logger.info('🔁 SSH-туннель уже активен')
 

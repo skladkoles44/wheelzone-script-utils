@@ -74,7 +74,7 @@ def create_Loki_db(token: str, page_id: str):
     data = build_payload(page_id)
 
     try:
-        response = requests.post(url, headers=headers, json=data)
+        response = requests.post(url, headers=headers, json=data, timeout=(2,10))
         response.raise_for_status()
         r = response.json()
         log_json("INFO", status="success", database_id=r.get("id"), url=r.get("url"))
