@@ -1,0 +1,27 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Guard wrapper: run real banner once per interactive TTY
+
+set -Eeuo pipefail
+
+# already done in this shell/session?
+: "${WZ_LOGIN_BANNER_DONE:=0}"
+if [ "$WZ_LOGIN_BANNER_DONE" = 1 ]; then
+  exit 0
+fi
+export WZ_LOGIN_BANNER_DONE=1
+
+# per-TTY lock (prevents multiple runs across re-entries)
+TTY_ID="$(tty 2>/dev/null | tr -c '[:alnum:]' _ || echo no_tty)"
+LOCKDIR="${TMPDIR:-/data/data/com.termux/files/usr/tmp}/.wz_banner_lock.${TTY_ID}"
+if ! mkdir "$LOCKDIR" 2>/dev/null; then
+  exit 0
+fi
+trap 'rmdir "$LOCKDIR" 2>/dev/null || true' EXIT
+
+REAL="$HOME/wheelzone-script-utils/login_banner.real.sh"
+if [ -x "$REAL" ]; then
+  exec "$REAL" "$@"
+else
+  printf '[banner] real script not found: %s\n' "$REAL" >&2
+  exit 0
+fi

@@ -5,3 +5,5 @@ configs/.env.Loki
 configs/.env.Loki
 termux_logs/permalog.ndjson
 termux_logs/permalog.ndjson
+.env*
+.netrc
