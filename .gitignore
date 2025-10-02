@@ -7,3 +7,7 @@ termux_logs/permalog.ndjson
 termux_logs/permalog.ndjson
 .env*
 .netrc
+
+# editor swap files
+*.swp
+*.swo
